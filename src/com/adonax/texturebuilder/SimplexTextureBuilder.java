@@ -5,6 +5,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 
+/**
+ * Main class for launching the app.
+ */
 public class SimplexTextureBuilder {
 	
 	public static STBFrame frame;
