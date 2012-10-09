@@ -1,0 +1,299 @@
+<html lang="en-us">
+<head>
+<title>Smooth (and Turbulent) Noise Basics</title>
+<style>
+    h1 {font: sans-serif;
+    	font-weight: bold;
+    	font-size: 16}
+
+    h2 {font: sans-serif;
+    	font-weight: normal;
+    	font-size: 14;
+    	color: "maroon"}	
+
+    p {font: Ariel;
+    	font-size: 14}
+    	
+	code {font-size: 16;
+		font-family: Courier;
+		}
+	
+	pre {color: "navy";
+		font-size: 15;
+		background-color: #ffffcf }        
+
+</style>
+</head>
+
+<body>
+<h1>Smooth (<i>and Turbulent</i>) Noise: <i>the Basics</i></h1>
+
+<h2>Click on the graphic to load settings into the Texture Editing 
+tool.</h2>
+
+<p>The following code will create a <code>BufferedImage</code> that 
+matches the above graphic. A template has been provided (see the 
+"Code Template" button) where you can copy and paste this code and 
+run it as a stand-alone Java program.</p>
+<pre> 
+        BufferedImage image = new BufferedImage(700, 160,
+                BufferedImage.TYPE_INT_ARGB);
+        WritableRaster raster = image.getRaster();
+        int[] pixel = new int[4]; 
+        pixel[3] = 255; // alpha channel 
+
+        double noiseValue;
+
+        for (int y = 0; y &lt; 160; y++)
+        {
+            for (int x = 0; x &lt; 700; x++)
+            {
+                noiseValue = SimplexNoise.noise(x/128f, y/128f);
+                noiseValue = (noiseValue + 1) / 2;
+                noiseValue *= 256;
+
+                pixel[0] = (int)noiseValue;  // red
+                pixel[1] = pixel[0];  // green
+                pixel[2] = pixel[0];  // blue
+
+                raster.setPixel(x, y, pixel);
+            }
+        }
+</pre>
+
+<p>The basic idea is to iterate through the individual pixels
+of the graphic, and use the (x, y) locations as arguments (usually
+with a scaling factor, as seen here where the scaling is 1/128) to 
+the noise function to generate our texture values. The code for 
+creating a <code>BufferedImage</code>, a <code>WritableRaster</code>
+and navigating through the image setting individual pixel values is
+assumed to be familiar. If not, you can learn more about this at the 
+Java 2D tutorial: 
+<code>http://docs.oracle.com/javase/tutorial/2d/overview/images.html
+</code></p>
+
+<p>The call to the noise function, for 2D, is static:</p>
+<pre>
+    double noiseValue = SimplexNoise.noise(x, y);
+</pre>
+ 
+<p>We use an argument for each dimension we wish to traverse. For a 
+1D call, we would provide a single argument, for 3D we provide 3 
+arguments, and so on. Our particular reference implementation only 
+accepts from 2 to 4 arguments, for 2D to 4D noise. Inputs and 
+outputs are all of the type <code>double</code>.</p>
+
+<p>A key point is that the output of a given input is always 
+the same. <code>SimplexNoise.noise(0,&nbsp;0)</code> will always 
+return the same number. Each call to (100,&nbsp;0) will also always 
+return it's same number, and so on.</p>
+
+<p>Another important point is that no matter where one starts, as 
+one traverses the noise space, one receives values
+with the same degree of variability, as long as the increment is the 
+same. The details will vary, but the same "texture" should result.</p>
+
+<p>The following figure shows three starting values for X: 0, 100 and 
+-256. In each case, we increment 256 times (once for every pixel
+in the width of the target graphic). You can see that there is a 
+definite "family resemblance" in the resulting graphics.</p>
+
+<p><i><b>Fig. 1 Three translations, X starting at (a)&nbsp;0, 
+(b)&nbsp;100, (c)&nbsp;-256. There is a similarity to the textures,
+even as the details differ.
+</b></i></p>
+<img SRC="../images/translate0.JPG" width="607" height="200" hspace="10"
+vspace="10" ALT="Translating the Noise Function"/>
+
+<p>Given this, those wanting to "seed" the noise function can do so 
+by generating a random constant and adding this to the X and/or Y value,
+aka <i>translating</i> (e.g., using <code>(x + seedValue, y)</code> in
+place of <code>(x, y)</code>).</p>  
+
+<p>Closely following this is a third key point: to change the degree
+of variability, one increases or decreases the increment between 
+adjacent calls. In our sample code for the top-of-the-screen graphic,
+the increment is 1/128. As X iterates from 0 to 699 (spanning the 
+width of the graphic), our calls to the noise function iterate by 
+1/128th of this amount: 0/128, 1/128, 2/128, ... 699/128.</p>
+<p>Making the interval smaller will spread out the hills and valleys.
+Making it larger will make the variability denser.</p>
+
+<p><i><b>Fig. 2 Three scalings, (a)&nbsp;X interval is 1/128, 
+(b)&nbsp;X interval is 1/256 (twice as small), (c)&nbsp;X interval is
+1/64 (twice as large). The Y interval remains 1/128 in all three.
+</b></i></p>
+<img SRC="../images/threeScalings.JPG" width="607" height="200" hspace="10"
+vspace="10" ALT="Translating the Noise Function"/>
+
+<p>In Simplex 2D space, the degree of randomness has predictability 
+in that the defining gradient nodes (which are points that always 
+return a value of 0) are located in a grid of equilateral triangles.
+There is undoubtedly a mathematical formula to derive the frequency 
+of the peaks and valleys as a function of distance, but I'm afraid 
+I don't have it as of this writing. To move smoothly across this 
+space, we have to use increments that are a great deal smaller than
+1.</p>
+
+<p>The tutorials I have seen online so far all tie this Scaling 
+factor value to the width or height of the graphic being created. 
+For example, one might use a scaling factor = 1/width. Note that by 
+this method, a degree of randomness is stretched to fit the graphic,
+based on the size of the graphic. For example, we might see the 
+following:</p>
+
+<pre>    noiseValue = SimplexNoise(X * (1/width), Y * (1/height);</pre>
+
+<p>or simplified:</p>
+
+<pre>    noiseValue = SimplexNoise(X/width), Y/height);</pre>
+
+<p>If you use this method, be careful not to do "integer division".
+You might need to add a <code>cast</code> since both <code>x</code>
+or <code>y</code> iterators and <code>size</code> values are 
+commonly held in <code>ints</code>.</p>
+
+<p>I prefer to use a fixed scaling factor of 1/256, or multiples of 
+it. This way, scaling values will create the same results for a given
+distance on the screen. Granted, the output will still vary in visual 
+size depending upon the screen resolution. The Texture Editing Tool 
+uses 1/256 as the default scaling factor, and any additional scaling
+is multiplied to this default. But, for the graphic at the top of the 
+page, I decided the default looked a little bland, so I multiplied 
+the default scaling by 2 in order to make the noise vary twice as 
+often, for purely esthetic reasons.</p>
+
+<p><U><b>Output</b></U></p>
+
+<p>The value returned by all forms of the Simplex noise function is 
+a double, ranging from -1 to 1. Ken Perlin wrote that he chose this 
+range for two reasons: (1) it matches the outputs of Sin and Cosine 
+functions, (2) the function is "DC neutral," i.e., the cumulative 
+average value tends to zero regardless of the amplitude of the noise.
+</p>
+
+<p>However, this output range of -1 to 1 does not match values we 
+normally use for encoding colors in Java. Some use normalized floats 
+(0.0f to 1.0f), but I think the use of integer values ranging from 
+0 to 255 is often preferred.</p>
+
+<p><b>Smooth Noise</b></p>
+
+<p>There are several ways in which the noise values are transformed 
+to fit into the color range. The most common is to use the following 
+function, which compresses and translates the range to [0, 1] (in 
+other words, <i>normalizes</i> the output). When this transform is 
+used, the resulting noise retains the smooth, rolling contours
+that can be seen in our demo graphic at the top of the page. Noise
+use in this fashion is sometimes called "Smooth Noise".</p>
+
+<pre>    noiseValue = (noiseValue + 1) / 2;</pre>
+
+<p>Once normalized, <code>noiseValue</code> can be multiplied by 
+256 and truncated to the nearest integer. <i>[As far as I know, in 
+this implementation the noise value never reaches exactly -1.0 or 
+1.0. I was unable to find documentation to verify this. But when 
+running tests, I was unable to generate absolute values greater 
+than 0.998.]</i></p>
+
+<p>After this scaling, the values can be selectively applied to 
+the RGB channels. In our example, we apply the noise values to all 
+three color channels, so the result will range from 
+<code>Color.BLACK</code> (RGB values are (0,0,0)) to 
+<code>Color.WHITE</code> (RGB values are (255, 255, 255)). But one 
+is free to scale and vary the mapping to link any two colors, or 
+substitute other mapping functions besides the linear interpolation 
+we've done in the example. In a later section I will demonstrate 
+the use of a "Color Map".</p>
+
+<p><b>Turbulent Noise</b></p>
+
+<p>Another method of normalizing the noise data is to apply an ABS 
+function. The noise that results from this transform is often called 
+"Turbulent Noise", a name given by Perlin himself.</p>
+
+<pre>    noiseValue = Math.abs(noiseValue);</pre>
+
+<p>The effects can be seen by selecting the "|v|" radio button in 
+the texture tool. This button signals the tool to use the above 
+"absolute value" normalization equation.</p>
+<br>
+
+<p><i><b>Fig. 3, Turbulent Noise returns a texture with a 
+discontinuity where the Simplex function returns 0.</b></i></p>
+
+<img SRC="../images/absFunction.JPG" width="262" height="296" hspace="10"
+vspace="10" ALT="Turbulent Noise"/>
+
+<p>If you compare this image with the graphic at the top of the page 
+(matching the top left corners), you might be able to see where the 
+middle values in the <i>smooth</i> form have become the lowest 
+(darkest) points in the <i>turbulent</i> function, and how the 
+image folds on either side. The following table of values shows 
+smooth and turbulent data, side by side.</p>
+
+<pre>
+<i>Fig 4. Noise values, with two normalization methods</i>
+
+   noise     "Smooth"    "Turbulent" 
+   value     (v + 1)/2      |v|
+  --------  -----------  ----------	
+    -1          0            1	
+    -0.5        0.25         0.5
+     0          0.5          0
+     0.5        0.75         0.5
+     1          1            1
+</pre>
+
+<p>The noise value normalized by the <i>turbulent</i> transform can 
+then be converted to a color value in the same manner as with the
+<i>smooth</i> translation & compression method.</p>
+
+<p><u><b>Using the Texture Editing tool</b></u></p>
+
+<h2>Clicking on the graphic loads the Texture Editing tool with 
+settings that will generate the graphic, and this tutorial window 
+will disappear. To bring back the tutorial at any time, click on 
+the "Tutorial" button on the bottom center right of the tool.</h2>
+
+<p>The texture editing tool allows one to edit four "channels". This
+graphic only uses one channel, represented by the stack of controls 
+on the top left.</p>
+
+<p>The <i>XScale</i> and <i>YScale</i> controls vary a scaling 
+factor, currently set to 2.0. <i>XTrans</i> and <i>YTrans</i> allow 
+one to "translate" the noise function to different locations. The  
+values in these four controls are used in the noise function 
+calculation as follows:</p>
+
+<pre>
+    noiseValue = SimplexNoise.noise(
+        (X * XScale)/256 + XTrans, (Y * YScale)/256 + YTrans );
+</pre>
+
+<p>As you play around with these values, you can see how the scaling 
+affects the density of the variability, but that translating does 
+not.</p>
+
+<p>The <i>Min</i> and <i>Max</i> controls were written to be applied 
+directly to the generated noise value (prior to normalization), and 
+thus also have a range from -1.0 to 1.0. I wasn't sure whether they 
+would turn out to be useful or not, and left them in as playing with 
+them might help one get a sense of how the math in the space works.
+</p>
+
+<p>The row of buttons just above the channel image are used to 
+control the type of transform used to normalize (or not) the noise 
+values. Once normalized, the values are scaled to color values. In 
+our example graphic, the selection is "(v+1)/2", the setting for 
+"Smooth Noise". <i>[We'll look at the "none" option in the next
+segment.]</i></p>
+
+<p>Below the local image are two sets of buttons and sliders that are 
+used to "mix" the separate noise channels. Since there is only one 
+channel in use (channel 0), it's slider has been set to maximum and 
+the other channels are set to 0. I will explain more about these 
+controls in coming segments.</p>
+
+</body>
+</HTML>

@@ -1,0 +1,65 @@
+package com.adonax.tutorial.utilities;
+ 
+public class ColorMap {
+
+	/**
+	 * colorBarPegs = [location, r, b, g, alpha]
+	 * Must be in ascending order by location!
+	 */
+	public static int[][] makeMap(int[][] colorBarPegs)
+	{
+		int[][] data = new int[256][4];
+
+		int idx, nextLoc;
+		float redIncr, greenIncr, blueIncr, alphaIncr;
+		float redSum, greenSum, blueSum, alphaSum;
+		
+		int lastRow = colorBarPegs.length - 1;
+		int[] peg, nextPeg;
+		for (int i = 0; i < lastRow; i++)
+		{
+			peg = colorBarPegs[i];
+
+			idx = peg[0];
+
+			data[idx][0] = peg[1]; 
+			data[idx][1] = peg[2];
+			data[idx][2] = peg[3];
+			data[idx][3] = peg[4];
+
+			redSum = peg[1]; 
+			greenSum = peg[2];
+			blueSum = peg[3];
+			alphaSum = peg[4];
+					
+			nextPeg = colorBarPegs[i + 1];
+			nextLoc = nextPeg[0];
+			float cols = nextLoc - idx;
+		
+			redIncr = (nextPeg[1] - peg[1])/cols;
+			greenIncr = (nextPeg[2] - peg[2])/cols;
+			blueIncr = (nextPeg[3] - peg[3])/cols;
+			alphaIncr = (nextPeg[4] - peg[4])/cols;
+			
+			for (int x = idx; x < nextLoc; x++)
+			{
+				redSum += redIncr;
+				data[x][0] = Math.round(redSum);
+				greenSum += greenIncr;
+				data[x][1] = Math.round(greenSum);
+				blueSum += blueIncr;
+				data[x][2] = Math.round(blueSum);
+				alphaSum += alphaIncr;
+				data[x][3] = Math.round(alphaSum);
+			}
+		}
+		
+		peg = colorBarPegs[lastRow];
+		data[255][0] = peg[1];
+		data[255][1] = peg[2];
+		data[255][2] = peg[3];
+		data[255][3] = peg[4];
+		
+		return data;
+	}
+}

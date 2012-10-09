@@ -1,0 +1,103 @@
+package com.adonax.texturebuilder;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.JComponent;
+
+public class ColorBar extends JComponent implements MouseListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private int width, height;
+	private boolean hover;
+
+	private ColorDialog colorDialog;
+	private ColorAxis colorAxis;
+	private ColorBarSet parent;
+	private STBPanel grandParent;
+	
+	public void setColorAxis(ColorAxis colorAxis)
+	{
+		this.colorAxis = colorAxis;
+	}
+	public ColorAxis getColorAxis()
+	{
+		return colorAxis;
+	}
+	
+	
+	ColorBar(int left, int top, int width, int height, 
+			ColorAxis colorAxis, STBPanel grandParent,
+			ColorBarSet parent)
+	{
+		
+		this.colorAxis = colorAxis;
+		this.parent = parent;
+		this.grandParent = grandParent;
+		
+		this.width = width;
+		this.height = height;
+		
+		
+		colorDialog = new ColorDialog(300, 330, colorAxis, grandParent);
+		colorDialog.setBounds(left, top - 16, 308, 364);
+		colorDialog.setModal(true);
+		
+		addMouseListener(this);
+	}
+		
+	@Override
+	public void mouseClicked(MouseEvent arg0) 
+	{
+		if (parent.mode == parent.EDIT)
+		{
+			colorDialog.updatePanel();
+			colorDialog.setVisible(true);
+			
+		}
+		if (parent.mode == parent.COPY)
+		{
+			parent.colorAxis = this.colorAxis.copy();
+		}
+		if (parent.mode == parent.PASTE)
+		{
+			this.colorAxis = parent.colorAxis.copy();
+			colorDialog.setColorAxis(colorAxis);
+			grandParent.update();
+		}
+	}
+	
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		hover = true;
+		repaint();
+	}
+	
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		hover = false;
+		repaint();
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {} 
+	
+	@Override
+	public void mouseReleased(MouseEvent arg0) {}
+	
+	public void paintComponent(Graphics g){
+		Graphics2D g2 = (Graphics2D)g;
+		
+		g2.setPaint(hover ? Color.RED : Color.BLACK);
+		g2.fillRect(0, 0, width, height);
+		
+		g2.drawImage(colorAxis.img, 0, 4, null);
+	}
+}

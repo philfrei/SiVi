@@ -1,0 +1,103 @@
+/***************************************************
+ * This class is required for tutorials examples
+ * that index into a ColorMap.
+ * 
+ * If you are using an IDE, create a class "ColorMap"
+ * and copy and paste in this code.
+ *
+ * If you are using command line Java, copy and 
+ * paste this code into a plain text file named
+ * "ColorMap.java" (note the exact capitalization).
+ * Then place the file into the same directory as
+ * the TestTemplate.java file and SimplexNoise.java
+ * file. As before, compile via the command:
+ *
+ *     javac TestTemplate.java
+ *
+ * and run via the command:
+ *
+ *     java TestTemplate
+ *
+ ***************************************************/
+ 
+public class ColorMap {
+
+    /*
+     * colorMapPegs = 2D array containing "pegs" that
+     * specify the color data at the location cited,
+     * as follows:
+     *      [location, red, green, blue, alpha]
+     * The "pegs" must be in ascending order by 
+     * location, and should include pegs for the first
+     * and last locations: at 0 and 255.
+     *
+     * Example: 
+     *     int[][] pegs = ({0, 0, 0, 0, 255}, 
+     *                     {255, 255, 255, 255, 255}};
+     * This has pure blue at the first location and 
+     * pure white at the last location, and is entirely
+     * opaque.
+     *
+     * Returns a 2D array with 256 rows of 4-color 
+     * data: red, green, blue, alpha 
+     * where each value is an int from 0 to 255.
+     *
+     * The color data in between the "color pegs" is 
+     * calculated using linear interpolation. 
+     */
+    public static int[][] makeMap(int[][] colorMapPegs)
+    {
+        int[][] data = new int[256][4];
+
+        int idx, nextLoc;
+        float redIncr, greenIncr, blueIncr, alphaIncr;
+        float redSum, greenSum, blueSum, alphaSum;
+
+        int lastRow = colorMapPegs.length - 1;
+        int[] peg, nextPeg;
+        for (int i = 0; i < lastRow; i++)
+        {
+            peg = colorMapPegs[i];
+            idx = peg[0];
+
+            data[idx][0] = peg[1]; 
+            data[idx][1] = peg[2];
+            data[idx][2] = peg[3];
+            data[idx][3] = peg[4];
+
+            redSum = peg[1]; 
+            greenSum = peg[2];
+            blueSum = peg[3];
+            alphaSum = peg[4];
+
+            nextPeg = colorMapPegs[i + 1];
+            nextLoc = nextPeg[0];
+            float cols = nextLoc - idx;
+
+            redIncr = (nextPeg[1] - peg[1])/cols;
+            greenIncr = (nextPeg[2] - peg[2])/cols;
+            blueIncr = (nextPeg[3] - peg[3])/cols;
+            alphaIncr = (nextPeg[4] - peg[4])/cols;
+
+            for (int x = idx; x < nextLoc; x++)
+            {
+                redSum += redIncr;
+                data[x][0] = Math.round(redSum);
+                greenSum += greenIncr;
+                data[x][1] = Math.round(greenSum);
+                blueSum += blueIncr;
+                data[x][2] = Math.round(blueSum);
+                alphaSum += alphaIncr;
+                data[x][3] = Math.round(alphaSum);
+            }
+        }
+
+        peg = colorMapPegs[lastRow];
+        data[255][0] = peg[1];
+        data[255][1] = peg[2];
+        data[255][2] = peg[3];
+        data[255][3] = peg[4];
+
+        return data;
+    }
+}
