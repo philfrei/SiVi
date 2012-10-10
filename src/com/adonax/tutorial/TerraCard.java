@@ -58,7 +58,11 @@ public class TerraCard extends JPanel implements MouseListener,
 		double[] yScales = {1, 4, 16, 64};
 		double[] xTranslations = {0, 0, 0, 0};
 		double[] yTranslations = {0, 0, 0, 0};
-		double[] volumes = {0.8, 0.2, 0.05, 0.0125};
+		double[] volumes = {0.75294117647058823529411764705882,
+				0.18823529411764705882352941176471, 
+				0.047058823529411764705882352941176,
+				0.011764705882352941176470588235294};
+		
 		
 		image = MakeTexturedImage.make(700, 160, colorAxis, 
 				xScales, yScales, xTranslations, yTranslations,
