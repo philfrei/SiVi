@@ -33,20 +33,20 @@ public class TestStsSettings {
 		sts[3] = stbPanel.sts4;
 		
 		
-		sts[0].setXScaleVal(2.0);
-		sts[0].setYScaleVal(2.0);
-		sts[1].setXScaleVal(4.0);
-		sts[1].setYScaleVal(4.0);
-		sts[2].setXScaleVal(8.0);
-		sts[2].setYScaleVal(8.0);
-		sts[3].setXScaleVal(16.0);
-		sts[3].setYScaleVal(16.0);
+		sts[0].setXScaleVal(2);
+		sts[0].setYScaleVal(2);
+		sts[1].setXScaleVal(4);
+		sts[1].setYScaleVal(4);
+		sts[2].setXScaleVal(8);
+		sts[2].setYScaleVal(8);
+		sts[3].setXScaleVal(16);
+		sts[3].setYScaleVal(16);
 		
 		
 //		sts[0].setXTranslationVal(100);
 //		sts[1].setYTranslationVal(-50);
-//		sts[2].setMinVal(-0.5);
-//		sts[3].setMaxVal(0.5);	
+//		sts[2].setMinVal(-0.5f);
+//		sts[3].setMaxVal(0.5f);	
 		
 		ArrayList<ColorBarPeg>colorBarPegs = new ArrayList<ColorBarPeg>();
 		colorBarPegs.add(new ColorBarPeg(0, 0, 0, 255, 255));

@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
 
 import com.adonax.texturebuilder.ColorAxis;
 import com.adonax.texturebuilder.ColorBarPeg;
@@ -24,7 +24,7 @@ import com.adonax.texturebuilder.SimplexTextureSource;
 import com.adonax.texturebuilder.TextureCombiner;
 import com.adonax.tutorial.utilities.MakeTexturedImage;
 
-public class TreeRingCard extends JPanel implements MouseListener,
+public class FlamesCard extends JPanel implements MouseListener,
 	MouseMotionListener
 {
 	private static final long serialVersionUID = 1L;
@@ -35,7 +35,7 @@ public class TreeRingCard extends JPanel implements MouseListener,
 	boolean hover;
 	final TutorialFramework tf;
 	
-	public TreeRingCard (int width, int height, final TutorialFramework tf)
+	public FlamesCard (int width, int height, final TutorialFramework tf)
 	{
 		setLayout(null);
 		
@@ -44,31 +44,33 @@ public class TreeRingCard extends JPanel implements MouseListener,
 		this.tf = tf;
 		ColorAxis colorAxis = new ColorAxis();
 		ArrayList<ColorBarPeg> colorBarPegs = new ArrayList<ColorBarPeg>();
-		colorBarPegs.add(new ColorBarPeg(0, 64, 32, 0, 255));
-		colorBarPegs.add(new ColorBarPeg(255, 128, 96, 0, 255));
+		colorBarPegs.add(new ColorBarPeg(0, 0, 0, 255, 255));
+    	colorBarPegs.add(new ColorBarPeg(128, 204, 0, 0, 255));
+		colorBarPegs.add(new ColorBarPeg(255, 255, 255, 102, 255));
 		colorAxis.setColorBarPegs(colorBarPegs);
 		
-		float[] xScales = {2, 2, 2, 2};
-		float[] yScales = {2, 2, 2, 2};
+		float[] xScales = {4, 8, 16, 32};
+		float[] yScales = {2, 4, 8, 16};
 		float[] xTranslations = {0, 0, 0, 0};
 		float[] yTranslations = {0, 0, 0, 0};
-		float[] volumes = {1, 1, 1, 1};
+		float[] volumes = {0.17032258f,	0.08516129f, 
+				0.042580646f, 0.021290323f};
 		
 		image = MakeTexturedImage.make(700, 160, colorAxis, 
 				xScales, yScales, xTranslations, yTranslations,
-				volumes, 2);
+				volumes, 3);
 		imageRect = new Rectangle(50, 36, 700, 160);
 		
 		NavigationPanel np = new NavigationPanel(tf,
-				"Smooth Noise", "Title Card", "Classic Clouds");
+				"Planet Terrain", "Title Card", "Template Card");
 		np.setBounds((width - 428)/2, 0, 428, 32);
 		add(np);
 		
-		JTextPane textArea = new JTextPane();
+		JEditorPane textArea = new JEditorPane();
 		textArea.setEditable(false);
 	
 		URL introURL = TutorialFramework.class.getResource(
-				"pageContent/treeRings.html");
+				"pageContent/Flames.html");
 		try
 		{
 			textArea.setPage(introURL);
@@ -81,7 +83,7 @@ public class TreeRingCard extends JPanel implements MouseListener,
 		JScrollPane scroller = new JScrollPane(textArea);
 		scroller.setBounds(50, 200, width - 100, height - 300);
 		add(scroller);
-		
+
 		addMouseListener(this);
 		addMouseMotionListener(this);
 	}
@@ -95,65 +97,87 @@ public class TreeRingCard extends JPanel implements MouseListener,
 		sts[2] = stbPanel.sts3;
 		sts[3] = stbPanel.sts4;
 		
-		sts[0].setXScaleVal(2);
+		sts[0].setXScaleVal(4);
 		sts[0].setYScaleVal(2);
-		sts[0].setMap(2);
-		sts[1].setXScaleVal(2);
-		sts[1].setYScaleVal(2);
-		sts[1].setMap(2);
-		sts[2].setXScaleVal(2);
-		sts[2].setYScaleVal(2);
-		sts[2].setMap(2);
-		sts[3].setXScaleVal(2);
-		sts[3].setYScaleVal(2);
-		sts[3].setMap(2);		
+		sts[0].setMap(0);
+		sts[1].setXScaleVal(8);
+		sts[1].setYScaleVal(4);
+		sts[1].setMap(0);
+		sts[2].setXScaleVal(16);
+		sts[2].setYScaleVal(8);
+		sts[2].setMap(0);
+		sts[3].setXScaleVal(32);
+		sts[3].setYScaleVal(16);
+		sts[3].setMap(0);
 		
 		ArrayList<ColorBarPeg>colorBarPegs = new ArrayList<ColorBarPeg>();
-		colorBarPegs.add(new ColorBarPeg(0, 64, 32, 0, 255));
-		colorBarPegs.add(new ColorBarPeg(255, 128, 96, 0, 255));
+		colorBarPegs.add(new ColorBarPeg(0, 0, 0, 255, 255));
+		colorBarPegs.add(new ColorBarPeg(128, 204, 0, 0, 255));
+		colorBarPegs.add(new ColorBarPeg(255, 255, 255, 102, 255));
+
 		stbPanel.getColorAxis(0).setColorBarPegs(colorBarPegs);
 		
 		sts[1].setColorAxis(stbPanel.getColorAxis(0));
 		sts[2].setColorAxis(stbPanel.getColorAxis(0));
 		sts[3].setColorAxis(stbPanel.getColorAxis(0));
 		
+		for(SimplexTextureSource s : sts) s.setMap(2);
+		
 		TextureCombiner txc = stbPanel.tc;
 		
-		txc.setStage1Weight(0, 64);
-		txc.setStage1Weight(1, 64);
-		txc.setStage1Weight(2, 64);
-		txc.setStage1Weight(3, 64);
+		txc.setStage1Weight(0, 16);
+		txc.setStage1Weight(1, 8);
+		txc.setStage1Weight(2, 4);
+		txc.setStage1Weight(3, 2);
 		
 		txc.setStage2Weight(0, 64);
-		txc.setStage2Weight(1, 0);
-		txc.setStage2Weight(2, 0);
-		txc.setStage2Weight(3, 0);
-		
+		txc.setStage2Weight(1, 64);
+		txc.setStage2Weight(2, 64);
+		txc.setStage2Weight(3, 64);
 		
 		String s;
 		while (true)
 		{
+			s = txc.clickStage1Button(0);
+			if (s.equals("yDim")) break;
+		}
+		while (true)
+		{
+			s = txc.clickStage1Button(1);
+			if (s.equals("yDim")) break;
+		}
+		while (true)
+		{
+			s = txc.clickStage1Button(2);
+			if (s.equals("yDim")) break;
+		}
+		while (true)
+		{
+			s = txc.clickStage1Button(3);
+			if (s.equals("yDim")) break;
+		}		
+
+		while (true)
+		{
 			s = txc.clickStage2Button(0);
-			if (s.equals("ring")) break;
+			if (s.equals("lerp")) break;
 		}
 		while (true)
 		{
 			s = txc.clickStage2Button(1);
-			if (s.equals("ring")) break;
+			if (s.equals("lerp")) break;
 		}
 		while (true)
 		{
 			s = txc.clickStage2Button(2);
-			if (s.equals("ring")) break;
+			if (s.equals("lerp")) break;
 		}
 		while (true)
 		{
 			s = txc.clickStage2Button(3);
-			if (s.equals("ring")) break;
-		}
-				
+			if (s.equals("lerp")) break;
+		}		
 		stbPanel.update();
-		
 	}
 	
 	@Override

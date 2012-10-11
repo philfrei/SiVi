@@ -52,11 +52,12 @@ public class CloudCard extends JPanel implements MouseListener,
 		colorBarPegs.add(new ColorBarPeg(255, 255, 255, 255, 255));
 		colorAxis.setColorBarPegs(colorBarPegs);
 		
-		double[] xScales = {2, 4, 8, 16, 32};
-		double[] yScales = {2, 4, 8, 16, 32};
-		double[] xTranslations = {0, 0, 0, 0, 0};
-		double[] yTranslations = {0, 0, 0, 0, 0};
-		double[] volumes = {0.5, 0.25, 0.125, 0.0625, 0.03125};
+		float[] xScales = {2, 4, 8, 16, 32};
+		float[] yScales = {2, 4, 8, 16, 32};
+		float[] xTranslations = {0, 0, 0, 0, 0};
+		float[] yTranslations = {0, 0, 0, 0, 0};
+		float[] volumes = {0.516129f, 0.2580645f, 0.12903225f, 
+				0.06451613f, 0.032258064f};
 		
 		image = MakeTexturedImage.make(700, 160, colorAxis, 
 				xScales, yScales, xTranslations, yTranslations,
@@ -99,17 +100,17 @@ public class CloudCard extends JPanel implements MouseListener,
 		sts[2] = stbPanel.sts3;
 		sts[3] = stbPanel.sts4;
 		
-		sts[0].setXScaleVal(2.0);
-		sts[0].setYScaleVal(2.0);
+		sts[0].setXScaleVal(2);
+		sts[0].setYScaleVal(2);
 		sts[0].setMap(0);
-		sts[1].setXScaleVal(4.0);
-		sts[1].setYScaleVal(4.0);
+		sts[1].setXScaleVal(4);
+		sts[1].setYScaleVal(4);
 		sts[1].setMap(0);
-		sts[2].setXScaleVal(8.0);
-		sts[2].setYScaleVal(8.0);
+		sts[2].setXScaleVal(8);
+		sts[2].setYScaleVal(8);
 		sts[2].setMap(0);
-		sts[3].setXScaleVal(16.0);
-		sts[3].setYScaleVal(16.0);
+		sts[3].setXScaleVal(16);
+		sts[3].setYScaleVal(16);
 		sts[3].setMap(0);
 
 		ArrayList<ColorBarPeg>colorBarPegs = new ArrayList<ColorBarPeg>();

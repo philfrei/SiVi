@@ -34,7 +34,7 @@ public class SimplexTextureSource extends JPanel
 	
 	private BufferedImage image;
 	private WritableRaster raster;
-	double[][] noiseArray;
+	float[][] noiseArray;
 	
 	private int width, height;
 	private int cols, rows;
@@ -44,20 +44,20 @@ public class SimplexTextureSource extends JPanel
 	JLabel xTranslateLbl, yTranslateLbl;
 	JLabel minLbl, maxLbl;
 	
-	double xScale;
-	double yScale;
-	double xTranslate;
-	double yTranslate;
-	double minClamp;
-	double maxClamp;
+	float xScale;
+	float yScale;
+	float xTranslate;
+	float yTranslate;
+	float minClamp;
+	float maxClamp;
 	
 	JCheckBox scaleLock;
 	boolean scaleLocked;
-	double scaleRatio;
+	float scaleRatio;
 	final JSlider xScaleSlider, yScaleSlider;
 	final JSlider xTranslateSlider, yTranslateSlider;
 	final JSlider minClampSlider, maxClampSlider;
-	final double PRECISION = 8;
+	final float PRECISION = 8;
 	
 	JTextField xScaleVal;
 	JTextField yScaleVal;
@@ -69,37 +69,37 @@ public class SimplexTextureSource extends JPanel
 	// I/O, allows external source to set values
 	// assumption: the ActionListener for each will update
 	// the model.
-	public void setXScaleVal(double val)
+	public void setXScaleVal(float val)
 	{
 		xScale = val;
 		xScaleVal.setText(String.valueOf(val));
 		xScaleSlider.setValue((int)Math.round(val)*8);
 	}
-	public void setYScaleVal(double val)
+	public void setYScaleVal(float val)
 	{
 		yScale = val;
 		yScaleVal.setText(String.valueOf(val));
 		yScaleSlider.setValue((int)Math.round(val)*8);
 	}
-	public void setXTranslationVal(double val)
+	public void setXTranslationVal(float val)
 	{
 		xTranslate = val;
 		xTranslationVal.setText(String.valueOf(val));
 		xTranslateSlider.setValue((int)Math.round(val)*4);
 	}
-	public void setYTranslationVal(double val)
+	public void setYTranslationVal(float val)
 	{
 		yTranslate = val;
 		yTranslationVal.setText(String.valueOf(val));
 		yTranslateSlider.setValue((int)Math.round(val)*4);
 	}
-	public void setMinVal(double val)
+	public void setMinVal(float val)
 	{
 		minClamp = val;
 		minVal.setText(String.valueOf(val));
 		minClampSlider.setValue((int)(val * 1024));
 	}
-	public void setMaxVal(double val)
+	public void setMaxVal(float val)
 	{
 		maxClamp = val;
 		maxVal.setText(String.valueOf(val));
@@ -283,7 +283,7 @@ public class SimplexTextureSource extends JPanel
 		{
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				xTranslate = xTranslateSlider.getValue() / 4.0;
+				xTranslate = xTranslateSlider.getValue() / 4f;
 				xTranslationVal.setText(String.valueOf(xTranslate));
 				update();
 			}
@@ -294,7 +294,7 @@ public class SimplexTextureSource extends JPanel
 			@Override
 			public void stateChanged(ChangeEvent e) 
 			{
-				yTranslate = yTranslateSlider.getValue() / 4.0;
+				yTranslate = yTranslateSlider.getValue() / 4f;
 				yTranslationVal.setText(String.valueOf(yTranslate));
 				update();
 			}
@@ -305,7 +305,7 @@ public class SimplexTextureSource extends JPanel
 			@Override
 			public void stateChanged(ChangeEvent e) 
 			{
-				minClamp = minClampSlider.getValue()/1024.0;
+				minClamp = minClampSlider.getValue()/1024f;
 				minVal.setText(String.valueOf(minClamp));
 				update();
 			}
@@ -316,7 +316,7 @@ public class SimplexTextureSource extends JPanel
 			@Override
 			public void stateChanged(ChangeEvent e) 
 			{
-				maxClamp = maxClampSlider.getValue()/1024.0;
+				maxClamp = maxClampSlider.getValue()/1024f;
 				maxVal.setText(String.valueOf(maxClamp));
 				update();
 			}
@@ -353,7 +353,7 @@ public class SimplexTextureSource extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				xScale = Double.valueOf(xScaleVal.getText());
+				xScale = Float.valueOf(xScaleVal.getText());
 				xScaleSlider.setValue((int)(xScale * PRECISION));
 				update();
 			}
@@ -368,7 +368,7 @@ public class SimplexTextureSource extends JPanel
 //						+ " yScale:" + yScale
 //						+ " yScaleSlider:" + yScaleSlider.getValue()
 //						+ " newScaleVal:" + (int)(yScale * PRECISION));
-				yScale = Double.valueOf(yScaleVal.getText());
+				yScale = Float.valueOf(yScaleVal.getText());
 				yScaleSlider.setValue((int)(yScale * PRECISION));
 				update();
 			}
@@ -489,7 +489,7 @@ public class SimplexTextureSource extends JPanel
 		
 		image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_ARGB);
 		raster = image.getRaster();
-		noiseArray = new double[cols][rows];
+		noiseArray = new float[cols][rows];
 		
 	}
 	
@@ -526,9 +526,9 @@ public class SimplexTextureSource extends JPanel
 			
 			for (int i = 0; i < cols; i++)
 			{
-				double x = (i * xScale) / cols + xTranslate;  
+				float x = (i * xScale) / cols + xTranslate;  
 				
-				double noiseVal = SimplexNoise.noise(x, y);
+				float noiseVal = (float)SimplexNoise.noise(x, y);
 				noiseVal = Math.min(Math.max(noiseVal, minClamp),
 						maxClamp);
 				

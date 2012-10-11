@@ -10,24 +10,24 @@ public class MakeTexturedImage
 {
 
 	public static BufferedImage make(int width, int height,
-			ColorAxis colorAxis, double[] xScale, double[] yScale,
-			double[] xTranslate, double[] yTranslate,
-			double[] volume, int mapMode)
+			ColorAxis colorAxis, float[] xScale, float[] yScale,
+			float[] xTranslate, float[] yTranslate,
+			float[] volume, int mapMode)
 	{
 		BufferedImage image = new BufferedImage(width, height, 
 				BufferedImage.TYPE_INT_ARGB);
 		WritableRaster raster = image.getRaster();
 		
 		int pixel[] = new int[4]; 
-		double noiseSum = 0;
+		float noiseSum = 0;
 		
 		int octaves = xScale.length;
 		
-		double[] noiseVal = new double[octaves];
-		double[] xIncr = new double[octaves];
-		double[] yIncr = new double[octaves];
-		double[] xSum = new double[octaves];
-		double[] ySum = new double[octaves];
+		float[] noiseVal = new float[octaves];
+		float[] xIncr = new float[octaves];
+		float[] yIncr = new float[octaves];
+		float[] xSum = new float[octaves];
+		float[] ySum = new float[octaves];
 
 		int cbIdx = 0;
 		
@@ -50,9 +50,8 @@ public class MakeTexturedImage
 				noiseSum = 0;
 				for (int idx = 0; idx < octaves; idx++)
 				{
-				
 					xSum[idx] += xIncr[idx];
-					noiseVal[idx] = SimplexNoise.noise(
+					noiseVal[idx] = (float)SimplexNoise.noise(
 							xSum[idx] + xTranslate[idx],
 							ySum[idx] + yTranslate[idx]);
 					noiseVal[idx] *= volume[idx];
@@ -65,16 +64,21 @@ public class MakeTexturedImage
 				{
 				case 0:
 					cbIdx = (int)Math.min(Math.max(
-							((noiseSum + 1) / 2) * 255, 0), 255);
+							((noiseSum + 1) / 2) * 256, 0), 255);
 					break;
 				case 1:
 					cbIdx = (int)Math.min(Math.max(
-							(Math.abs(noiseSum) * 255), 0), 255);
+							(Math.abs(noiseSum) * 256), 0), 255);
 					break;
 				case 2:
-					cbIdx = (int)(noiseSum * 255);
+					cbIdx = (int)(noiseSum * 256);
 					while (cbIdx < 0) cbIdx += 256;
-					cbIdx %= 256;					
+					cbIdx %= 256;
+					break;
+				case 3: // yAxis
+					noiseSum += j/(float)height;
+					cbIdx = (int)Math.min(
+							Math.max(noiseSum * 256, 0), 255);
 				}				
 				
 				

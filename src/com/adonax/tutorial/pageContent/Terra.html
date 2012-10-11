@@ -42,10 +42,11 @@ matches the above graphic. A template has been provided (see the
 "Code Template" button) where you can copy and paste this code 
 and run it as a stand-alone Java program. You will also need to 
 load the ColorMap class, which can be obtained via the "ColorMap 
-Source" button.</p>
+Source" button. Code lines that are different from previous examples
+are <b>bolded</b>.</p>
 <br>
 <pre>
-        int[][] pegs = { // location, R, B, G, alpha 
+        <b>int[][] pegs = { // location, R, B, G, alpha 
                 {0, 255, 255, 255, 255},
                 {40, 153, 153, 153, 255},
                 {64, 0, 128, 0, 255},
@@ -54,12 +55,12 @@ Source" button.</p>
                 {100, 204, 204, 204, 255},
                 {128, 64, 64, 255, 255},
                 {255, 0, 0, 192, 255}};
-        int[][] colorMap = ColorMap.makeMap(pegs);
+        int[][] colorMap = ColorMap.makeMap(pegs);</b>
 
-        BufferedImage image = new BufferedImage(700, 160,
+        BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_ARGB);
         WritableRaster raster = image.getRaster();
-        int[] pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
+        int[] pixel = new int[4];
         pixel[3] = 255; // alpha = opaque
 
         int[] octaveScale = {1, 4, 16, 64};
@@ -67,13 +68,16 @@ Source" button.</p>
         int octaves = octaveScale.length;
 
         float amplitudeSum = 0;
-        for (int i : octaveAmplitude) amplitudeSum += i;	
-
+        for (int i : octaveAmplitude)
+        {
+            amplitudeSum += i;	
+        }
+        
         double noiseSum = 0;
 
-        for (int y = 0; y &lt; 160; y++)
+        for (int y = 0; y &lt; height; y++)
         {
-            for (int x = 0; x &lt; 700; x++)
+            for (int x = 0; x &lt; width; x++)
             {
                 noiseSum = 0;
                 for (int i = 0; i &lt; octaves; i++)
@@ -83,15 +87,16 @@ Source" button.</p>
                           y * octaveScale[i]/256f )
                           * ( octaveAmplitude[i]/amplitudeSum );
                 }
-                noiseSum = (noiseSum * 0.5) + .5;
+                <b>noiseSum = (noiseSum * 0.5) + .5;</b>
                 noiseSum *= 256;
-                noiseSum = Math.max(noiseSum, 0);
+                
+                <b>noiseSum = Math.max(noiseSum, 0);
                 noiseSum = Math.min(noiseSum, 255);
 
                 int idx = (int)noiseSum;
                 pixel[0] = colorMap[idx][0];
                 pixel[1] = colorMap[idx][1];
-                pixel[2] = colorMap[idx][2];
+                pixel[2] = colorMap[idx][2];</b>
 
                 raster.setPixel(x, y, pixel);
             }
@@ -183,7 +188,7 @@ cut buttons for reversing direction or converting the colors to
 their RGB "negatives." I think, if some form of curve-fitting were 
 possible, we might be able to lessen the tendency of "cornering"
 (discontinuities of direction) which tends to catch the eye at the
-peg points.</p>
+peg points. An example of this is perhaps the green at location 64.</p>
 
 <p><b>Editing the sample code directly</b></p>
 
@@ -251,9 +256,12 @@ white that is in the <i>AngryOctapus</i> tutorial example. </p>
 was given the color values that were previously in the end peg. The
 end peg was then edited to the color white. The result can be seen 
 below, albeit the change is subtle. The regions of the ocean that 
-were previously the deepest blue are now somewhat mottled.</p>
+were previously the deepest blue are now somewhat mottled. This
+indicates that the noise values don't get all that close to the value
+of 1.0 in this part of the Simplex space.</p>
   
-<p><i><b>Fig. 3, Terra surface with a 9-peg color map</b></i></p>
+<p><i><b>Fig. 3, Terra surface with a 9-peg color map, resulting in
+a bit more texture in ocean middles</b></i></p>
 <img SRC="../images/terra9pegs.JPG" width="700" height="160" 
 hspace="0" vspace="0" ALT="Terra Surface with 9 color pegs"/>
 
@@ -278,7 +286,7 @@ This can be done by editing the line to the following:</p>
 values on both ends, so we have to clamp the values with the Min and
 Max functions. The resulting graphic follows:</p>
 
-<p><i><b>Fig. 3, Terra surface with a bit of clamping at either 
+<p><i><b>Fig. 4, Terra surface with a bit of clamping at either 
 end</b></i></p>
 <img SRC="../images/terraClamps.JPG" width="700" height="160" 
 hspace="0" vspace="0" ALT="Terra Surface two-end clamping"/>

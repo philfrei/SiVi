@@ -39,11 +39,11 @@ public class TitleCard extends JPanel
 		colorBarPegs.add(new ColorBarPeg(255, 224, 196, 0, 255));
 		colorAxis.setColorBarPegs(colorBarPegs);
 		
-		double[] xScales = {128};
-		double[] yScales = {4};
-		double[] xTranslations = {0};
-		double[] yTranslations = {0};
-		double[] volumes = {1};
+		float[] xScales = {128};
+		float[] yScales = {4};
+		float[] xTranslations = {0};
+		float[] yTranslations = {0};
+		float[] volumes = {1};
 		
 		image = MakeTexturedImage.make(720, 200, colorAxis, 
 				xScales, yScales, xTranslations, yTranslations,
@@ -189,6 +189,23 @@ public class TitleCard extends JPanel
 				300, labelHeight);
 		add(colorMapLabel);
 
+		JButton flamesButton = new JButton();
+		flamesButton.setBounds(50, 520, 48, buttonHeight);
+		flamesButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tf.setCard("Flames Card");
+			}
+		});
+		add(flamesButton);
+
+		JLabel flamesLabel = new JLabel("Flames: modulating a function");
+		flamesLabel.setFont(new java.awt.Font(
+				"Serif", java.awt.Font.PLAIN, 24) );
+		flamesLabel.setBounds(106, 520, 494, labelHeight);
+		add(flamesLabel);		
+		
 	}	
 	@Override
 	protected void paintComponent(Graphics g) {

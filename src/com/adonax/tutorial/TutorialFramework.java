@@ -35,6 +35,7 @@ public class TutorialFramework extends JDialog {
 	    JPanel card7 = new TemplateCard(800, 750, this);
 	    JPanel card8 = new SimplexCard(800, 750, this);
 	    JPanel card9 = new ColorMapCard(800, 750, this);
+	    JPanel card10 = new FlamesCard(800, 750, this);
 	    cards.add(card1, "Title Card");
 	    cards.add(card2, "Intro Card");
 	    cards.add(card3, "Smooth Noise");
@@ -44,6 +45,7 @@ public class TutorialFramework extends JDialog {
 	    cards.add(card7, "Template Card");
 	    cards.add(card8, "Simplex Card");
 	    cards.add(card9, "ColorMap Card");
+	    cards.add(card10, "Flames Card");
 	    
 	    add(cards);
 	}

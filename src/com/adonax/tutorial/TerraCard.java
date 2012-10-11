@@ -54,14 +54,12 @@ public class TerraCard extends JPanel implements MouseListener,
 		colorBarPegs.add(new ColorBarPeg(255, 0, 0, 192, 255));
 		colorAxis.setColorBarPegs(colorBarPegs);
 		
-		double[] xScales = {1, 4, 16, 64};
-		double[] yScales = {1, 4, 16, 64};
-		double[] xTranslations = {0, 0, 0, 0};
-		double[] yTranslations = {0, 0, 0, 0};
-		double[] volumes = {0.75294117647058823529411764705882,
-				0.18823529411764705882352941176471, 
-				0.047058823529411764705882352941176,
-				0.011764705882352941176470588235294};
+		float[] xScales = {1, 4, 16, 64};
+		float[] yScales = {1, 4, 16, 64};
+		float[] xTranslations = {0, 0, 0, 0};
+		float[] yTranslations = {0, 0, 0, 0};
+		float[] volumes = {0.7529412f, 0.1882353f, 
+				0.047058824f, 0.011764706f};
 		
 		
 		image = MakeTexturedImage.make(700, 160, colorAxis, 
@@ -70,7 +68,7 @@ public class TerraCard extends JPanel implements MouseListener,
 		imageRect = new Rectangle(50, 36, 700, 160);
 		
 		NavigationPanel np = new NavigationPanel(tf,
-				"Classic Clouds", "Title Card", "Template Card");
+				"Classic Clouds", "Title Card", "Flames Card");
 		np.setBounds((width - 428)/2, 0, 428, 32);
 		add(np);
 		
@@ -105,17 +103,17 @@ public class TerraCard extends JPanel implements MouseListener,
 		sts[2] = stbPanel.sts3;
 		sts[3] = stbPanel.sts4;
 		
-		sts[0].setXScaleVal(1.0);
-		sts[0].setYScaleVal(1.0);
+		sts[0].setXScaleVal(1);
+		sts[0].setYScaleVal(1);
 		sts[0].setMap(0);
-		sts[1].setXScaleVal(4.0);
-		sts[1].setYScaleVal(4.0);
+		sts[1].setXScaleVal(4);
+		sts[1].setYScaleVal(4);
 		sts[1].setMap(0);
-		sts[2].setXScaleVal(16.0);
-		sts[2].setYScaleVal(16.0);
+		sts[2].setXScaleVal(16);
+		sts[2].setYScaleVal(16);
 		sts[2].setMap(0);
-		sts[3].setXScaleVal(64.0);
-		sts[3].setYScaleVal(64.0);
+		sts[3].setXScaleVal(64);
+		sts[3].setYScaleVal(64);
 		sts[3].setMap(0);
 		
 		ArrayList<ColorBarPeg>colorBarPegs = new ArrayList<ColorBarPeg>();

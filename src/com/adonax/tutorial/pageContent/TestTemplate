@@ -52,15 +52,15 @@ class TestTemplate extends JPanel
         this.height = height;
         
 //***DROP test code (overwriting) between the two comments (TOP)
-        BufferedImage image = new BufferedImage(700, 160,
+        BufferedImage image = new BufferedImage(width, height,
                     BufferedImage.TYPE_INT_ARGB);
         WritableRaster raster = image.getRaster();
         int[] pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
         double noiseValue = 0;
 
-        for (int y = 0; y < 160; y++)
+        for (int y = 0; y < height; y++)
         {
-            for (int x = 0; x < 700; x++)
+            for (int x = 0; x < width; x++)
             {
                 noiseValue = SimplexNoise.noise(x/128f, y/128f);
                 noiseValue = (noiseValue + 1) / 2;
@@ -98,9 +98,9 @@ class TestTemplate extends JPanel
                 JFrame frame = new JFrame();
                 frame.setDefaultCloseOperation(
                         JFrame.EXIT_ON_CLOSE);
-                frame.setSize(728, 214);
+                frame.setSize(708, 194);
                 frame.setTitle("Test Simplex Texture Image");
-                TestTemplate panel = new TestTemplate(720, 180);
+                TestTemplate panel = new TestTemplate(700, 160);
                 frame.add(panel);
                 frame.setVisible(true);
             }

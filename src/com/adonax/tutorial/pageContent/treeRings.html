@@ -43,19 +43,19 @@ an effect that reminds me of over-exposed light.</i></p>
 <p>The following code will create a <code>BufferedImage</code> that 
 matches the above graphic. A template has been provided (see the 
 "Code Template" button) where you can copy and paste this code and 
-run it as a stand-alone Java program.</p>
+run it as a stand-alone Java program. Code lines that are different
+from previous examples are <b>bolded</b>.</p>
+
 <pre> 
-        BufferedImage image = new BufferedImage(700, 160,
+        BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_ARGB);
         WritableRaster raster = image.getRaster();
 
-        int[] pixel = new int[4]; //[0]=r,[1]=g,[2]=b,[3]=alpha
-        pixel[2] = 0; // blue, none used
+        int[] pixel = new int[4]; 
+        <b>pixel[2] = 0; // blue, none used</b>
         pixel[3] = 255; // alpha channel, always opaque
 
-        double noiseValue;
-
-        // dark brown = Color(64, 32, 0)
+        <b>// dark brown = Color(64, 32, 0)
         int redA = 64;
         int greenA = 32;
     
@@ -63,19 +63,21 @@ run it as a stand-alone Java program.</p>
         int redB = 128;
         int greenB = 96;
 
-        int rings = 4;
+        int rings = 4;</b>
+        
+        double noiseValue;
 
-        for (int y = 0; y &lt; 160; y++)
+        for (int y = 0; y &lt; height; y++)
         {
-            for (int x = 0; x &lt; 700; x++)
+            for (int x = 0; x &lt; width; x++)
             {
                 noiseValue = SimplexNoise.noise(x/128f, y/128f);
-                noiseValue *= rings; 
+                <b>noiseValue *= rings; 
                 noiseValue = noiseValue - Math.floor(noiseValue);
 
                 pixel[0] = (int)(noiseValue * (redB - redA) + redA);
                 pixel[1] = (int)(noiseValue * (greenB - greenA) 
-                             + greenA);
+                             + greenA);</b>
 
                 raster.setPixel(x, y, pixel);
             }
@@ -84,11 +86,14 @@ run it as a stand-alone Java program.</p>
 
 <p><U><b>Rings</b></U></p>
 
-<p>In the above sample code, <code>noiseValue</code> is initially 
-given a value in the range of -1.0 to 1.0 by the Simplex noise 
-function, but this value is amplified to range of -4 to 4 in the 
-very next line, by multiplying it by the <code>rings</code> variable. 
-The value is then brought back into normalization range by using a 
+<p>In the above sample code, at the heart of the for loops, the 
+variable <code>noiseValue</code> is given a value in the range of 
+-1.0 to 1.0 by the Simplex noise function, exactly as we had done in
+the previous tutorial section. Then, this value is amplified to the 
+range of -4 to 4 in the very next line, by multiplying it by the 
+<code>rings</code> variable.</p>
+
+<p>The value is then brought back into normalization range by using a 
 function similar to modular division by 1, which creates a remainder
 that repeatedly cycles through the range 0 to 1.</p>
 

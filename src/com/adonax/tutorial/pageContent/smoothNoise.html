@@ -36,7 +36,7 @@ matches the above graphic. A template has been provided (see the
 "Code Template" button) where you can copy and paste this code and 
 run it as a stand-alone Java program.</p>
 <pre> 
-        BufferedImage image = new BufferedImage(700, 160,
+        BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_ARGB);
         WritableRaster raster = image.getRaster();
         int[] pixel = new int[4]; 
@@ -44,9 +44,9 @@ run it as a stand-alone Java program.</p>
 
         double noiseValue;
 
-        for (int y = 0; y &lt; 160; y++)
+        for (int y = 0; y &lt; height; y++)
         {
-            for (int x = 0; x &lt; 700; x++)
+            for (int x = 0; x &lt; width; x++)
             {
                 noiseValue = SimplexNoise.noise(x/128f, y/128f);
                 noiseValue = (noiseValue + 1) / 2;
@@ -153,15 +153,21 @@ You might need to add a <code>cast</code> since both <code>x</code>
 or <code>y</code> iterators and <code>size</code> values are 
 commonly held in <code>ints</code>.</p>
 
-<p>I prefer to use a fixed scaling factor of 1/256, or multiples of 
-it. This way, scaling values will create the same results for a given
-distance on the screen. Granted, the output will still vary in visual 
-size depending upon the screen resolution. The Texture Editing Tool 
-uses 1/256 as the default scaling factor, and any additional scaling
-is multiplied to this default. But, for the graphic at the top of the 
-page, I decided the default looked a little bland, so I multiplied 
-the default scaling by 2 in order to make the noise vary twice as 
-often, for purely esthetic reasons.</p>
+<p>I currently prefer to use a fixed scaling factor of 1/256, or 
+multiples of it. This way, scaling values will create the same 
+results for a given distance on the screen. Granted, the output will 
+still vary in visual size depending upon the screen resolution. The 
+Texture Editing Tool uses 1/256 as the default scaling factor, and 
+any additional scaling is multiplied to this default. But, for the 
+graphic at the top of the page, I decided the default looked a little
+bland, so I multiplied the default scaling by 2 in order to make the 
+noise vary twice as often, for purely esthetic reasons.</p>
+
+<p><i>[It occurs to me, though, that scaling the noise to the size
+of the graphic makes perfect sense if one is working in 3D. That way
+the texture pattern can more easily be computed to grow or shrink 
+along with the changes in the size and orientation of the object it
+is covering.]</i></p> 
 
 <p><U><b>Output</b></U></p>
 

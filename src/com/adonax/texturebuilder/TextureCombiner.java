@@ -32,12 +32,7 @@ public class TextureCombiner extends JPanel
 	private int cols, rows;
 
 	private final int channels = 4;
-	
-	/* TODO: move instantiations of objects dependent
-	 * upon a given number of channels to the 
-	 * constructor and make the number of channels
-	 * a final int.
-	 */
+
 	private SimplexTextureSource[] sts = 
 			new SimplexTextureSource[channels];
 	
@@ -331,8 +326,6 @@ public class TextureCombiner extends JPanel
 			
 			
 			
-			
-			
 			if (stage1Mode[cg.members.get(0)] == SIN)
 			{
 				for (int j = 0; j < 256; j++)
@@ -343,9 +336,9 @@ public class TextureCombiner extends JPanel
 						for (int idx : cg.members)
 						{
 							sum += sts[idx].noiseArray[i][j]
-								* (weightStage1[idx] / 64f);
+								* (weightStage1[idx] / 128f);
 						}
-						cg.noiseVals[i][j] = Math.sin(i/24.0 + sum);
+						cg.noiseVals[i][j] = (float)Math.sin(i/24f + sum);
 					}
 				}					
 			}
@@ -360,9 +353,9 @@ public class TextureCombiner extends JPanel
 						for (int idx : cg.members)
 						{
 							sum += sts[idx].noiseArray[i][j]
-									* (weightStage1[idx] / 64f);
+									* (weightStage1[idx] / 128f);
 						}
-						cg.noiseVals[i][j] = (i/256.0 + sum);
+						cg.noiseVals[i][j] = (i/256f + sum);
 					}
 				}					
 			}
@@ -377,9 +370,9 @@ public class TextureCombiner extends JPanel
 						for (int idx : cg.members)
 						{
 							sum += sts[idx].noiseArray[i][j]
-									* (weightStage1[idx] / 64f);
+									* (weightStage1[idx] / 128f);
 						}
-						cg.noiseVals[i][j] = (j/256.0 + sum);
+						cg.noiseVals[i][j] = (j/256f + sum);
 					}
 				}					
 			}
@@ -396,10 +389,10 @@ public class TextureCombiner extends JPanel
 						for (int idx : cg.members)
 						{
 							sum += sts[idx].noiseArray[i][j]
-									* (weightStage1[idx] / 64f);
+									* (weightStage1[idx] / 128f);
 						}
-						double r = middle.distance(i, j)/192.0;
-						r = Math.min(r, 1.0);
+						float r = (float)middle.distance(i, j)/192f;
+						r = Math.min(r, 1);
 						
 						cg.noiseVals[i][j] = (r + sum);
 					}
@@ -565,7 +558,7 @@ public class TextureCombiner extends JPanel
 	{
 		ArrayList<Integer> members = new ArrayList<Integer>();
 		// x, y noise data, merged via "mode" function
-		double[][] noiseVals = new double[256][256];
+		float[][] noiseVals = new float[256][256];
 		
 	}
 	

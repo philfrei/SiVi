@@ -48,11 +48,11 @@ public class SmoothNoiseCard extends JPanel implements MouseListener,
 		colorBarPegs.add(new ColorBarPeg(255, 255, 255, 255, 255));
 		colorAxis.setColorBarPegs(colorBarPegs);
 		
-		double[] xScales = {2};
-		double[] yScales = {2};
-		double[] xTranslations = {0};
-		double[] yTranslations = {0};
-		double[] volumes = {1.0};
+		float[] xScales = {2};
+		float[] yScales = {2};
+		float[] xTranslations = {0};
+		float[] yTranslations = {0};
+		float[] volumes = {1.0f};
 		
 		image = MakeTexturedImage.make(700, 160, colorAxis, 
 				xScales, yScales, xTranslations, yTranslations,
@@ -97,17 +97,17 @@ public class SmoothNoiseCard extends JPanel implements MouseListener,
 		sts[2] = stbPanel.sts3;
 		sts[3] = stbPanel.sts4;
 		
-		sts[0].setXScaleVal(2.0);
-		sts[0].setYScaleVal(2.0);
+		sts[0].setXScaleVal(2);
+		sts[0].setYScaleVal(2);
 		sts[0].setMap(0);
-		sts[1].setXScaleVal(2.0);
-		sts[1].setYScaleVal(2.0);
+		sts[1].setXScaleVal(2);
+		sts[1].setYScaleVal(2);
 		sts[1].setMap(0);
-		sts[2].setXScaleVal(2.0);
-		sts[2].setYScaleVal(2.0);
+		sts[2].setXScaleVal(2);
+		sts[2].setYScaleVal(2);
 		sts[2].setMap(0);
-		sts[3].setXScaleVal(2.0);
-		sts[3].setYScaleVal(2.0);
+		sts[3].setXScaleVal(2);
+		sts[3].setYScaleVal(2);
 		sts[3].setMap(0);
 		
 		ArrayList<ColorBarPeg>colorBarPegs = new ArrayList<ColorBarPeg>();

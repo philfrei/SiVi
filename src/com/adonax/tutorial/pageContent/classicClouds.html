@@ -42,38 +42,44 @@ weight of the preceding octave.</i></p>
 <p>The following code will create a <code>BufferedImage</code> that 
 matches the above graphic. A template has been provided (see the 
 "Code Template" button) where you can copy and paste this code and 
-run it as a stand-alone Java program.</p>
+run it as a stand-alone Java program. Code lines that are different
+from previous examples are <b>bolded</b>.</p>
 <pre> 
-        BufferedImage image = new BufferedImage(700, 160,
+        BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_ARGB);
         WritableRaster raster = image.getRaster();
-        int[] pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
+        int[] pixel = new int[4]; 
 
         // the blue value is always at maximum
         pixel[2] = 255; // blue
         pixel[3] = 255; // opaque
 
-        int[] octaveScale = {2, 4, 8, 16};
+        <b>int[] octaveScale = {2, 4, 8, 16};
         int[] octaveAmplitude = {8, 4, 2, 1};
-        int octaves = octaveScale.length;
+        int octaves = octaveScale.length;</b>
 
         float amplitudeSum = 0;
-        for (int i : octaveAmplitude) amplitudeSum += i;	
-
+        
+        <b>for (int i : octaveAmplitude)
+         {
+             amplitudeSum += i;	
+         }</b>
+         
         double noiseSum = 0;
 
-        for (int y = 0; y &lt; 160; y++)
+        for (int y = 0; y &lt; height; y++)
         {
-            for (int x = 0; x &lt; 700; x++)
+            for (int x = 0; x &lt; width; x++)
             {
                 noiseSum = 0;
-                for (int i = 0; i &lt; octaves; i++)
+                <b>for (int i = 0; i &lt; octaves; i++)
                 {
                     noiseSum += SimplexNoise.noise(
                           x * octaveScale[i]/256f,
                           y * octaveScale[i]/256f )
                           * ( octaveAmplitude[i]/amplitudeSum );
-                }
+                }</b>
+                
                 noiseSum = (1 + noiseSum) / 2;
                 noiseSum *= 256;
 
@@ -283,6 +289,6 @@ vspace="10" ALT="Cirrus Step 3"/>
 heterodox texture like this does involve more bookkeeping than
 sticking with a purely fractal and consistent setup. But it does 
 allow for the creation of unique and expressive textures.</p>
-
+<br><br><br>
 </body>
 </HTML>
