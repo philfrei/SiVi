@@ -21,12 +21,8 @@
             <src path="src/main/java"/>
             <classpath refid="SiVi.classpath"/>
         </javac>
-        <!-- TODO-SK: one call and move resources to mvn resources dir -->
-        <copy todir="target/classes/com/adonax/tutorial/images">
-            <fileset dir="src/main/java/com/adonax/tutorial/images"/>
-        </copy>
-        <copy todir="target/classes/com/adonax/tutorial/pageContent">
-            <fileset dir="src/main/java/com/adonax/tutorial/pageContent"/>
+        <copy todir="target/classes">
+            <fileset dir="src/main/resources"/>
         </copy>
     </target>
 
