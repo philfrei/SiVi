@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<project basedir="." default="build" name="SiVi">
+    <property environment="env"/>
+
+    <target name="clean">
+        <delete dir="target"/>
+    </target>
+
+    <target name="init">
+        <mkdir dir="target/classes"/>
+    </target>
+
+    <path id="SiVi.classpath">
+        <pathelement location="target"/>
+    </path>
+
+    <target name="build" depends="init">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="source,lines,vars" destdir="target/classes" includeantruntime="false" source="1.6" target="1.6">
+            <src path="src/main/java"/>
+            <classpath refid="SiVi.classpath"/>
+        </javac>
+        <copy todir="target/classes">
+            <fileset dir="src/main/resources"/>
+        </copy>
+    </target>
+
+    <target name="run" depends="build">
+        <java classname="com.adonax.texturebuilder.SimplexTextureBuilder" fork="true">
+            <classpath>
+                <pathelement path="target/classes"/>
+            </classpath>
+        </java>
+    </target>
+
+</project>
