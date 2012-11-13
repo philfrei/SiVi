@@ -55,7 +55,7 @@ are <b>bolded</b>.</p>
                 {100, 204, 204, 204, 255},
                 {128, 64, 64, 255, 255},
                 {255, 0, 0, 192, 255}};
-        int[][] colorMap = ColorMap.makeMap(pegs);</b>
+        int[] colorMap = ColorMap.makeMap(pegs);</b>
 
         BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_ARGB);
@@ -94,11 +94,8 @@ are <b>bolded</b>.</p>
                 noiseSum = Math.min(noiseSum, 255);
 
                 int idx = (int)noiseSum;
-                pixel[0] = colorMap[idx][0];
-                pixel[1] = colorMap[idx][1];
-                pixel[2] = colorMap[idx][2];</b>
 
-                raster.setPixel(x, y, pixel);
+                image.setRGB(colorMap[idx]);</b>
             }
         }
 </pre>

@@ -17,45 +17,25 @@
  */
 package com.adonax.texturebuilder;
 
-import java.awt.Color;
-//import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
 
-import javax.swing.ButtonGroup;
-//import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.*;
+import javax.swing.event.*;
 
 import com.adonax.utils.SimplexNoise;
 
 public class SimplexTextureSource extends JPanel
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private BufferedImage image;
-	private WritableRaster raster;
 	float[][] noiseArray;
 	
 	private int width, height;
 	private int cols, rows;
-	private int[] pixel;
+//	private int[] pixel;
 
 	JLabel xScaleLbl, yScaleLbl;
 	JLabel xTranslateLbl, yTranslateLbl;
@@ -456,7 +436,6 @@ public class SimplexTextureSource extends JPanel
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-//				useColorMapCheckBox.setEnabled(true);
 				update();
 			}
 		});
@@ -465,7 +444,6 @@ public class SimplexTextureSource extends JPanel
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-//				useColorMapCheckBox.setEnabled(true);
 				update();
 			}
 		});
@@ -475,37 +453,16 @@ public class SimplexTextureSource extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// NOTE: noMap data range undefined for ColorMap
-//				useColorMapCheckBox.setSelected(false);
-//				useColorMapSelected = false;
-//				useColorMapCheckBox.setEnabled(false);
 				update();
 			}
 		});
 
-//		useColorMapCheckBox = new JCheckBox("cmap");
-//		useColorMapCheckBox.setBounds(190, 224, 64, 24);
-//		add(useColorMapCheckBox);		
-//		useColorMapCheckBox.addActionListener(new ActionListener(){
-//
-//			@Override
-//			public void actionPerformed(ActionEvent arg0) {
-//				useColorMapSelected = !useColorMapSelected;
-//				host.remix();
-//			}
-//		});
-		
-//		functionText = new JTextField();
-//		add(functionText);
-//		functionText.setBounds(0, height - 28, 256, 24);
 		
 		// image building variables, initializations
 		cols = 256;
 		rows = 256;
-		pixel = new int[4];
-		pixel[3] = 255;
 		
 		image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_ARGB);
-		raster = image.getRaster();
 		noiseArray = new float[cols][rows];
 		
 	}
@@ -515,13 +472,6 @@ public class SimplexTextureSource extends JPanel
 	public void update()
 	{
 		
-//		double xScale = Double.parseDouble(xScaleVal.getText());
-//		double yScale = Double.parseDouble(yScaleVal.getText());
-//		double xTranslate = Double.parseDouble(xTranslationVal.getText());
-//		double yTranslate = Double.parseDouble(yTranslationVal.getText());
-//		double minClamp = Double.parseDouble(minVal.getText());
-//		double maxClamp = Double.parseDouble(maxVal.getText());
-				
 		int mapChoice = 0;
 		if (mappingOptions.getSelection().equals(compress01Map.getModel()))
 		{
@@ -536,7 +486,7 @@ public class SimplexTextureSource extends JPanel
 			mapChoice = 2;
 		}
 
-		
+		int pixel = 0;
 		for (int j = 0; j < rows; j++)
 		{
 			double y = (j * yScale) / rows + yTranslate; 
@@ -566,28 +516,20 @@ public class SimplexTextureSource extends JPanel
 				int idx = (int)(noiseVal * 255);
 				if (mapChoice == 0 || mapChoice ==1)
 				{	
-					pixel[0] = colorAxis.data[idx][0];
-					pixel[1] = colorAxis.data[idx][1];
-					pixel[2] = colorAxis.data[idx][2];
-					pixel[3] = 255;
+					int argb = colorAxis.data[idx];
+					pixel = ColorAxis.calculateARGB(
+							255, 
+							ColorAxis.getRed(argb),
+							ColorAxis.getGreen(argb), 
+							ColorAxis.getBlue(argb));
 				}
 				else if (mapChoice == 2)
 				{
-					pixel[0] = idx;
-					pixel[1] = idx;
-					pixel[2] = idx;
-					pixel[3] = 255;
-				}
-				else
-				{ 
-					// should never be called
-					pixel[0] = 0;
-					pixel[1] = 0;
-					pixel[2] = 0;
-					pixel[3] = 255;
+					pixel = ColorAxis.calculateARGB(
+							255, idx, idx, idx); 
 				}
 					
-				raster.setPixel(i, j, pixel);
+				image.setRGB(i, j, pixel);
 				
 				noiseArray[i][j] = noiseVal;
 				

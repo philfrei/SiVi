@@ -16,7 +16,6 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -41,11 +40,11 @@ class TestSimplexImageCode extends JPanel
 	                {100, 204, 204, 204, 255},
 	                {128, 64, 64, 255, 255},
 	                {255, 0, 0, 192, 255}};
-	        int[][] colorMap = ColorMap.makeMap(pegs);
+	        int[] colorMap = ColorMap.makeMap(pegs);
 
 	        BufferedImage image = new BufferedImage(700, 160,
 	                BufferedImage.TYPE_INT_ARGB);
-	        WritableRaster raster = image.getRaster();
+//	        WritableRaster raster = image.getRaster();
 	        int[] pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
 	        pixel[3] = 255; // alpha = opaque
 
@@ -76,11 +75,13 @@ class TestSimplexImageCode extends JPanel
 	                noiseSum = Math.min(noiseSum, 255);
 
 	                int idx = (int)noiseSum;
-	                pixel[0] = colorMap[idx][0];
-	                pixel[1] = colorMap[idx][1];
-	                pixel[2] = colorMap[idx][2];
-
-	                raster.setPixel(x, y, pixel);
+//	                pixel[0] = colorMap[idx][0];
+//	                pixel[1] = colorMap[idx][1];
+//	                pixel[2] = colorMap[idx][2];
+//
+//	                raster.setPixel(x, y, pixel);
+	                
+	                image.setRGB(x, y, colorMap[idx]);
 	            }
 	        }
 //***********drop test code within the two comments (BOTTOM)

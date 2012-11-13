@@ -18,7 +18,6 @@
 package com.adonax.tutorial.utilities;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 
 import com.adonax.texturebuilder.ColorAxis;
 import com.adonax.utils.SimplexNoise;
@@ -33,9 +32,7 @@ public class MakeTexturedImage
 	{
 		BufferedImage image = new BufferedImage(width, height, 
 				BufferedImage.TYPE_INT_ARGB);
-		WritableRaster raster = image.getRaster();
-		
-		int pixel[] = new int[4]; 
+
 		float noiseSum = 0;
 		
 		int octaves = xScale.length;
@@ -98,13 +95,8 @@ public class MakeTexturedImage
 							Math.max(noiseSum * 256, 0), 255);
 				}				
 				
-				
-				pixel[0] = colorAxis.data[cbIdx][0];
-				pixel[1] = colorAxis.data[cbIdx][1];
-				pixel[2] = colorAxis.data[cbIdx][2];
-				pixel[3] = colorAxis.data[cbIdx][3];
 
-				raster.setPixel(i, j, pixel);
+				image.setRGB(i, j, colorAxis.data[cbIdx]);
 			}
 		}
 		

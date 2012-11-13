@@ -17,24 +17,13 @@
  */
 package com.adonax.texturebuilder;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.*;
+import javax.swing.event.*;
 
 public class TextureCombiner extends JPanel
 {
@@ -44,7 +33,6 @@ public class TextureCombiner extends JPanel
 	private static final long serialVersionUID = 1L;
 	BufferedImage image;
 	WritableRaster raster;
-	int[] pixel = new int[4];
 	private int width, height;
 	private int cols, rows;
 
@@ -423,7 +411,7 @@ public class TextureCombiner extends JPanel
 		
 		int chCount = channelGroups.size();
 		double[] weight = new double[chCount];
-		int[][][] cMapData = new int[chCount][256][4]; // ch, x, pixel 
+		int[][] cMapData = new int[chCount][256]; // ch, x, 
 				//sts[cg.members.get(0)].colorAxis.data;
 		
 		for (int i = 0; i < chCount; i++)
@@ -454,7 +442,7 @@ public class TextureCombiner extends JPanel
 		}  // weights are now a fraction of 1
 	
 		double rPixel, gPixel, bPixel;
-		pixel[3] = 255;
+		int pixel = 0;
 		for (int j = 0; j < 256; j++)
 		{
 			for (int i = 0; i < 256; i++)
@@ -486,16 +474,17 @@ public class TextureCombiner extends JPanel
 //						System.out.println("stage2Mode:" + stage2Mode[channelGroupIdx]);
 //					}
 					
-					rPixel += cMapData[channelGroupIdx][colorMapIdx][0] * weight[channelGroupIdx];
-					gPixel += cMapData[channelGroupIdx][colorMapIdx][1] * weight[channelGroupIdx];
-					bPixel += cMapData[channelGroupIdx][colorMapIdx][2] * weight[channelGroupIdx];
+					rPixel += ColorAxis.getRed(cMapData[channelGroupIdx][colorMapIdx]) * weight[channelGroupIdx];
+					gPixel += ColorAxis.getGreen(cMapData[channelGroupIdx][colorMapIdx]) * weight[channelGroupIdx];
+					bPixel += ColorAxis.getBlue(cMapData[channelGroupIdx][colorMapIdx]) * weight[channelGroupIdx];
 				
 				}
-				pixel[0] = (int) Math.min(255, Math.max(0, rPixel));
-				pixel[1] = (int) Math.min(255, Math.max(0, gPixel));
-				pixel[2] = (int) Math.min(255, Math.max(0, bPixel));
+				pixel = ColorAxis.calculateARGB(255,
+						(int)Math.min(255, Math.max(0, rPixel)),
+						(int)Math.min(255, Math.max(0, gPixel)),
+						(int)Math.min(255, Math.max(0, bPixel)));
 				
-				raster.setPixel(i, j, pixel);
+				image.setRGB(i, j, pixel);
 			}
 		}
 

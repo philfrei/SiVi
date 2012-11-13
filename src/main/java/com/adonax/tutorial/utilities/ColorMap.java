@@ -23,9 +23,9 @@ public class ColorMap {
 	 * colorBarPegs = [location, r, b, g, alpha]
 	 * Must be in ascending order by location!
 	 */
-	public static int[][] makeMap(int[][] colorBarPegs)
+	public static int[]makeMap(int[][] colorBarPegs)
 	{
-		int[][] data = new int[256][4];
+		int[] data = new int[256];
 
 		int idx, nextLoc;
 		float redIncr, greenIncr, blueIncr, alphaIncr;
@@ -39,10 +39,12 @@ public class ColorMap {
 
 			idx = peg[0];
 
-			data[idx][0] = peg[1]; 
-			data[idx][1] = peg[2];
-			data[idx][2] = peg[3];
-			data[idx][3] = peg[4];
+//			data[idx][0] = peg[1]; 
+//			data[idx][1] = peg[2];
+//			data[idx][2] = peg[3];
+//			data[idx][3] = peg[4];
+
+			data[idx] = calculateARGB(peg[4], peg[1], peg[2], peg[3]);
 
 			redSum = peg[1]; 
 			greenSum = peg[2];
@@ -61,22 +63,35 @@ public class ColorMap {
 			for (int x = idx; x < nextLoc; x++)
 			{
 				redSum += redIncr;
-				data[x][0] = Math.round(redSum);
+//				data[x][0] = Math.round(redSum);
 				greenSum += greenIncr;
-				data[x][1] = Math.round(greenSum);
+//				data[x][1] = Math.round(greenSum);
 				blueSum += blueIncr;
-				data[x][2] = Math.round(blueSum);
+//				data[x][2] = Math.round(blueSum);
 				alphaSum += alphaIncr;
-				data[x][3] = Math.round(alphaSum);
+//				data[x][3] = Math.round(alphaSum);
+				
+				
+				
+				data[x] = calculateARGB(Math.round(alphaSum),
+						Math.round(redSum),
+						Math.round(greenSum), 
+						Math.round(blueSum));
 			}
 		}
 		
 		peg = colorBarPegs[lastRow];
-		data[255][0] = peg[1];
-		data[255][1] = peg[2];
-		data[255][2] = peg[3];
-		data[255][3] = peg[4];
+		data[255] = calculateARGB(peg[4], peg[1], peg[2], peg[3]);
+//		data[255][0] = peg[1];
+//		data[255][1] = peg[2];
+//		data[255][2] = peg[3];
+//		data[255][3] = peg[4];
 		
 		return data;
+	}
+	
+	private static int calculateARGB(int a, int r, int g, int b)
+	{
+		return b + (g << 8) + (r <<16) + (a << 24);
 	}
 }

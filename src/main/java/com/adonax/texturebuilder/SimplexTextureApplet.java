@@ -17,8 +17,7 @@
  */
 package com.adonax.texturebuilder;
 
-import javax.swing.JApplet;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 public class SimplexTextureApplet extends JApplet {
 	private static final long serialVersionUID = 1L;

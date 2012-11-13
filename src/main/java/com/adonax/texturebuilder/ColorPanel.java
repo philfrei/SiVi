@@ -17,26 +17,11 @@
  */
 package com.adonax.texturebuilder;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 public class ColorPanel extends JPanel implements ActionListener,
 	MouseListener, MouseMotionListener {
@@ -289,12 +274,17 @@ public class ColorPanel extends JPanel implements ActionListener,
 	@Override
 	public void mouseClicked(MouseEvent arg0) 
 	{
-		// are we in a color rectangle? 
+		// are we in a color peg rectangle? 
 		int cpIdx = clickInColorPad(arg0.getPoint());
 		if (cpIdx > -1)
 		{
-			Color pickedColor = new Color(colorAxis.data[cpIdx][0], 
-					colorAxis.data[cpIdx][1], colorAxis.data[cpIdx][2]);
+			int argb = colorAxis.data[cpIdx];
+			Color pickedColor = new Color(
+					ColorAxis.getRed(argb),
+					ColorAxis.getGreen(argb),
+					ColorAxis.getBlue(argb),
+					255);
+					
 			Color newColor = JColorChooser.showDialog(this, 
 					"Pick a color", pickedColor);
 			if (newColor == null) 
@@ -311,15 +301,20 @@ public class ColorPanel extends JPanel implements ActionListener,
 			}
 		}
 		
-		// in top bar?
+		// in top display bar? (to add a new peg)
 		if (colorBarPegs.size() >= 8) return;
 		
 		if (inTopColorBar(arg0.getPoint()))
 		{
 			int idx = arg0.getX() - 16;
-			Color pickedColor = new Color(colorAxis.data[idx][0], 
-					colorAxis.data[idx][1], colorAxis.data[idx][2]);
-			Color newColor = JColorChooser.showDialog(this, 
+			int argb = colorAxis.data[idx];
+			Color pickedColor = new Color(
+					ColorAxis.getRed(argb),
+					ColorAxis.getGreen(argb),
+					ColorAxis.getBlue(argb),
+					255);
+	
+				Color newColor = JColorChooser.showDialog(this, 
 					"Pick a color", pickedColor);
 			if (newColor == null) return;
 			

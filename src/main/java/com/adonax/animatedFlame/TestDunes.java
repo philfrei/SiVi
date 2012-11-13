@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -24,12 +23,11 @@ class TestDunes extends JPanel
 		int[][] colorBarPegs = {{0, 0, 0, 255, 255},
 				{128, 204, 0, 0, 255},
 				{255, 255, 255, 102, 255}};
-		int[][] colorAxis = ColorMap.makeMap(colorBarPegs);
+		int[] colorAxis = ColorMap.makeMap(colorBarPegs);
 		
 		
 		BufferedImage image = new BufferedImage(width, height,
 	            BufferedImage.TYPE_INT_ARGB);
-	    WritableRaster raster = image.getRaster();
 	    int[] pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
 	    pixel[3] = 255;
 	    
@@ -72,12 +70,13 @@ class TestDunes extends JPanel
                 if (nSum > 255) nSum = 255;
 	            if (nSum < 0) nSum = 0;
 	
-	            pixel[0] = colorAxis[nSum][0];
-	            pixel[1] = colorAxis[nSum][1];
-	            pixel[2] = colorAxis[nSum][2];
+//	            pixel[0] = colorAxis[nSum][0];
+//	            pixel[1] = colorAxis[nSum][1];
+//	            pixel[2] = colorAxis[nSum][2];
+//	            
+//	            raster.setPixel(x, y, pixel);
 	            
-	            raster.setPixel(x, y, pixel);
-	            
+	            image.setRGB(x, y, colorAxis[nSum]);
 	        }
 //	    	System.out.println(xValue[0]);
 	    }
