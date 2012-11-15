@@ -1,7 +1,6 @@
 package com.adonax.animatedFlame;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 
 import com.adonax.tutorial.utilities.ColorMap;
 import com.adonax.utils.SimplexNoise;
@@ -10,12 +9,11 @@ public class Flames
 {
 	private int width, height;
 	private BufferedImage image;
-	private WritableRaster raster;
 
 	private int[] pixel;
 	private float noiseSum;
 	private int octaves;
-	private int[][] colorMap;
+	private int[] colorMap;
 	
 	private final float[] xScales = {6/128f, 16/128f};
 	private final float[] yScales = {3/128f, 8/128f};
@@ -64,7 +62,6 @@ public class Flames
 		
 		image = new BufferedImage(width, height,
 	            BufferedImage.TYPE_INT_ARGB);
-	    raster = image.getRaster();
 	    pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
 	    pixel[3] = 255;
 	    
@@ -100,11 +97,13 @@ public class Flames
                 if (nSum > 255) nSum = 255;
 	            if (nSum < 0) nSum = 0;
 	
-	            pixel[0] = colorMap[nSum][0];
-	            pixel[1] = colorMap[nSum][1];
-	            pixel[2] = colorMap[nSum][2];
-	            
-	            raster.setPixel(x, y, pixel);	            
+//	            pixel[0] = colorMap[nSum][0];
+//	            pixel[1] = colorMap[nSum][1];
+//	            pixel[2] = colorMap[nSum][2];
+//	            
+//	            raster.setPixel(x, y, pixel);
+
+                image.setRGB(x, y, colorMap[nSum]);
 	        }
 	    }
 	}

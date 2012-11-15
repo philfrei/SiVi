@@ -10,6 +10,7 @@ import java.awt.image.WritableRaster;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.adonax.tutorial.utilities.ColorMap;
 import com.adonax.utils.SimplexNoise;
 
 public class TestGraphicCodeExamples
@@ -145,7 +146,10 @@ class TestImagesPanel extends JPanel
 	
 	private BufferedImage testImage2()
 	{
-	    BufferedImage image = new BufferedImage(700, 160,
+		int width = 700; int height = 160;
+		
+		//*****************Code dropped here:
+	    BufferedImage image = new BufferedImage(width, height,
 	            BufferedImage.TYPE_INT_ARGB);
 	    WritableRaster raster = image.getRaster();
 	    int[] pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
@@ -187,11 +191,65 @@ class TestImagesPanel extends JPanel
 
 		return image;
 	}
-
+	
 	private BufferedImage testImage3()
 	{
-	    BufferedImage image = new BufferedImage(700, 160,
-	            BufferedImage.TYPE_INT_ARGB);
+		int width = 700; int height = 160;
+		
+		//*****************Code dropped here:
+
+       int[][] pegs = { // location, R, B, G, alpha 
+                {0, 255, 255, 255, 255},
+                {40, 153, 153, 153, 255},
+                {64, 0, 128, 0, 255},
+                {95, 96, 176, 0, 255},
+                {99, 224, 224, 128, 255},
+                {100, 204, 204, 204, 255},
+                {128, 64, 64, 255, 255},
+                {255, 0, 0, 192, 255}};
+        int[] colorMap = ColorMap.makeMap(pegs);
+
+        BufferedImage image = new BufferedImage(700, 160,
+	                BufferedImage.TYPE_INT_ARGB);
+        int[] pixel = new int[4];
+        pixel[3] = 255; // alpha = opaque
+
+        int[] octaveScale = {1, 4, 16, 64};
+        int[] octaveAmplitude = {64, 16, 4, 1};
+        int octaves = octaveScale.length;
+
+        float amplitudeSum = 0;
+        for (int i : octaveAmplitude)
+        {
+            amplitudeSum += i;	
+        }
+        
+        double noiseSum = 0;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                noiseSum = 0;
+                for (int i = 0; i < octaves; i++)
+                {
+                    noiseSum += SimplexNoise.noise(
+                          x * octaveScale[i]/256f,
+                          y * octaveScale[i]/256f )
+                          * ( octaveAmplitude[i]/amplitudeSum );
+                }
+                noiseSum = (noiseSum * 0.5) + .5;
+                noiseSum *= 256;
+                
+                noiseSum = Math.max(noiseSum, 0);
+                noiseSum = Math.min(noiseSum, 255);
+
+                int idx = (int)noiseSum;
+
+                image.setRGB(x, y, colorMap[idx]);
+            }
+        }
+        
 	    return image;
 	}
 	
@@ -228,6 +286,7 @@ class TestImagesPanel extends JPanel
 		g2.drawImage(images[1], 10, 180, null);
 		g2.drawImage(images[2], 10, 350, null);
 		g2.drawImage(images[3], 10, 520, null);
+		g2.drawImage(images[4], 10, 690, null);
 	}
 	
 }

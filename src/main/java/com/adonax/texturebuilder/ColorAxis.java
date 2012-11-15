@@ -19,13 +19,12 @@
 package com.adonax.texturebuilder;
  
 import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
+import java.awt.image.*;
 import java.util.ArrayList;
 
 public class ColorAxis {
 
-	public int[][] data;
+	public int[] data;
 	BufferedImage img;
 	boolean hover;
 	ArrayList<ColorBarPeg>colorBarPegs;
@@ -33,39 +32,50 @@ public class ColorAxis {
 	
 	public ColorAxis()
 	{
-		data = new int[256][4];
+		data = new int[256];
 		img = new BufferedImage(256, 16, 
 				BufferedImage.TYPE_INT_ARGB);
 		
 		// default data will be black to white gradient
-		WritableRaster raster = img.getRaster();
-		
-		int[] pixel = new int[4];
-		pixel[3] = 255;
+//		WritableRaster raster = img.getRaster();
 		
 		for (int i = 0; i < 256; i++)
 		{
-			pixel[0] = i;
-			pixel[1] = i;
-			pixel[2] = i;
-			
-			data[i][0] = i;
-			data[i][1] = i;
-			data[i][2] = i;
-			data[i][3] = 255;
+			data[i] = calculateARGB(255, i, i, i);
 			
 			for (int j = 0; j < 16; j++)
 			{
-				raster.setPixel(i, j, pixel);
+				img.setRGB(i, j, data[i]);
 			}
 		}
 		
 		colorBarPegs = new ArrayList<ColorBarPeg>();
-		colorBarPegs.add(new ColorBarPeg(0, data[0][0], 
-				data[0][1], data[0][2], 255));
-		colorBarPegs.add(new ColorBarPeg(255, data[255][0], 
-				data[255][1], data[255][2], 255));
+		colorBarPegs.add(new ColorBarPeg(0, getRed(data[0]), 
+				getGreen(data[0]), getBlue(data[0]),
+				255));
+		colorBarPegs.add(new ColorBarPeg(255, getRed(data[255]), 
+				getGreen(data[255]), getBlue(data[255]),
+				255));
+	}
+	
+	public static int calculateARGB(int a, int r, int g, int b)
+	{
+		return b + (g << 8) + (r <<16) + (a << 24);
+	}
+	
+	public static int getRed(int colorARGB)
+	{
+		return (colorARGB & 0x00FF0000) >> 16;
+	}
 
+	public static int getGreen(int colorARGB)
+	{
+		return (colorARGB & 0x0000FF00) >> 8;
+	}
+	
+	public static int getBlue(int colorARGB)
+	{
+		return (colorARGB & 0x000000FF);
 	}
 	
 	public ColorAxis copy()
@@ -77,10 +87,7 @@ public class ColorAxis {
 		img.copyData(raster);
 		for (int i = 0; i < 256; i++)
 		{
-			for (int j = 0; j < 4; j++)
-			{
-				newCA.data[i][j] = data[i][j];
-			}
+			newCA.data[i] = data[i];
 		}
 		newCA.setColorBarPegs(colorBarPegs);
 		
@@ -107,6 +114,7 @@ public class ColorAxis {
 					new ColorBarPeg(rd.getLocation(), 
 							rd.getrColor(), rd.getgColor(), 
 							rd.getbColor(), rd.getAlpha()));
+
 		}
 		update();
 	}
@@ -114,8 +122,8 @@ public class ColorAxis {
 	public void update()
 	{
 		int idx, cols;
-		float redIncr, greenIncr, blueIncr, alphaIncr;
-		float redSum, greenSum, blueSum, alphaSum;
+		float redIncr, greenIncr, blueIncr;
+		float redSum, greenSum, blueSum;
 		float hueIncr, saturationIncr, brightnessIncr;
 		float hueSum, saturationSum, brightnessSum;
 		float[] hsbStartVals = new float[3];
@@ -130,22 +138,16 @@ public class ColorAxis {
 			redSum = colorBarPegs.get(i).getrColor(); 
 			greenSum = colorBarPegs.get(i).getgColor();
 			blueSum = colorBarPegs.get(i).getbColor();
-			alphaSum = colorBarPegs.get(i).getAlpha();
 			
-//			System.out.println("Peg " + i + "=" + alphaSum);
-			
-			data[idx][0] = (int)redSum; 
-			data[idx][1] = (int)greenSum;
-			data[idx][2] = (int)blueSum;
-			data[idx][3] = (int)alphaSum;
-					
+			data[idx] = calculateARGB(255, (int)redSum, 
+					(int)greenSum, (int)blueSum); 
 			
 			cols = colorBarPegs.get(i + 1).getLocation() - idx;
 		
 			if (useHsbLerp)
 			{
-				hsbStartVals = Color.RGBtoHSB(data[idx][0], 
-						data[idx][1], data[idx][2],
+				hsbStartVals = Color.RGBtoHSB(getRed(data[idx]), 
+						getGreen(data[idx]), getBlue(data[idx]),
 						hsbStartVals);
 				
 				hsbEndVals = Color.RGBtoHSB(
@@ -192,9 +194,10 @@ public class ColorAxis {
 					brightnessSum += brightnessIncr;
 					
 					color = new Color(Color.HSBtoRGB(hueSum, saturationSum, brightnessSum));
-					data[x][0] = color.getRed();
-					data[x][1] = color.getGreen();
-					data[x][2] = color.getBlue();
+					data[x] = calculateARGB(255, 
+							color.getRed(), 
+							color.getGreen(), 
+							color.getBlue());
 					
 //					{System.out.println("h:" + hueSum + " s:" + saturationSum 
 //							+ " b:" + brightnessSum + " color:" + color
@@ -211,43 +214,33 @@ public class ColorAxis {
 				redIncr = (colorBarPegs.get(i + 1).getrColor() - redSum)/cols;
 				greenIncr = (colorBarPegs.get(i + 1).getgColor() - greenSum)/cols;
 				blueIncr = (colorBarPegs.get(i + 1).getbColor() - blueSum)/cols;
-				alphaIncr = (colorBarPegs.get(i + 1).getAlpha() - alphaSum)/cols;
 				
 				for (int x = idx; x < idx + cols; x++)
 				{
 					redSum += redIncr;
-					data[x][0] = Math.round(redSum);
 					greenSum += greenIncr;
-					data[x][1] = Math.round(greenSum);
 					blueSum += blueIncr;
-					data[x][2] = Math.round(blueSum);
-					alphaSum += alphaIncr;
-					data[x][3] = Math.round(alphaSum);
+					data[x] = calculateARGB(255,
+							Math.round(redSum),
+							Math.round(greenSum), 
+							Math.round(blueSum));
 				}
 			}
 		}
 		
-		data[255][0] = colorBarPegs.get(lastRow).getrColor();
-		data[255][1] = colorBarPegs.get(lastRow).getgColor();
-		data[255][2] = colorBarPegs.get(lastRow).getbColor();
-		data[255][3] = colorBarPegs.get(lastRow).getAlpha();
+		data[255] = calculateARGB(
+				255,
+				colorBarPegs.get(lastRow).getrColor(),
+				colorBarPegs.get(lastRow).getgColor(),
+				colorBarPegs.get(lastRow).getbColor());
 		
 		// update the ColorBar image
-		WritableRaster raster = img.getRaster();
-		int[] pixel = new int[4];
 		
 		for (int i = 0; i < 256; i++)
 		{
-			pixel[0] = data[i][0];
-			pixel[1] = data[i][1];
-			pixel[2] = data[i][2];
-			pixel[3] = data[i][3];
-
-//			System.out.println(i + ":" + data[i][3]);
-			
 			for (int j = 0; j < 16; j++)
 			{
-				raster.setPixel(i, j, pixel);
+				img.setRGB(i, j, data[i]);
 			}
 		}		
 	}
