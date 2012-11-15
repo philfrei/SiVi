@@ -207,7 +207,6 @@ public class CloudCard extends JPanel implements MouseListener,
 		if (imageRect.contains(arg0.getPoint()))
 		{
 			setupTextureBuilder();
-			tf.setVisible(false);
 		}
 	}
 
