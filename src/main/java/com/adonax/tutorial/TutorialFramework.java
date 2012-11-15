@@ -20,12 +20,12 @@ package com.adonax.tutorial;
 
 import java.awt.CardLayout;
 
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.adonax.texturebuilder.STBPanel;
 
-public class TutorialFramework extends JDialog {
+public class TutorialFramework extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 

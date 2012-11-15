@@ -110,8 +110,7 @@ public class STBPanel extends JPanel
 		cbSet.setBounds(788, 550, 264, 256);
 		add(cbSet);
 		
-	    tutorial = new TutorialFramework(this);	    
-	    tutorial.setModal(true);
+	    tutorial = new TutorialFramework(this);
         tutorial.setBounds(100, 100, 800 + 8, 700 + 34);
 	    
 		update();
