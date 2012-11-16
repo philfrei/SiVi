@@ -63,7 +63,7 @@ public class STBPanel extends JPanel
 		cbSelector.setTitle("Select a Color Axis");
 		cbSelector.setModal(true);
 		
-		tc = new TextureCombiner(580, 256);
+		tc = new TextureCombiner(640, 256);
 		
 		sts1 = new SimplexTextureSource(4, 0, 256, 544, 
 						colorAxisSet[0], this);
@@ -80,12 +80,12 @@ public class STBPanel extends JPanel
 		add(sts4);
 		add(tc);
 		
-		sts1.setBounds(4, 0, 256, 544);
-		sts2.setBounds(268, 0, 256, 544);
-		sts3.setBounds(532, 0, 256, 544);
-		sts4.setBounds(796, 0, 256, 544);
+		sts1.setBounds(4, 32, 256, 512);
+		sts2.setBounds(268, 32, 256, 512);
+		sts3.setBounds(532, 32, 256, 512);
+		sts4.setBounds(796, 32, 256, 512);
 		
-		tc.setBounds(16, 550, 580, 256);
+		tc.setBounds(16, 550, 640, 256);
 		
 		tc.setSTS(sts1, 0);
 		tc.setSTS(sts2, 1);
@@ -93,7 +93,7 @@ public class STBPanel extends JPanel
 		tc.setSTS(sts4, 3);
 			
 		JButton tutorialBtn = new JButton("Tutorial");
-		tutorialBtn.setBounds(640, height - 36, 100, 24);
+		tutorialBtn.setBounds(4, 4, 100, 24);
 		tutorialBtn.addActionListener(new ActionListener()
 		{
 			@Override

@@ -33,7 +33,7 @@ public class Animator extends Timer
 			if (counter % 64 == 0)
 			{
 				System.out.println(
-						(System.currentTimeMillis() - start)/64f);
+					"setRGB:" + (System.currentTimeMillis() - start)/64f);
 				start = System.currentTimeMillis();
 			}
 			
