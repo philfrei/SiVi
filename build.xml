@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 
 <project basedir="." default="build" name="SiVi">
-    <property environment="env"/>
 
     <target name="clean">
         <delete dir="target"/>
@@ -11,15 +10,10 @@
         <mkdir dir="target/classes"/>
     </target>
 
-    <path id="SiVi.classpath">
-        <pathelement location="target"/>
-    </path>
-
     <target name="build" depends="init">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="source,lines,vars" destdir="target/classes" includeantruntime="false" source="1.6" target="1.6">
             <src path="src/main/java"/>
-            <classpath refid="SiVi.classpath"/>
         </javac>
         <copy todir="target/classes">
             <fileset dir="src/main/resources"/>
@@ -32,6 +26,16 @@
                 <pathelement path="target/classes"/>
             </classpath>
         </java>
+    </target>
+
+    <target name="jar" depends="build">
+        <manifest file="target/MANIFEST.MF">
+            <attribute name="Main-Class" value="com.adonax.texturebuilder.SimplexTextureBuilder"/>
+        </manifest>
+        <jar destfile="target/SiVi-1.0-SNAPSHOT.jar"
+             basedir="target/classes"
+             manifest="target/MANIFEST.MF">
+        </jar>
     </target>
 
 </project>
