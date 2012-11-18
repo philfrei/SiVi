@@ -3,18 +3,25 @@ SiVi
 
 Simplex texture visualization tool
 
+Ant
+---
 
 To build and execute from the command-line using Ant:
-> ant clean build
-> ant run
+
+    ant clean build
+    ant run
 
 
-With maven:
-> mvn clean package
-> mvn exec:exec
+Maven
+-----
+
+    mvn clean package
+    mvn exec:exec
 
 
-In Eclipse:
+Eclipse
+-------
+
 1. Select menu File -> New -> Java Project
 2. In the New Java Project dialog uncheck: Use default location
 3. Browse to location SiVi
@@ -26,10 +33,11 @@ In Eclipse:
 Build and Debug main() in com.adonax.texturebuilder.SimplexTextureBuilder
 
 
-In IntelliJ:
+IntelliJ
+--------
+
 1. Create New Project
 2. Select radio button Import project from external model (maven pom)
 3. Browse Root directory to SiVi
 
 Make project and Debug main() in com.adonax.texturebuilder.SimplexTextureBuilder
-
