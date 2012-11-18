@@ -12,8 +12,8 @@ public class AppTop
 	 */
 	public static void main(String[] args) {
 
-		final int hSize = 256;
-		final int vSize = 128;
+		final int hSize = 1024;
+		final int vSize = 256;
 		
 		
 	    EventQueue.invokeLater(new Runnable(){
