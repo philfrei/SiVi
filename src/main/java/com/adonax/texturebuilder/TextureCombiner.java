@@ -80,6 +80,7 @@ public class TextureCombiner extends JPanel
 	
 	private JSlider[] weightSlider = new JSlider[channels];	
 	private JTextField[] weightVal = new JTextField[channels];
+	private JLabel[] weightDenominator = new JLabel[channels];
 	private int[] weightStage1 = new int[channels];
 	
 	public void setStage1Weight(int channel, int weight)
@@ -138,6 +139,10 @@ public class TextureCombiner extends JPanel
 					
 			weightVal[i] = makeWeightingTextField(i);
 			add(weightVal[i]);
+
+			weightDenominator[i] = makeWeightDenominatorLabel(i);
+			add(weightDenominator[i]);
+
 			
 			stage2Label[i] = new JLabel(String.valueOf(i));
 			stage2Label[i].setBounds(2, i * 32 + 128, 32, 24);
@@ -233,7 +238,7 @@ public class TextureCombiner extends JPanel
 		weightStage1[idx] = 16;
 		final JTextField newJTextField = new JTextField(
 				String.valueOf(weightStage1[idx]));
-		newJTextField.setBounds(262, idx * 32, 48, 24);	
+		newJTextField.setBounds(262, idx * 32, 36, 24);	
 
 		newJTextField.addActionListener(new ActionListener()
 		{
@@ -247,6 +252,16 @@ public class TextureCombiner extends JPanel
 		return newJTextField;	
 	}
 
+	private JLabel makeWeightDenominatorLabel(final int idx)
+	{
+		weightStage1[idx] = 16;
+		final JLabel newJLabel = new JLabel("/ 64");
+		newJLabel.setBounds(300, idx * 32, 48, 24);	
+
+		return newJLabel;	
+	}
+	
+	
 	private JTextField makeStage2TextField(final int idx, int yStart)
 	{
 		weightStage2[idx] = 64;
@@ -283,6 +298,7 @@ public class TextureCombiner extends JPanel
 				for (int i : cg.members)
 				{
 					weight[i] = weightStage1[i] / 64f;
+					weightDenominator[i].setText(" / 64");
 				}
 				
 				for (int j = 0; j < 256; j++)
@@ -312,6 +328,8 @@ public class TextureCombiner extends JPanel
 				for (int i : cg.members)
 				{
 					weight[i] = weightStage1[i] / weightSum;
+					weightDenominator[i].setText(" / " + weightSum);
+
 				}
 				
 				for (int j = 0; j < 256; j++)
@@ -327,12 +345,15 @@ public class TextureCombiner extends JPanel
 						cg.noiseVals[i][j] = sum;
 					}
 				}					
-			}
-			
-			
+			}			
 			
 			if (stage1Mode[cg.members.get(0)] == SIN)
 			{
+				for (int i : cg.members)
+				{
+					weightDenominator[i].setText(" / 128");
+				}
+				
 				for (int j = 0; j < 256; j++)
 				{
 					for (int i = 0; i < 256; i++)
@@ -350,6 +371,11 @@ public class TextureCombiner extends JPanel
 			
 			if (stage1Mode[cg.members.get(0)] == XDIM)
 			{
+				for (int i : cg.members)
+				{
+					weightDenominator[i].setText(" / 128");
+				}
+				
 				for (int j = 0; j < 256; j++)
 				{
 					for (int i = 0; i < 256; i++)
@@ -367,6 +393,11 @@ public class TextureCombiner extends JPanel
 
 			if (stage1Mode[cg.members.get(0)] == YDIM)
 			{
+				for (int i : cg.members)
+				{
+					weightDenominator[i].setText(" / 128");
+				}
+				
 				for (int j = 0; j < 256; j++)
 				{
 					for (int i = 0; i < 256; i++)
@@ -386,6 +417,12 @@ public class TextureCombiner extends JPanel
 			if (stage1Mode[cg.members.get(0)] == CIRC)
 			{
 				Point middle = new Point(128, 128);
+				
+				for (int i : cg.members)
+				{
+					weightDenominator[i].setText(" / 128");
+				}
+				
 				for (int j = 0; j < 256; j++)
 				{
 					for (int i = 0; i < 256; i++)
