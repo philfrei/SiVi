@@ -1,6 +1,6 @@
 package com.adonax.animatedFlame;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 
 import com.adonax.tutorial.utilities.ColorMap;
 import com.adonax.utils.SimplexNoise;
@@ -9,7 +9,9 @@ public class Flames
 {
 	private int width, height;
 	private BufferedImage image;
-
+	private WritableRaster raster;
+	private int[] outData;
+	
 	private int[] pixel;
 	private float noiseSum;
 	private int octaves;
@@ -62,8 +64,12 @@ public class Flames
 		
 		image = new BufferedImage(width, height,
 	            BufferedImage.TYPE_INT_ARGB);
+		raster = image.getRaster();
 	    pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
 	    pixel[3] = 255;
+	    
+
+		outData = new int[width * height];
 	    
 	    octaves = xScales.length;
 
@@ -106,6 +112,38 @@ public class Flames
                 image.setRGB(x, y, colorMap[nSum]);
 	        }
 	    }
+	}
+	
+	public void updateManagedImage()
+	{
+		aniZ += aniZincr;
+		
+		outData = (int[]) raster.getDataElements(0, 0, width, height, outData);
+		int idx = 0;
+	    for (int y = 0; y < height; y++)
+	    {
+	    	for (int x = 0; x < width; x++)
+	        {
+	    		noiseSum = 0;
+	    		for (int i = 0; i < octaves; i++)
+	    		{
+	    			noiseSum += SimplexNoise.noise(x * xScales[i], 
+	    					y * yScales[i] + aniZ, aniZ)
+	    					* ( octaveAmplitudes[i] );
+	    		}
+	    		
+	    		nSum = (int)(noiseSum * 6 + y * verticalFactor);
+	    		
+                // clamp
+                if (nSum > 255) nSum = 255;
+	            if (nSum < 0) nSum = 0;            
+	            
+//	            nSum &= 0xff;
+	            
+                outData[idx++] =  colorMap[nSum];
+	        }
+	    }
+	    raster.setDataElements(0, 0, width, height, outData);
 	}
 	
 }

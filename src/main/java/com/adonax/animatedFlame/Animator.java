@@ -30,14 +30,16 @@ public class Animator extends Timer
 		public void run()
 		{
 			counter++;
-			if (counter % 64 == 0)
+			if (counter % 32 == 0)
 			{
-				System.out.println(
-					"setRGB:" + (System.currentTimeMillis() - start)/64f);
+				float elapsed = (System.currentTimeMillis() - start)/32f;
+				System.out.println("setDataElements:" + elapsed);
+//				System.out.println("setRGB:" + elapsed);
 				start = System.currentTimeMillis();
 			}
 			
-			flames.update();
+//			flames.update();
+			flames.updateManagedImage();
 			fireplace.repaint();
 			
 		}
