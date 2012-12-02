@@ -21,6 +21,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 
 public class ColorBarSet extends JPanel {
 
@@ -48,17 +49,21 @@ public class ColorBarSet extends JPanel {
 		this.width = width;
 		this.height = height;
 		
+		TitledBorder combineTitledBorder = BorderFactory.createTitledBorder("Color Axis");
+		setBorder(combineTitledBorder);
+		Insets insets = combineTitledBorder.getBorderInsets(this);
+
 		cb = new ColorBar[bars];
 		for (int i = 0; i < bars; i++)
 		{
 			cb[i] = new ColorBar(left, top, 256, 24, 
 					colorAxis[i], host, this);
-			cb[i].setBounds(4, i * 32 + 4 + 32, 256, 24);
+			cb[i].setBounds(insets.left+10, insets.top + i*32 + 4 + 32, insets.left + 256 + 10, insets.top + 24);
 			add(cb[i]);
 		}	
 		
 		JPanel controlPanel = new JPanel();
-		controlPanel.setBounds(0, 0, width, 32);
+		controlPanel.setBounds(insets.left, insets.top, insets.left + width, insets.top + 32);
 		controlPanel.setOpaque(false);
 		
 		JLabel cpInstructions = new JLabel("Click BAR to:");
@@ -100,13 +105,9 @@ public class ColorBarSet extends JPanel {
 		add(controlPanel);
 					
 	}
-	
-	
-	public void paintComponent(Graphics g)
-	{
-		Graphics2D g2 = (Graphics2D)g;
-		g2.setPaint(Color.CYAN);
-		g2.fillRect(0, 0, width, height);
+
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(width, height);
 	}
-	
 }

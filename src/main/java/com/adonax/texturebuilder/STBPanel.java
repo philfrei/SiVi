@@ -17,6 +17,7 @@
  */
 package com.adonax.texturebuilder;
 
+import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -51,7 +52,7 @@ public class STBPanel extends JPanel
 	
 	STBPanel(int width, int height, final STBFrame host)
 	{
-		setLayout(null);		
+		setLayout(new BorderLayout());
 		
 		colorAxisSet = new ColorAxis[BARS];
 		for (int i = 0; i < BARS; i++)
@@ -63,9 +64,9 @@ public class STBPanel extends JPanel
 		cbSelector.setTitle("Select a Color Axis");
 		cbSelector.setModal(true);
 		
-		tc = new TextureCombiner(640, 256);
+		tc = new TextureCombiner(640, 286);
 		
-		sts1 = new SimplexTextureSource(4, 0, 256, 544, 
+		sts1 = new SimplexTextureSource(4, 0, 256, 544,
 						colorAxisSet[0], this);
 		sts2 = new SimplexTextureSource(268, 0, 256, 544, 
 						colorAxisSet[0], this);
@@ -73,27 +74,34 @@ public class STBPanel extends JPanel
 						colorAxisSet[0], this);
 		sts4 = new SimplexTextureSource(796, 0, 256, 544, 
 						colorAxisSet[0], this);
-		
-		add(sts1);
-		add(sts2);
-		add(sts3);
-		add(sts4);
-		add(tc);
-		
-		sts1.setBounds(4, 32, 256, 512);
-		sts2.setBounds(268, 32, 256, 512);
-		sts3.setBounds(532, 32, 256, 512);
-		sts4.setBounds(796, 32, 256, 512);
-		
-		tc.setBounds(16, 550, 640, 256);
-		
+
+		JPanel textureSourcesPanel = new JPanel();
+		textureSourcesPanel.setLayout(null);
+
+		textureSourcesPanel.add(sts1);
+		textureSourcesPanel.add(sts2);
+		textureSourcesPanel.add(sts3);
+		textureSourcesPanel.add(sts4);
+
+		add(textureSourcesPanel, BorderLayout.NORTH);
+
+		int stsWidth = sts1.getPreferredSize().width;
+		int stsHeight = sts1.getPreferredSize().height;
+		int shim = 10;
+
+		textureSourcesPanel.setPreferredSize(new Dimension(4*stsWidth, stsHeight+shim));
+
+		sts1.setBounds(0*stsWidth + 0*shim, 0, stsWidth, stsHeight);
+		sts2.setBounds(1*stsWidth + 1*shim, 0, stsWidth, stsHeight);
+		sts3.setBounds(2*stsWidth + 2*shim, 0, stsWidth, stsHeight);
+		sts4.setBounds(3*stsWidth + 3*shim, 0, stsWidth, stsHeight);
+
 		tc.setSTS(sts1, 0);
 		tc.setSTS(sts2, 1);
 		tc.setSTS(sts3, 2);
 		tc.setSTS(sts4, 3);
-			
+
 		JButton tutorialBtn = new JButton("Tutorial");
-		tutorialBtn.setBounds(4, 4, 100, 24);
 		tutorialBtn.addActionListener(new ActionListener()
 		{
 			@Override
@@ -102,14 +110,29 @@ public class STBPanel extends JPanel
 				tutorial.setVisible(true);	
 			}
 		});
-		add(tutorialBtn);
-		
-		
-		cbSet = new ColorBarSet(BARS, 700, 550, 264, 256, 
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+		buttonPanel.add(tutorialBtn);
+
+		add(buttonPanel, BorderLayout.SOUTH);
+
+		cbSet = new ColorBarSet(BARS, 700, 550, 300, 286,
 				colorAxisSet, this);
-		cbSet.setBounds(788, 550, 264, 256);
-		add(cbSet);
-		
+
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(null);
+
+		centerPanel.add(tc);
+		int tcWidth = tc.getPreferredSize().width;
+		int tcHeight = tc.getPreferredSize().height;
+		tc.setBounds(0, 0, tcWidth, tcHeight);
+		centerPanel.add(cbSet);
+		cbSet.setBounds(tcWidth+shim, 0, cbSet.getPreferredSize().width, cbSet.getPreferredSize().height);
+
+		add(centerPanel, BorderLayout.CENTER);
+
 	    tutorial = new TutorialFramework(this);
         tutorial.setBounds(100, 100, 800 + 8, 700 + 34);
 	    
