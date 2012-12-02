@@ -23,6 +23,7 @@ import java.awt.image.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 
 public class TextureCombiner extends JPanel
@@ -108,6 +109,10 @@ public class TextureCombiner extends JPanel
 	
 	TextureCombiner(int width, int height)
 	{
+		TitledBorder combineTitledBorder = BorderFactory.createTitledBorder("Combine Textures");
+		setBorder(combineTitledBorder);
+		Insets insets = combineTitledBorder.getBorderInsets(this);
+
 		this.width = width;
 		this.height = height;
 		cols = 256;
@@ -123,7 +128,7 @@ public class TextureCombiner extends JPanel
 		for (int i = 0; i < channels; i++)
 		{
 			stage1Labels[i] = new JLabel(String.valueOf(i));
-			stage1Labels[i].setBounds(2, i * 32, 18, 24);
+			stage1Labels[i].setBounds(insets.left + 2, insets.top + i * 32, insets.left + 18, 24);
 			stage1Labels[i].setHorizontalAlignment(SwingConstants.CENTER);
 			stage1Labels[i].setBackground(new Color(224, 255, 255));
 			stage1Labels[i].setOpaque(true);
@@ -145,7 +150,7 @@ public class TextureCombiner extends JPanel
 
 			
 			stage2Label[i] = new JLabel(String.valueOf(i));
-			stage2Label[i].setBounds(2, i * 32 + 128, 32, 24);
+			stage2Label[i].setBounds(insets.left + 2, insets.top + i * 32 + 128, insets.left + 32, 24);
 			stage2Label[i].setHorizontalAlignment(
 					SwingConstants.RIGHT);
 			stage2Label[i].setBackground(new Color(224, 255, 196));
@@ -170,7 +175,10 @@ public class TextureCombiner extends JPanel
 			final String[] stageTexts, final int[] stageModes)
 	{
 		final JButton newButton = new JButton(stageTexts[stageModes[idx]]);
-		newButton.setBounds(38, idx * 32 + yStart, 64, 24);
+
+		Insets insets = getBorder().getBorderInsets(this);
+		newButton.setBounds(insets.left + 40, insets.top + idx * 32 + yStart, 64, 24);
+
 		newButton.addActionListener(new ActionListener(){
 
 			@Override
@@ -195,7 +203,9 @@ public class TextureCombiner extends JPanel
 		weightStage1[idx] = 16;
 		final JSlider weightSlider = new JSlider(0, 64, 
 				weightStage1[idx]);
-		weightSlider.setBounds(110, idx * 32, 128, 24);
+
+		Insets insets = getBorder().getBorderInsets(this);
+		weightSlider.setBounds(insets.left + 110, insets.top + idx * 32, 128, 24);
 
 		weightSlider.addChangeListener(new ChangeListener(){
 
@@ -216,7 +226,9 @@ public class TextureCombiner extends JPanel
 		weightStage2[idx] = 64;
 		final JSlider weightSlider = new JSlider(0, 64, 
 				weightStage2[idx]);
-		weightSlider.setBounds(110, idx * 32 + yStart, 128, 24);
+
+		Insets insets = getBorder().getBorderInsets(this);
+		weightSlider.setBounds(insets.left + 110, insets.top + idx * 32 + yStart, 128, 24);
 
 		weightSlider.addChangeListener(new ChangeListener()
 		{
@@ -238,7 +250,9 @@ public class TextureCombiner extends JPanel
 		weightStage1[idx] = 16;
 		final JTextField newJTextField = new JTextField(
 				String.valueOf(weightStage1[idx]));
-		newJTextField.setBounds(262, idx * 32, 36, 24);	
+
+		Insets insets = getBorder().getBorderInsets(this);
+		newJTextField.setBounds(insets.left + 262, insets.top + idx * 32, 36, 24);
 
 		newJTextField.addActionListener(new ActionListener()
 		{
@@ -256,7 +270,9 @@ public class TextureCombiner extends JPanel
 	{
 		weightStage1[idx] = 16;
 		final JLabel newJLabel = new JLabel("/ 64");
-		newJLabel.setBounds(300, idx * 32, 48, 24);	
+
+		Insets insets = getBorder().getBorderInsets(this);
+		newJLabel.setBounds(insets.left + 300, insets.top + idx * 32, 48, 24);
 
 		return newJLabel;	
 	}
@@ -267,7 +283,9 @@ public class TextureCombiner extends JPanel
 		weightStage2[idx] = 64;
 		final JTextField newJTextField = new JTextField(
 				String.valueOf(weightStage2[idx]));
-		newJTextField.setBounds(262, idx * 32 + yStart, 48, 24);	
+
+		Insets insets = getBorder().getBorderInsets(this);
+		newJTextField.setBounds(insets.left + 262, insets.top + idx * 32 + yStart, 48, 24);
 
 		newJTextField.addActionListener(new ActionListener()
 		{
@@ -604,18 +622,23 @@ public class TextureCombiner extends JPanel
 		float[][] noiseVals = new float[256][256];
 		
 	}
-	
-	
+
+	@Override
+	public Dimension getPreferredSize()
+	{
+		return new Dimension(width, height);
+	}
+
+	@Override
 	public void paintComponent(Graphics g)
 	{
-		Graphics2D g2 = (Graphics2D) g;
-		
-		// refresh screen
-		g2.setBackground(new Color(255, 255, 255, 255));  //230,250,255
-		g2.clearRect(0, 0, width, height);
+		super.paintComponent(g);
 
-		g2.setPaint(Color.BLACK);
-		g2.drawLine(0, 124, width - (256 + 8), 124);
-		g2.drawImage(image, width - 256, 0, null);
+		Graphics2D g2 = (Graphics2D) g;
+
+		Insets insets = getBorder().getBorderInsets(this);
+
+		g2.drawLine(insets.left, insets.top + 124, insets.left + width - 256 - insets.right, insets.top + 124);
+		g2.drawImage(image, width - 256 - insets.right, insets.top, null);
 	}
 }
