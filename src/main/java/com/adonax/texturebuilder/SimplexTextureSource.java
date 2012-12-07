@@ -144,67 +144,54 @@ public class SimplexTextureSource extends JPanel
 		this.host = host;
 		this.colorAxis = colorAxis;
 		
-		setLayout(null);
-		
-		final Rectangle colorBarArea = new Rectangle(0, 0, width, 24);
-		
-		addMouseListener(new MouseListener(){
+		setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (colorBarArea.contains(e.getPoint()))
-				{
-					host.cbSelector.setBounds(left, top, 272, 
-							STBPanel.BARS * 32 
-							+ 34 );
-					host.cbSelector.setCallback(getSelf());
-					host.cbSelector.setVisible(true);
-				}
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub	
-			}
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub	
-			}
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub	
-			}});
-		
 		xScaleLbl = new JLabel("X Scale");
 		yScaleLbl = new JLabel("Y Scale");
 		xTranslateLbl = new JLabel("X Trans");
 		yTranslateLbl = new JLabel("Y Trans");
 		minLbl = new JLabel("Min");
 		maxLbl = new JLabel("Max");
-		
-		xScaleLbl.setBounds(0, 32, 64, 24);
-		yScaleLbl.setBounds(0, 64, 64, 24);
-		xTranslateLbl.setBounds(0, 96, 64, 24);
-		yTranslateLbl.setBounds(0, 128, 64, 24);
-		minLbl.setBounds(0, 160, 64, 24);
-		maxLbl.setBounds(0, 192, 64, 24);
-		
-		add(xScaleLbl);
-		add(yScaleLbl);
-		add(xTranslateLbl);
-		add(yTranslateLbl);
-		add(minLbl);
-		add(maxLbl);
-		
+
+		c.anchor = GridBagConstraints.LINE_START;
+
+		c.gridx = 1;
+		c.gridy = 1;
+		add(xScaleLbl, c);
+
+		c.gridx = 1;
+		c.gridy = 2;
+		add(yScaleLbl, c);
+
+		c.gridx = 1;
+		c.gridy = 3;
+		add(xTranslateLbl, c);
+
+		c.gridx = 1;
+		c.gridy = 4;
+		add(yTranslateLbl, c);
+
+		c.gridx = 1;
+		c.gridy = 5;
+		add(minLbl, c);
+
+		c.gridx = 1;
+		c.gridy = 6;
+		add(maxLbl, c);
+
+ 		c.anchor = GridBagConstraints.CENTER;
+
 		scaleLock = new JCheckBox();
-		scaleLock.setBounds(42, 52, 18, 16);
 		scaleLock.setSelected(false);
 		scaleLocked = false;
-		add(scaleLock);
+
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridheight = 2;
+		add(scaleLock, c);
+		c.gridheight = 1;
+
 		scaleLock.addActionListener(new ActionListener(){
 
 			@Override
@@ -221,25 +208,45 @@ public class SimplexTextureSource extends JPanel
 		yTranslateSlider = new JSlider(-1024, 1024, 0);
 		minClampSlider = new JSlider(-1024, 1024, -1024);
 		maxClampSlider = new JSlider(-1024, 1024, 1024);
-		
-		add(xScaleSlider);
-		add(yScaleSlider);
-		add(xTranslateSlider);
-		add(yTranslateSlider);
-		add(minClampSlider);
-		add(maxClampSlider);
-		
-		xScaleSlider.setBounds(64, 32, 128, 24);
-		yScaleSlider.setBounds(64, 64, 128, 24);
-		xTranslateSlider.setBounds(64, 96, 128, 24);
-		yTranslateSlider.setBounds(64, 128, 128, 24);		
-		minClampSlider.setBounds(64, 160, 128, 24);
-		maxClampSlider.setBounds(64, 192, 128, 24);
+
+		int sliderWidth = 110;
+		int sliderHeight = xScaleSlider.getPreferredSize().height;
+		Dimension sliderDim = new Dimension(sliderWidth, sliderHeight);
+
+		c.gridx = 2;
+		c.gridy = 1;
+		xScaleSlider.setPreferredSize(sliderDim);
+		add(xScaleSlider, c);
+
+		c.gridx = 2;
+		c.gridy = 2;
+		yScaleSlider.setPreferredSize(sliderDim);
+		add(yScaleSlider, c);
+
+		c.gridx = 2;
+		c.gridy = 3;
+		xTranslateSlider.setPreferredSize(sliderDim);
+		add(xTranslateSlider, c);
+
+		c.gridx = 2;
+		c.gridy = 4;
+		yTranslateSlider.setPreferredSize(sliderDim);
+		add(yTranslateSlider, c);
+
+		c.gridx = 2;
+		c.gridy = 5;
+		minClampSlider.setPreferredSize(sliderDim);
+		add(minClampSlider, c);
+
+		c.gridx = 2;
+		c.gridy = 6;
+		maxClampSlider.setPreferredSize(sliderDim);
+		add(maxClampSlider, c);
 		
 		xScaleSlider.addChangeListener(new ChangeListener(){
 
 			@Override
-			public void stateChanged(ChangeEvent e) 
+			public void stateChanged(ChangeEvent e)
 			{
 				xScale = xScaleSlider.getValue() / PRECISION;
 				xScaleVal.setText(String.valueOf(xScale));
@@ -331,19 +338,36 @@ public class SimplexTextureSource extends JPanel
 		minVal = new JTextField(String.valueOf(minClamp));
 		maxClamp = 1;
 		maxVal = new JTextField(String.valueOf(maxClamp));
-		add(xScaleVal);
-		add(yScaleVal);
-		add(xTranslationVal);
-		add(yTranslationVal);
-		add(minVal);
-		add(maxVal);
-		
-		xScaleVal.setBounds(208, 32, 48, 24);
-		yScaleVal.setBounds(208, 64, 48, 24);
-		xTranslationVal.setBounds(208, 96, 48, 24);
-		yTranslationVal.setBounds(208, 128, 48, 24);
-		minVal.setBounds(208, 160, 48, 24);
-		maxVal.setBounds(208, 192, 48, 24);
+
+		c.gridx = 3;
+		c.gridy = 1;
+		xScaleVal.setColumns(4);
+		add(xScaleVal, c);
+
+		c.gridx = 3;
+		c.gridy = 2;
+		yScaleVal.setColumns(4);
+		add(yScaleVal, c);
+
+		c.gridx = 3;
+		c.gridy = 3;
+		xTranslationVal.setColumns(4);
+		add(xTranslationVal, c);
+
+		c.gridx = 3;
+		c.gridy = 4;
+		yTranslationVal.setColumns(4);
+		add(yTranslationVal, c);
+
+		c.gridx = 3;
+		c.gridy = 5;
+		minVal.setColumns(4);
+		add(minVal, c);
+
+		c.gridx = 3;
+		c.gridy = 6;
+		maxVal.setColumns(4);
+		add(maxVal, c);
 		
 		xScaleVal.addActionListener(new ActionListener()
 		{
@@ -428,9 +452,18 @@ public class SimplexTextureSource extends JPanel
 		absMap.setBounds(78, 224, 54, 24);
 		noMap.setBounds(134, 224, 54, 24);
 
-		add(noMap);
-		add(absMap);
-		add(compress01Map);
+		JPanel radioPanel = new JPanel();
+		radioPanel.setLayout(new FlowLayout());
+		radioPanel.add(compress01Map);
+		radioPanel.add(absMap);
+		radioPanel.add(noMap);
+
+		c.gridx = 0;
+		c.gridy = 7;
+		c.gridwidth = 4;
+		add(radioPanel, c);
+		c.gridwidth = 1;
+
 
 		absMap.addActionListener(new ActionListener(){
 
@@ -457,6 +490,36 @@ public class SimplexTextureSource extends JPanel
 			}
 		});
 
+		JPanel colorAxisImagePanel = new JPanel() {
+			@Override
+			public void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				g.drawImage(SimplexTextureSource.this.colorAxis.img, 0, 0, null);
+			}
+
+			@Override
+			public Dimension getPreferredSize() {
+				return new Dimension(SimplexTextureSource.this.colorAxis.img.getWidth(), SimplexTextureSource.this.colorAxis.img.getHeight());
+			}
+		};
+		colorAxisImagePanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent mouseEvent) {
+				host.cbSelector.setBounds(left, top, 272, STBPanel.BARS * 32 + 34);
+				host.cbSelector.setCallback(getSelf());
+				host.cbSelector.setVisible(true);
+				repaint();
+			}
+		});
+
+        c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 4;
+		c.anchor = GridBagConstraints.LINE_START;
+		add(colorAxisImagePanel, c);
+		c.gridwidth = 1;
+		c.anchor = GridBagConstraints.CENTER;
+
 		
 		// image building variables, initializations
 		cols = 256;
@@ -464,7 +527,27 @@ public class SimplexTextureSource extends JPanel
 		
 		image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_ARGB);
 		noiseArray = new float[cols][rows];
-		
+
+		JPanel imagePanel = new JPanel() {
+			@Override
+			public void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				g.drawImage(image, 0, 0, null);
+			}
+
+			@Override
+			public Dimension getPreferredSize() {
+				return new Dimension(cols, rows);
+			}
+		};
+
+		c.gridx = 0;
+		c.gridy = 8;
+		c.gridwidth = 4;
+		c.anchor = GridBagConstraints.LINE_START;
+		add(imagePanel, c);
+		c.gridwidth = 1;
+		c.anchor = GridBagConstraints.CENTER;
 	}
 	
 	private SimplexTextureSource getSelf() {return this;}
@@ -556,17 +639,4 @@ public class SimplexTextureSource extends JPanel
 		repaint();
 		host.remix();
 	}
-	
-	public void paintComponent(Graphics g)
-	{
-		Graphics2D g2 = (Graphics2D) g;
-		
-		// refresh screen
-		g2.setBackground(new Color(255, 255, 255, 255));  //230,250,255
-		g2.clearRect(0, 0, width, height);
-
-		g2.drawImage(colorAxis.img, 0, 4, null);
-		g2.drawImage(image, 0, 256, null);
-	}
-	
 }
