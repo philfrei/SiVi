@@ -48,7 +48,15 @@ public class ExportFrame extends JDialog {
 
 		for (ExportCode code : supportedLangs) {
 			JTextArea textArea = new JTextArea();
+
+			String codeStr = code.getCode();
+			int pos = codeStr.indexOf("// --- end dynamically generated code");
+			if (pos < 0) {
+				pos = 0;
+			}
+
 			textArea.setText(code.getCode());
+			textArea.setCaretPosition(pos);
 			textAreas.add(textArea);
 
 			cards.add(new JScrollPane(textArea), code.getLang());
