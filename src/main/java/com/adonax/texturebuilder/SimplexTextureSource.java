@@ -32,8 +32,7 @@ public class SimplexTextureSource extends JPanel
 	
 	private BufferedImage image;
 	float[][] noiseArray;
-	
-	private int width, height;
+
 	private int cols, rows;
 //	private int[] pixel;
 
@@ -108,9 +107,7 @@ public class SimplexTextureSource extends JPanel
 	
 	ButtonGroup mappingOptions;
 	JRadioButton noMap, absMap, compress01Map;
-//	JCheckBox useColorMapCheckBox;
-//	boolean useColorMapSelected;
-	
+
 	public void setMap(int i)
 	{
 		switch (i)
@@ -139,8 +136,6 @@ public class SimplexTextureSource extends JPanel
 	SimplexTextureSource(final int left, final int top, int width, int height, 
 			ColorAxis colorAxis, final STBPanel host)
 	{
-		this.width = width;
-		this.height = height;
 		this.host = host;
 		this.colorAxis = colorAxis;
 		
