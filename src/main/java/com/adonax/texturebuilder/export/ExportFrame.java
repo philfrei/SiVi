@@ -19,8 +19,13 @@ package com.adonax.texturebuilder.export;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -73,8 +78,29 @@ public class ExportFrame extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				int i = cards.getSelectedIndex();
-				System.out.println("selected index is: " + i);
-				System.out.println("TODO: save code to file: " + textAreas.get(i).getText());
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setSelectedFile(new File("TestTemplate." + supportedLangs.get(i).getLang().toLowerCase()));
+
+				int userSelection = fileChooser.showSaveDialog(ExportFrame.this);
+				if (userSelection == JFileChooser.APPROVE_OPTION) {
+					File saveAsFile = fileChooser.getSelectedFile();
+
+					BufferedWriter writer = null;
+					try {
+						writer = new BufferedWriter(new FileWriter(saveAsFile));
+						writer.write(textAreas.get(i).getText());
+					} catch (IOException e) {
+						System.out.println("exception caught" + e);
+					} finally {
+						try {
+							if (writer != null) {
+								writer.close();
+							}
+						} catch (IOException e) {
+							// ignore
+						}
+					}
+				}
 			}
 		});
 
@@ -83,8 +109,8 @@ public class ExportFrame extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				int i = cards.getSelectedIndex();
-				System.out.println("selected index is: " + i);
-				System.out.println("TODO: copy code to clipboard: " + textAreas.get(i).getText());
+				StringSelection data = new StringSelection(textAreas.get(i).getText());
+				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(data, data);
 			}
 		});
 
