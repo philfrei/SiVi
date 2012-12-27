@@ -28,39 +28,33 @@ import com.adonax.utils.SimplexNoise;
 
 public class SimplexTextureSource extends JPanel
 {
-	private static final long serialVersionUID = 1L;
-	
 	private BufferedImage image;
-	float[][] noiseArray;
+	float[][] noiseArray;  // accessed from TextureCombiner
 
 	private int cols, rows;
 //	private int[] pixel;
 
-	JLabel xScaleLbl, yScaleLbl;
-	JLabel xTranslateLbl, yTranslateLbl;
-	JLabel minLbl, maxLbl;
+	private float xScale;
+	private float yScale;
+	private float xTranslate;
+	private float yTranslate;
+	private float minClamp;
+	private float maxClamp;
 	
-	float xScale;
-	float yScale;
-	float xTranslate;
-	float yTranslate;
-	float minClamp;
-	float maxClamp;
+	private JCheckBox scaleLock;
+	private boolean scaleLocked;
+	private float scaleRatio;
+	private final JSlider xScaleSlider, yScaleSlider;
+	private final JSlider xTranslateSlider, yTranslateSlider;
+	private final JSlider minClampSlider, maxClampSlider;
+	private final float PRECISION = 8;
 	
-	JCheckBox scaleLock;
-	boolean scaleLocked;
-	float scaleRatio;
-	final JSlider xScaleSlider, yScaleSlider;
-	final JSlider xTranslateSlider, yTranslateSlider;
-	final JSlider minClampSlider, maxClampSlider;
-	final float PRECISION = 8;
-	
-	JTextField xScaleVal;
-	JTextField yScaleVal;
-	JTextField xTranslationVal;
-	JTextField yTranslationVal;
-	JTextField minVal;
-	JTextField maxVal;
+	private JTextField xScaleVal;
+	private JTextField yScaleVal;
+	private JTextField xTranslationVal;
+	private JTextField yTranslationVal;
+	private JTextField minVal;
+	private JTextField maxVal;
 	
 	// I/O, allows external source to set values
 	// assumption: the ActionListener for each will update
@@ -103,10 +97,10 @@ public class SimplexTextureSource extends JPanel
 	}
 	
 	
-	JTextField functionText;
+	private JTextField functionText;
 	
-	ButtonGroup mappingOptions;
-	JRadioButton noMap, absMap, compress01Map;
+	private ButtonGroup mappingOptions;
+	private JRadioButton noMap, absMap, compress01Map;
 
 	public void setMap(int i)
 	{
@@ -124,14 +118,14 @@ public class SimplexTextureSource extends JPanel
 	}
 	
 	
-	ColorAxis colorAxis;
+	ColorAxis colorAxis;  // accessed from outside
 	public void setColorAxis(ColorAxis colorAxis)
 	{
 		this.colorAxis = colorAxis;
 	}
 	
 	
-	final STBPanel host;
+	private final STBPanel host;
 	
 	SimplexTextureSource(final int left, final int top, int width, int height, 
 			ColorAxis colorAxis, final STBPanel host)
@@ -142,12 +136,12 @@ public class SimplexTextureSource extends JPanel
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
-		xScaleLbl = new JLabel("X Scale");
-		yScaleLbl = new JLabel("Y Scale");
-		xTranslateLbl = new JLabel("X Trans");
-		yTranslateLbl = new JLabel("Y Trans");
-		minLbl = new JLabel("Min");
-		maxLbl = new JLabel("Max");
+		JLabel xScaleLbl = new JLabel("X Scale");
+		JLabel yScaleLbl = new JLabel("Y Scale");
+		JLabel xTranslateLbl = new JLabel("X Trans");
+		JLabel yTranslateLbl = new JLabel("Y Trans");
+		JLabel minLbl = new JLabel("Min");
+		JLabel maxLbl = new JLabel("Max");
 
 		c.anchor = GridBagConstraints.LINE_START;
 
