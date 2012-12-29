@@ -42,7 +42,7 @@ public class ExportFrame extends JDialog {
 		final JTabbedPane cards = new JTabbedPane();
 
 		// TODO: properly instantiate the texture parameters
-		TextureParams params = new TextureParams();
+		TextureParams params = null;
 
 		// supported langauges instantiated here
 		final java.util.List<ExportCode> supportedLangs = new ArrayList<ExportCode>();

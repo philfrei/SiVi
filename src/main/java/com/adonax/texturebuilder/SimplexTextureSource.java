@@ -24,6 +24,8 @@ import java.awt.image.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import com.adonax.texturebuilder.export.ColorSpectrum;
+import com.adonax.texturebuilder.export.TextureParams;
 import com.adonax.utils.SimplexNoise;
 
 public class SimplexTextureSource extends JPanel
@@ -627,5 +629,28 @@ public class SimplexTextureSource extends JPanel
 //			+ yTranslationVal.getText() + ");");
 		repaint();
 		host.remix();
+	}
+
+	public TextureParams getTextureParams() {
+		TextureParams.NoiseNormalization normalize;
+
+		if (mappingOptions.getSelection().equals(compress01Map.getModel())) {
+			normalize = TextureParams.NoiseNormalization.SMOOTH;
+		} else if (mappingOptions.getSelection().equals(absMap.getModel())) {
+			normalize = TextureParams.NoiseNormalization.ABS;
+		} else {
+			normalize = TextureParams.NoiseNormalization.NONE;
+		}
+
+		return new TextureParams(
+				xScale,
+				yScale,
+				xTranslate,
+				yTranslate,
+				minClamp,
+				maxClamp,
+				normalize,
+				new ColorSpectrum(colorAxis.data)
+		);
 	}
 }
