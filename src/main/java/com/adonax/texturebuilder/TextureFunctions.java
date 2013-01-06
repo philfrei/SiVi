@@ -20,7 +20,6 @@ package com.adonax.texturebuilder;
 import com.adonax.utils.SimplexNoise;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +41,8 @@ public class TextureFunctions {
 
 	/**
 	 * Generate the data necessary to create a single texture.
+	 *
+	 * This is a pure function.
 	 *
 	 * @param width     image width
 	 * @param height    image height
@@ -77,11 +78,14 @@ public class TextureFunctions {
 	/**
 	 * Combine multiple textures into one.
 	 *
+	 * This is a pure function.
+	 *
 	 * @param textures    to combine
 	 * @param cp          combine parameters from TextureCombiner
+	 *
+	 * @return pixel array containing argb values suitable for BufferedImage.setRGB
 	 */
-	// TODO-SK: temporarily imageCombined passed in and thus not a pure function
-	public static void combine(List<TextureData> textures, CombineParams cp, BufferedImage imageCombined) {
+	public static int[][] combine(List<TextureData> textures, CombineParams cp) {
 		int channels = textures.size();
 
 		int width = -1;
@@ -104,17 +108,13 @@ public class TextureFunctions {
 
 		// There are between 1-4 channel groups and each one has at least one member.
 		// ChannelGroup.members is a set of indices ranging from 0-3
-
-		float[][] noiseArray = new float[width][height];
-
-		CombineParams combineParams = cp;
 		Map<CombineParams.ChannelMode, ChannelGroup> channelData = new HashMap<CombineParams.ChannelMode, ChannelGroup>();
 
-		for (CombineParams.ChannelMode stage1ChannelMode : combineParams.getGroups())
+		for (CombineParams.ChannelMode stage1ChannelMode : cp.getGroups())
 		{
 			ChannelGroup cg = new ChannelGroup();
 			for (int i = 0;  i < channels;  i++) {
-				if (stage1ChannelMode == combineParams.getChannelMode(i)) {
+				if (stage1ChannelMode == cp.getChannelMode(i)) {
 					cg.members.add(i);
 				}
 			}
@@ -125,7 +125,7 @@ public class TextureFunctions {
 			{
 				float[] weight = new float[channels];
 				for (int i : cg.members) {
-					weight[i] = combineParams.getStage1Weight(i) / 64f;
+					weight[i] = cp.getStage1Weight(i) / 64f;
 				}
 
 				for (int j = 0; j < 256; j++) {
@@ -145,10 +145,10 @@ public class TextureFunctions {
 				float weightSum = 0;
 
 				for (int i : cg.members) {
-					weightSum += combineParams.getStage1Weight(i);
+					weightSum += cp.getStage1Weight(i);
 				}
 				for (int i : cg.members) {
-					weight[i] = combineParams.getStage1Weight(i) / weightSum;
+					weight[i] = cp.getStage1Weight(i) / weightSum;
 				}
 
 				for (int j = 0; j < 256; j++) {
@@ -168,7 +168,7 @@ public class TextureFunctions {
 					for (int i = 0; i < 256; i++) {
 						float sum = 0;
 						for (int idx : cg.members) {
-							sum += textures.get(idx).noiseArray[i][j] * (combineParams.getStage1Weight(idx) / 128f);
+							sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
 						}
 						cg.noiseVals[i][j] = (float)Math.sin(i/24f + sum);
 					}
@@ -181,7 +181,7 @@ public class TextureFunctions {
 					for (int i = 0; i < 256; i++) {
 						float sum = 0;
 						for (int idx : cg.members) {
-							sum += textures.get(idx).noiseArray[i][j] * (combineParams.getStage1Weight(idx) / 128f);
+							sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
 						}
 						cg.noiseVals[i][j] = (i/256f + sum);
 					}
@@ -194,7 +194,7 @@ public class TextureFunctions {
 					for (int i = 0; i < 256; i++) {
 						float sum = 0;
 						for (int idx : cg.members) {
-							sum += textures.get(idx).noiseArray[i][j] * (combineParams.getStage1Weight(idx) / 128f);
+							sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
 						}
 						cg.noiseVals[i][j] = (j/256f + sum);
 					}
@@ -210,7 +210,7 @@ public class TextureFunctions {
 					for (int i = 0; i < 256; i++) {
 						float sum = 0;
 						for (int idx : cg.members) {
-							sum += textures.get(idx).noiseArray[i][j] * (combineParams.getStage1Weight(idx) / 128f);
+							sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
 						}
 						float r = (float)middle.distance(i, j)/192f;
 						r = Math.min(r, 1);
@@ -222,12 +222,13 @@ public class TextureFunctions {
 		}
 
 		// now turn this into a graphic...via the colormap
+		int[][] pixelArray = new int[width][height];
 
 		// stage 2
 
 		ArrayList<CombineParams.ChannelMode> channelArray = new ArrayList<CombineParams.ChannelMode>();
 		for (int c = 0;  c < channels;  c++) {
-			CombineParams.ChannelMode channelMode = combineParams.getChannelMode(c);
+			CombineParams.ChannelMode channelMode = cp.getChannelMode(c);
 
 			if (!channelArray.contains(channelMode)) {
 				channelArray.add(channelMode);
@@ -240,18 +241,18 @@ public class TextureFunctions {
 				//sts[cg.members.get(0)].colorAxis.data;
 
 		for (int i = 0; i < chCount; i++) {
-			weight[i] = combineParams.getStage2Weight(channelArray.get(i));  // value from slider/txtfield
+			weight[i] = cp.getStage2Weight(channelArray.get(i));  // value from slider/txtfield
 			cMapData[i] = textures.get(channelData.get(channelArray.get(i)).members.get(0)).spectrum.data;  //colormap data, shared
 		}
 
 		double lerpSum = 0;
 		for (int cgIdx = 0; cgIdx < chCount; cgIdx++) {
-			if (combineParams.getGroupMode(channelArray.get(cgIdx)) == CombineParams.GroupMode.LERP) {
+			if (cp.getGroupMode(channelArray.get(cgIdx)) == CombineParams.GroupMode.LERP) {
 				lerpSum += weight[cgIdx];
 			}
 		}
 		for (int cgIdx = 0; cgIdx < chCount; cgIdx++) {
-			if (combineParams.getGroupMode(channelArray.get(cgIdx)) == CombineParams.GroupMode.LERP) {
+			if (cp.getGroupMode(channelArray.get(cgIdx)) == CombineParams.GroupMode.LERP) {
 				weight[cgIdx] /= lerpSum;  // lerp factor
 			} else {
 				// presumably SUM or MOD
@@ -273,10 +274,10 @@ public class TextureFunctions {
 
 					int colorMapIdx = (int)(channelData.get(stage1ChannelModeKey).noiseVals[i][j] * denormalizingFactor);
 
-					if (combineParams.getGroupMode(stage1ChannelModeKey) == CombineParams.GroupMode.ADD ||
-							combineParams.getGroupMode(stage1ChannelModeKey) == CombineParams.GroupMode.LERP) {
+					if (cp.getGroupMode(stage1ChannelModeKey) == CombineParams.GroupMode.ADD ||
+							cp.getGroupMode(stage1ChannelModeKey) == CombineParams.GroupMode.LERP) {
 						colorMapIdx = Math.min(255, Math.max(0, colorMapIdx));
-					} else if (combineParams.getGroupMode(stage1ChannelModeKey) == CombineParams.GroupMode.RING) {
+					} else if (cp.getGroupMode(stage1ChannelModeKey) == CombineParams.GroupMode.RING) {
 						while (colorMapIdx < 0) colorMapIdx += 256;
 						colorMapIdx %= 256;
 					} else {
@@ -293,11 +294,10 @@ public class TextureFunctions {
 						(int)Math.min(255, Math.max(0, gPixel)),
 						(int)Math.min(255, Math.max(0, bPixel)));
 
-				imageCombined.setRGB(i, j, pixel);
+				pixelArray[i][j] = pixel;
 			}
 		}
 
-		// TODO-SK: temporary
-		//return new TextureData(width, height, noiseArray, tp.spectrum);
+		return pixelArray;
 	}
 }

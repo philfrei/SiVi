@@ -18,9 +18,8 @@
 package com.adonax.texturebuilder;
 
 /**
- * Immutable data structure containing the return result from texture
- * generation and combine functions.  Contains all necessary data to
- * generate an image.
+ * Immutable data structure containing the return result from a single texture
+ * generation function.  Contains all necessary data to generate an image.
  */
 public class TextureData {
 

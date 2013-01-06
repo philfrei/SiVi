@@ -286,7 +286,13 @@ public class TextureCombiner extends JPanel
 			textures.add(data);
 		}
 
-		TextureFunctions.combine(textures, getCombineParams(), image);
+		int[][] pixels = TextureFunctions.combine(textures, getCombineParams());
+
+		for (int j = 0;  j < 256;  j++) {
+			for (int i = 0;  i < 256;  i++) {
+				image.setRGB(i, j, pixels[i][j]);
+			}
+		}
 
 		repaint();
 	}
