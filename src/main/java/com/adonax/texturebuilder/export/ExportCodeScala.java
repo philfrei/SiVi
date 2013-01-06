@@ -17,6 +17,8 @@
  */
 package com.adonax.texturebuilder.export;
 
+import com.adonax.texturebuilder.TextureParams;
+
 public class ExportCodeScala extends ExportCode {
 
 	public ExportCodeScala(TextureParams params) {

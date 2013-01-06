@@ -15,7 +15,7 @@
  *  License along with SiVi.  If not, see
  *  <http://www.gnu.org/licenses/>.
  */
-package com.adonax.texturebuilder.export;
+package com.adonax.texturebuilder;
 
 import java.util.Arrays;
 
@@ -24,7 +24,7 @@ import java.util.Arrays;
  */
 public class ColorSpectrum {
 
-	private final int[] data;
+	public final int[] data;  // TODO-SK: temporarily public for TextureFunctions
 
 	public ColorSpectrum() {
 		data = new int[256];

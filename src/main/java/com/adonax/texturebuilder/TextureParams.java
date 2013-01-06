@@ -15,7 +15,7 @@
  *  License along with SiVi.  If not, see
  *  <http://www.gnu.org/licenses/>.
  */
-package com.adonax.texturebuilder.export;
+package com.adonax.texturebuilder;
 
 /**
  * Immutable class representing parameters for a single texture source.

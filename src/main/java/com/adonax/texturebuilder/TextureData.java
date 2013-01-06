@@ -15,32 +15,29 @@
  *  License along with SiVi.  If not, see
  *  <http://www.gnu.org/licenses/>.
  */
-package com.adonax.texturebuilder.export;
-
-import com.adonax.texturebuilder.TextureParams;
+package com.adonax.texturebuilder;
 
 /**
- * Extend to support a new language for export.
+ * Immutable data structure containing the return result from texture
+ * generation and combine functions.  Contains all necessary data to
+ * generate an image.
  */
-abstract public class ExportCode {
+public class TextureData {
 
-	private final String lang;
-	private final TextureParams params;
+	public final int width;
+	public final int height;
 
-	public ExportCode(String lang, TextureParams params) {
-		this.lang = lang;
-		this.params = params;
+	public final float[][] noiseArray;
+	public final ColorSpectrum spectrum;
+
+	public TextureData(int width, int height, float[][] noiseArray, ColorSpectrum spectrum) {
+		this.width = width;
+		this.height = height;
+
+		assert(width > 0);
+		assert(height > 0);
+		assert(noiseArray.length == width * height);
+		this.noiseArray = noiseArray;
+		this.spectrum = spectrum;
 	}
-
-	/**
-	 * @return Language string
-	 */
-	public String getLang() {
-		return lang;
-	}
-
-	/**
-	 * @return self-contained code that implements specified texture.
-	 */
-	abstract public String getCode();
 }

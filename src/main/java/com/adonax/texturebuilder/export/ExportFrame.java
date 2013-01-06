@@ -17,6 +17,8 @@
  */
 package com.adonax.texturebuilder.export;
 
+import com.adonax.texturebuilder.TextureParams;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;

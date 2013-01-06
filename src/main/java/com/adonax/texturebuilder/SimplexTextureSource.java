@@ -24,17 +24,11 @@ import java.awt.image.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.adonax.texturebuilder.export.ColorSpectrum;
-import com.adonax.texturebuilder.export.TextureParams;
-import com.adonax.utils.SimplexNoise;
-
 public class SimplexTextureSource extends JPanel
 {
 	private BufferedImage image;
-	float[][] noiseArray;  // accessed from TextureCombiner
 
 	private int cols, rows;
-//	private int[] pixel;
 
 	private float xScale;
 	private float yScale;
@@ -517,7 +511,6 @@ public class SimplexTextureSource extends JPanel
 		rows = 256;
 		
 		image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_ARGB);
-		noiseArray = new float[cols][rows];
 
 		JPanel imagePanel = new JPanel() {
 			@Override
@@ -545,82 +538,28 @@ public class SimplexTextureSource extends JPanel
 	
 	public void update()
 	{
-		
-		int mapChoice = 0;
-		if (mappingOptions.getSelection().equals(compress01Map.getModel()))
-		{
-			mapChoice = 0;
-		}
-		if (mappingOptions.getSelection().equals(absMap.getModel()))
-		{
-			mapChoice = 1;
-		}
-		if (mappingOptions.getSelection().equals(noMap.getModel())) 
-		{
-			mapChoice = 2;
+		TextureParams tp = getTextureParams();
+		TextureData data = TextureFunctions.generate(cols, rows, tp);
+
+		for (int j = 0;  j < data.height;  j++) {
+			for (int i = 0;  i < data.width;  i++) {
+				int idx = (int)(data.noiseArray[i][j] * 255);
+				int pixel = 0;
+				if (tp.normalize == TextureParams.NoiseNormalization.SMOOTH ||
+						tp.normalize == TextureParams.NoiseNormalization.ABS) {
+					int argb = data.spectrum.getARGB(idx);
+					pixel = ColorAxis.calculateARGB(255,
+							ColorAxis.getRed(argb),
+							ColorAxis.getGreen(argb),
+							ColorAxis.getBlue(argb));
+				} else if (tp.normalize == TextureParams.NoiseNormalization.NONE) {
+					pixel = ColorAxis.calculateARGB(255, idx, idx, idx);
+				}
+
+				image.setRGB(i, j, pixel);
+			}
 		}
 
-		int pixel = 0;
-		for (int j = 0; j < rows; j++)
-		{
-			double y = (j * yScale) / rows + yTranslate; 
-			
-			for (int i = 0; i < cols; i++)
-			{
-				float x = (i * xScale) / cols + xTranslate;  
-				
-				float noiseVal = (float)SimplexNoise.noise(x, y);
-				noiseVal = Math.min(Math.max(noiseVal, minClamp),
-						maxClamp);
-				
-				switch (mapChoice)
-				{
-					case 0:
-						noiseVal = (noiseVal + 1) / 2;
-						break;
-					case 1:
-						noiseVal = Math.abs(noiseVal);
-						break;
-					case 2:
-						// use raw noiseVal
-						break;
-					case 3:
-						// use ColorMap locally
-				}
-				int idx = (int)(noiseVal * 255);
-				if (mapChoice == 0 || mapChoice ==1)
-				{	
-					int argb = colorAxis.data[idx];
-					pixel = ColorAxis.calculateARGB(
-							255, 
-							ColorAxis.getRed(argb),
-							ColorAxis.getGreen(argb), 
-							ColorAxis.getBlue(argb));
-				}
-				else if (mapChoice == 2)
-				{
-					pixel = ColorAxis.calculateARGB(
-							255, idx, idx, idx); 
-				}
-					
-				image.setRGB(i, j, pixel);
-				
-				noiseArray[i][j] = noiseVal;
-				
-//				if (i == 0 && j == 0)
-//				{
-//					System.out.println("noiseVal:" + noiseVal
-//							+ " xScale:" + xScale
-//							+ " yScale:" + yScale
-//							+ " xTranslate:" + xTranslate
-//							+ " yTranslate:" + yTranslate
-//							+ " Min:" + minClamp
-//							+ " Max:" + maxClamp
-//							+ " idx:" + idx);
-//				}
-			}
-		}	
-		
 //		functionText.setText("noise((x / width) * " 
 //			+ xScaleVal.getText() + " + " 
 //			+ xTranslationVal.getText()
