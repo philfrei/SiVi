@@ -22,6 +22,7 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import com.adonax.texturebuilder.export.ExportFrame;
 import com.adonax.tutorial.TutorialFramework;
 
 public class STBPanel extends JPanel
@@ -30,6 +31,10 @@ public class STBPanel extends JPanel
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	// stored to be parent of sub-dialogs
+	private final STBFrame host;
+
 	private ColorAxis[] colorAxisSet;
 	
 	public TextureCombiner tc;
@@ -48,10 +53,12 @@ public class STBPanel extends JPanel
 	{
 		return colorAxisSet[index];
 	}
-	
-	
+
+
 	STBPanel(int width, int height, final STBFrame host)
 	{
+		this.host = host;
+
 		setLayout(new BorderLayout());
 		
 		colorAxisSet = new ColorAxis[BARS];
@@ -111,10 +118,20 @@ public class STBPanel extends JPanel
 			}
 		});
 
+		JButton exportBtn = new JButton("Export");
+		exportBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				new ExportFrame(STBPanel.this.host);
+			}
+		});
+
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
 		buttonPanel.add(tutorialBtn);
+		// TODO-SK: disabled until feature is complete buttonPanel.add(exportBtn);
 
 		add(buttonPanel, BorderLayout.SOUTH);
 
