@@ -131,7 +131,7 @@ public class STBPanel extends JPanel
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
 		buttonPanel.add(tutorialBtn);
-		buttonPanel.add(exportBtn);
+		// TODO-SK: disabled until feature is complete buttonPanel.add(exportBtn);
 
 		add(buttonPanel, BorderLayout.SOUTH);
 
