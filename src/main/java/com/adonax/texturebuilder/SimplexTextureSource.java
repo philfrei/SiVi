@@ -24,44 +24,33 @@ import java.awt.image.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.adonax.utils.SimplexNoise;
-
 public class SimplexTextureSource extends JPanel
 {
-	private static final long serialVersionUID = 1L;
-	
 	private BufferedImage image;
-	float[][] noiseArray;
-	
-	private int width, height;
-	private int cols, rows;
-//	private int[] pixel;
 
-	JLabel xScaleLbl, yScaleLbl;
-	JLabel xTranslateLbl, yTranslateLbl;
-	JLabel minLbl, maxLbl;
+	private int cols, rows;
+
+	private float xScale;
+	private float yScale;
+	private float xTranslate;
+	private float yTranslate;
+	private float minClamp;
+	private float maxClamp;
 	
-	float xScale;
-	float yScale;
-	float xTranslate;
-	float yTranslate;
-	float minClamp;
-	float maxClamp;
+	private JCheckBox scaleLock;
+	private boolean scaleLocked;
+	private float scaleRatio;
+	private final JSlider xScaleSlider, yScaleSlider;
+	private final JSlider xTranslateSlider, yTranslateSlider;
+	private final JSlider minClampSlider, maxClampSlider;
+	private final float PRECISION = 8;
 	
-	JCheckBox scaleLock;
-	boolean scaleLocked;
-	float scaleRatio;
-	final JSlider xScaleSlider, yScaleSlider;
-	final JSlider xTranslateSlider, yTranslateSlider;
-	final JSlider minClampSlider, maxClampSlider;
-	final float PRECISION = 8;
-	
-	JTextField xScaleVal;
-	JTextField yScaleVal;
-	JTextField xTranslationVal;
-	JTextField yTranslationVal;
-	JTextField minVal;
-	JTextField maxVal;
+	private JTextField xScaleVal;
+	private JTextField yScaleVal;
+	private JTextField xTranslationVal;
+	private JTextField yTranslationVal;
+	private JTextField minVal;
+	private JTextField maxVal;
 	
 	// I/O, allows external source to set values
 	// assumption: the ActionListener for each will update
@@ -104,13 +93,11 @@ public class SimplexTextureSource extends JPanel
 	}
 	
 	
-	JTextField functionText;
+	private JTextField functionText;
 	
-	ButtonGroup mappingOptions;
-	JRadioButton noMap, absMap, compress01Map;
-//	JCheckBox useColorMapCheckBox;
-//	boolean useColorMapSelected;
-	
+	private ButtonGroup mappingOptions;
+	private JRadioButton noMap, absMap, compress01Map;
+
 	public void setMap(int i)
 	{
 		switch (i)
@@ -127,32 +114,30 @@ public class SimplexTextureSource extends JPanel
 	}
 	
 	
-	ColorAxis colorAxis;
+	ColorAxis colorAxis;  // accessed from outside
 	public void setColorAxis(ColorAxis colorAxis)
 	{
 		this.colorAxis = colorAxis;
 	}
 	
 	
-	final STBPanel host;
+	private final STBPanel host;
 	
 	SimplexTextureSource(final int left, final int top, int width, int height, 
 			ColorAxis colorAxis, final STBPanel host)
 	{
-		this.width = width;
-		this.height = height;
 		this.host = host;
 		this.colorAxis = colorAxis;
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
-		xScaleLbl = new JLabel("X Scale");
-		yScaleLbl = new JLabel("Y Scale");
-		xTranslateLbl = new JLabel("X Trans");
-		yTranslateLbl = new JLabel("Y Trans");
-		minLbl = new JLabel("Min");
-		maxLbl = new JLabel("Max");
+		JLabel xScaleLbl = new JLabel("X Scale");
+		JLabel yScaleLbl = new JLabel("Y Scale");
+		JLabel xTranslateLbl = new JLabel("X Trans");
+		JLabel yTranslateLbl = new JLabel("Y Trans");
+		JLabel minLbl = new JLabel("Min");
+		JLabel maxLbl = new JLabel("Max");
 
 		c.anchor = GridBagConstraints.LINE_START;
 
@@ -526,7 +511,6 @@ public class SimplexTextureSource extends JPanel
 		rows = 256;
 		
 		image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_ARGB);
-		noiseArray = new float[cols][rows];
 
 		JPanel imagePanel = new JPanel() {
 			@Override
@@ -554,82 +538,28 @@ public class SimplexTextureSource extends JPanel
 	
 	public void update()
 	{
-		
-		int mapChoice = 0;
-		if (mappingOptions.getSelection().equals(compress01Map.getModel()))
-		{
-			mapChoice = 0;
-		}
-		if (mappingOptions.getSelection().equals(absMap.getModel()))
-		{
-			mapChoice = 1;
-		}
-		if (mappingOptions.getSelection().equals(noMap.getModel())) 
-		{
-			mapChoice = 2;
+		TextureParams tp = getTextureParams();
+		TextureData data = TextureFunctions.generate(cols, rows, tp);
+
+		for (int j = 0;  j < data.height;  j++) {
+			for (int i = 0;  i < data.width;  i++) {
+				int idx = (int)(data.noiseArray[i][j] * 255);
+				int pixel = 0;
+				if (tp.normalize == TextureParams.NoiseNormalization.SMOOTH ||
+						tp.normalize == TextureParams.NoiseNormalization.ABS) {
+					int argb = data.spectrum.getARGB(idx);
+					pixel = ColorAxis.calculateARGB(255,
+							ColorAxis.getRed(argb),
+							ColorAxis.getGreen(argb),
+							ColorAxis.getBlue(argb));
+				} else if (tp.normalize == TextureParams.NoiseNormalization.NONE) {
+					pixel = ColorAxis.calculateARGB(255, idx, idx, idx);
+				}
+
+				image.setRGB(i, j, pixel);
+			}
 		}
 
-		int pixel = 0;
-		for (int j = 0; j < rows; j++)
-		{
-			double y = (j * yScale) / rows + yTranslate; 
-			
-			for (int i = 0; i < cols; i++)
-			{
-				float x = (i * xScale) / cols + xTranslate;  
-				
-				float noiseVal = (float)SimplexNoise.noise(x, y);
-				noiseVal = Math.min(Math.max(noiseVal, minClamp),
-						maxClamp);
-				
-				switch (mapChoice)
-				{
-					case 0:
-						noiseVal = (noiseVal + 1) / 2;
-						break;
-					case 1:
-						noiseVal = Math.abs(noiseVal);
-						break;
-					case 2:
-						// use raw noiseVal
-						break;
-					case 3:
-						// use ColorMap locally
-				}
-				int idx = (int)(noiseVal * 255);
-				if (mapChoice == 0 || mapChoice ==1)
-				{	
-					int argb = colorAxis.data[idx];
-					pixel = ColorAxis.calculateARGB(
-							255, 
-							ColorAxis.getRed(argb),
-							ColorAxis.getGreen(argb), 
-							ColorAxis.getBlue(argb));
-				}
-				else if (mapChoice == 2)
-				{
-					pixel = ColorAxis.calculateARGB(
-							255, idx, idx, idx); 
-				}
-					
-				image.setRGB(i, j, pixel);
-				
-				noiseArray[i][j] = noiseVal;
-				
-//				if (i == 0 && j == 0)
-//				{
-//					System.out.println("noiseVal:" + noiseVal
-//							+ " xScale:" + xScale
-//							+ " yScale:" + yScale
-//							+ " xTranslate:" + xTranslate
-//							+ " yTranslate:" + yTranslate
-//							+ " Min:" + minClamp
-//							+ " Max:" + maxClamp
-//							+ " idx:" + idx);
-//				}
-			}
-		}	
-		
 //		functionText.setText("noise((x / width) * " 
 //			+ xScaleVal.getText() + " + " 
 //			+ xTranslationVal.getText()
@@ -638,5 +568,28 @@ public class SimplexTextureSource extends JPanel
 //			+ yTranslationVal.getText() + ");");
 		repaint();
 		host.remix();
+	}
+
+	public TextureParams getTextureParams() {
+		TextureParams.NoiseNormalization normalize;
+
+		if (mappingOptions.getSelection().equals(compress01Map.getModel())) {
+			normalize = TextureParams.NoiseNormalization.SMOOTH;
+		} else if (mappingOptions.getSelection().equals(absMap.getModel())) {
+			normalize = TextureParams.NoiseNormalization.ABS;
+		} else {
+			normalize = TextureParams.NoiseNormalization.NONE;
+		}
+
+		return new TextureParams(
+				xScale,
+				yScale,
+				xTranslate,
+				yTranslate,
+				minClamp,
+				maxClamp,
+				normalize,
+				new ColorSpectrum(colorAxis.data)
+		);
 	}
 }

@@ -21,6 +21,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -28,19 +30,12 @@ import javax.swing.event.*;
 
 public class TextureCombiner extends JPanel
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	BufferedImage image;
-	WritableRaster raster;
-	private int width, height;
-	private int cols, rows;
+	private BufferedImage image;
+  	private int width, height;
 
 	private final int channels = 4;
 
-	private SimplexTextureSource[] sts = 
-			new SimplexTextureSource[channels];
+	private SimplexTextureSource[] sts = new SimplexTextureSource[channels];
 	
 	public void setSTS(SimplexTextureSource sts, int n)
 	{
@@ -79,7 +74,7 @@ public class TextureCombiner extends JPanel
 	}
 	
 	
-	private JSlider[] weightSlider = new JSlider[channels];	
+	private JSlider[] weightSlider = new JSlider[channels];
 	private JTextField[] weightVal = new JTextField[channels];
 	private JLabel[] weightDenominator = new JLabel[channels];
 	private int[] weightStage1 = new int[channels];
@@ -101,11 +96,8 @@ public class TextureCombiner extends JPanel
 		weightStage2Slider[channel].setValue(weight);
 		weightStage2Val[channel].setText(String.valueOf(weight));
 	}
-	
-//	private JCheckBox overflowOption, underflowOption;
-//	private boolean overflowPrevented, underflowPrevented;
-	
-	ArrayList<ChannelGroup> channelGroups; // stage2 members
+
+	private ArrayList<ChannelGroup> channelGroups; // stage2 members
 	
 	TextureCombiner(int width, int height)
 	{
@@ -115,12 +107,9 @@ public class TextureCombiner extends JPanel
 
 		this.width = width;
 		this.height = height;
-		cols = 256;
-		rows = 256;
-		
-		image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_ARGB);
-		raster = image.getRaster();
-		
+
+		image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+
 		setLayout(null);
 
 		JLabel[] stage1Labels = new JLabel[channels];
@@ -135,8 +124,7 @@ public class TextureCombiner extends JPanel
 			add(stage1Labels[i]);
 						
 			stage1Mode[i] = ADD;
-			stage1Button[i] = makeMultiStageButton(i, 0,
-					stageOneText, stage1Mode);
+			stage1Button[i] = makeMultiStageButton(i, 0, stageOneText, stage1Mode);
 			add(stage1Button[i]);
 		
 			weightSlider[i] = makeWeightingSlider(i);
@@ -158,8 +146,7 @@ public class TextureCombiner extends JPanel
 			add(stage2Label[i]);
 	
 			stage2Mode[i] = LERP;
-			stage2Button[i] = makeMultiStageButton(i, 128,
-					stageTwoText, stage2Mode);
+			stage2Button[i] = makeMultiStageButton(i, 128, stageTwoText, stage2Mode);
 			add(stage2Button[i]);
 		
 			weightStage2Slider[i] = makeStage2Slider(i, 128);
@@ -172,8 +159,7 @@ public class TextureCombiner extends JPanel
 	}
 	
 	private JButton makeMultiStageButton(final int idx, int yStart, 
-			final String[] stageTexts, final int[] stageModes)
-	{
+			final String[] stageTexts, final int[] stageModes) {
 		final JButton newButton = new JButton(stageTexts[stageModes[idx]]);
 
 		Insets insets = getBorder().getBorderInsets(this);
@@ -185,8 +171,7 @@ public class TextureCombiner extends JPanel
 			public void actionPerformed(ActionEvent e) 
 			{
 				stageModes[idx] += 1;
-				if (stageModes[idx] >= stageTexts.length)
-				{
+				if (stageModes[idx] >= stageTexts.length) {
 					stageModes[idx] = 0;
 				}
 								
@@ -198,11 +183,9 @@ public class TextureCombiner extends JPanel
 	}
 	
 	
-	private JSlider makeWeightingSlider(final int idx)
-	{
+	private JSlider makeWeightingSlider(final int idx) {
 		weightStage1[idx] = 16;
-		final JSlider weightSlider = new JSlider(0, 64, 
-				weightStage1[idx]);
+		final JSlider weightSlider = new JSlider(0, 64, weightStage1[idx]);
 
 		Insets insets = getBorder().getBorderInsets(this);
 		weightSlider.setBounds(insets.left + 110, insets.top + idx * 32, 128, 24);
@@ -221,11 +204,9 @@ public class TextureCombiner extends JPanel
 		return weightSlider;
 	}
 
-	private JSlider makeStage2Slider(final int idx, int yStart)
-	{
+	private JSlider makeStage2Slider(final int idx, int yStart) {
 		weightStage2[idx] = 64;
-		final JSlider weightSlider = new JSlider(0, 64, 
-				weightStage2[idx]);
+		final JSlider weightSlider = new JSlider(0, 64, weightStage2[idx]);
 
 		Insets insets = getBorder().getBorderInsets(this);
 		weightSlider.setBounds(insets.left + 110, insets.top + idx * 32 + yStart, 128, 24);
@@ -245,11 +226,9 @@ public class TextureCombiner extends JPanel
 		return weightSlider;
 	}
 
-	private JTextField makeWeightingTextField(final int idx)
-	{
+	private JTextField makeWeightingTextField(final int idx) {
 		weightStage1[idx] = 16;
-		final JTextField newJTextField = new JTextField(
-				String.valueOf(weightStage1[idx]));
+		final JTextField newJTextField = new JTextField(String.valueOf(weightStage1[idx]));
 
 		Insets insets = getBorder().getBorderInsets(this);
 		newJTextField.setBounds(insets.left + 262, insets.top + idx * 32, 36, 24);
@@ -263,26 +242,23 @@ public class TextureCombiner extends JPanel
 			}
 		});
 		
-		return newJTextField;	
+		return newJTextField;
 	}
 
-	private JLabel makeWeightDenominatorLabel(final int idx)
-	{
+	private JLabel makeWeightDenominatorLabel(final int idx) {
 		weightStage1[idx] = 16;
 		final JLabel newJLabel = new JLabel("/ 64");
 
 		Insets insets = getBorder().getBorderInsets(this);
 		newJLabel.setBounds(insets.left + 300, insets.top + idx * 32, 48, 24);
 
-		return newJLabel;	
+		return newJLabel;
 	}
 	
 	
-	private JTextField makeStage2TextField(final int idx, int yStart)
-	{
+	private JTextField makeStage2TextField(final int idx, int yStart) {
 		weightStage2[idx] = 64;
-		final JTextField newJTextField = new JTextField(
-				String.valueOf(weightStage2[idx]));
+		final JTextField newJTextField = new JTextField(String.valueOf(weightStage2[idx]));
 
 		Insets insets = getBorder().getBorderInsets(this);
 		newJTextField.setBounds(insets.left + 262, insets.top + idx * 32 + yStart, 48, 24);
@@ -296,256 +272,28 @@ public class TextureCombiner extends JPanel
 			}
 		});
 		
-		return newJTextField;	
+		return newJTextField;
 	}
-	
+
 	public void update()
 	{
 		update2ndStage();
-		
-		for (ChannelGroup cg : channelGroups)
-		{
-			
-//			System.out.println("ch group:" + 
-//				channelGroups.indexOf(cg));
-					
-			// SUM mode
-			if (stage1Mode[cg.members.get(0)] == ADD)
-			{
-				float[] weight = new float[channels];
-				for (int i : cg.members)
-				{
-					weight[i] = weightStage1[i] / 64f;
-					weightDenominator[i].setText(" / 64");
-				}
-				
-				for (int j = 0; j < 256; j++)
-				{
-					for (int i = 0; i < 256; i++)
-					{
-						float sum = 0;
-						for (int idx : cg.members)
-						{
-							sum += sts[idx].noiseArray[i][j]
-								* weight[idx];
-						}
-						cg.noiseVals[i][j] = sum;
-					}
-				}					
-			}
 
-			if (stage1Mode[cg.members.get(0)] == LERP)
-			{
-				float[] weight = new float[channels];
-				float weightSum = 0;
-				
-				for (int i : cg.members)
-				{
-					weightSum += weightStage1[i];
-				}
-				for (int i : cg.members)
-				{
-					weight[i] = weightStage1[i] / weightSum;
-					weightDenominator[i].setText(" / " + weightSum);
+		java.util.List<TextureData> textures = new ArrayList<TextureData>(4);
 
-				}
-				
-				for (int j = 0; j < 256; j++)
-				{
-					for (int i = 0; i < 256; i++)
-					{
-						float sum = 0;
-						for (int idx : cg.members)
-						{
-							sum += sts[idx].noiseArray[i][j]
-								* weight[idx];
-						}
-						cg.noiseVals[i][j] = sum;
-					}
-				}					
-			}			
-			
-			if (stage1Mode[cg.members.get(0)] == SIN)
-			{
-				for (int i : cg.members)
-				{
-					weightDenominator[i].setText(" / 128");
-				}
-				
-				for (int j = 0; j < 256; j++)
-				{
-					for (int i = 0; i < 256; i++)
-					{
-						float sum = 0;
-						for (int idx : cg.members)
-						{
-							sum += sts[idx].noiseArray[i][j]
-								* (weightStage1[idx] / 128f);
-						}
-						cg.noiseVals[i][j] = (float)Math.sin(i/24f + sum);
-					}
-				}					
-			}
-			
-			if (stage1Mode[cg.members.get(0)] == XDIM)
-			{
-				for (int i : cg.members)
-				{
-					weightDenominator[i].setText(" / 128");
-				}
-				
-				for (int j = 0; j < 256; j++)
-				{
-					for (int i = 0; i < 256; i++)
-					{
-						float sum = 0;
-						for (int idx : cg.members)
-						{
-							sum += sts[idx].noiseArray[i][j]
-									* (weightStage1[idx] / 128f);
-						}
-						cg.noiseVals[i][j] = (i/256f + sum);
-					}
-				}					
-			}
+		for (int c = 0;  c < channels;  c++) {
+			TextureData data = TextureFunctions.generate(256, 256, sts[c].getTextureParams());
+			textures.add(data);
+		}
 
-			if (stage1Mode[cg.members.get(0)] == YDIM)
-			{
-				for (int i : cg.members)
-				{
-					weightDenominator[i].setText(" / 128");
-				}
-				
-				for (int j = 0; j < 256; j++)
-				{
-					for (int i = 0; i < 256; i++)
-					{
-						float sum = 0;
-						for (int idx : cg.members)
-						{
-							sum += sts[idx].noiseArray[i][j]
-									* (weightStage1[idx] / 128f);
-						}
-						cg.noiseVals[i][j] = (j/256f + sum);
-					}
-				}					
-			}
-			
-			
-			if (stage1Mode[cg.members.get(0)] == CIRC)
-			{
-				Point middle = new Point(128, 128);
-				
-				for (int i : cg.members)
-				{
-					weightDenominator[i].setText(" / 128");
-				}
-				
-				for (int j = 0; j < 256; j++)
-				{
-					for (int i = 0; i < 256; i++)
-					{
-						float sum = 0;
-						for (int idx : cg.members)
-						{
-							sum += sts[idx].noiseArray[i][j]
-									* (weightStage1[idx] / 128f);
-						}
-						float r = (float)middle.distance(i, j)/192f;
-						r = Math.min(r, 1);
-						
-						cg.noiseVals[i][j] = (r + sum);
-					}
-				}
-			}
-		}
-		
-		// now turn this into a graphic...via the colormap
-		
-		// stage 2 
-		
-		int chCount = channelGroups.size();
-		double[] weight = new double[chCount];
-		int[][] cMapData = new int[chCount][256]; // ch, x, 
-				//sts[cg.members.get(0)].colorAxis.data;
-		
-		for (int i = 0; i < chCount; i++)
-		{
-			weight[i] = weightStage2[i];  // value from slider/txtfield
-			cMapData [i] = sts[channelGroups.get(i).members.get(0)]
-					.colorAxis.data;  //colormap data, shared
-		}
-		
-		double lerpSum = 0;
-		for (int cgIdx = 0; cgIdx < chCount; cgIdx++)
-		{
-			if (stage2Mode[cgIdx] == LERP)
-			{
-				lerpSum += weight[cgIdx];
-			}
-		}
-		for (int cgIdx = 0; cgIdx < chCount; cgIdx++)
-		{
-			if (stage2Mode[cgIdx] == LERP)
-			{
-				weight[cgIdx] /= lerpSum;  // lerp factor
-			}
-			else // presumably SUM or MOD
-			{
-				weight[cgIdx] /= 64;  // add factor
-			}
-		}  // weights are now a fraction of 1
-	
-		double rPixel, gPixel, bPixel;
-		int pixel = 0;
-		for (int j = 0; j < 256; j++)
-		{
-			for (int i = 0; i < 256; i++)
-			{			
-				// for each pixel
-				rPixel = 0;
-				gPixel = 0;
-				bPixel = 0;
-				
-				float denormalizingFactor = 255f;
-				for (int channelGroupIdx = 0; channelGroupIdx < chCount; channelGroupIdx++)
-				{
-					int colorMapIdx = (int)(channelGroups.get(channelGroupIdx)
-							.noiseVals[i][j] * denormalizingFactor);
-					
-					if (stage2Mode[channelGroupIdx] == ADD || stage2Mode[channelGroupIdx] == LERP)
-					{
-						colorMapIdx = Math.min(255, Math.max(0, colorMapIdx));				
-					} 
-					else if (stage2Mode[channelGroupIdx] == RING)
-					{
-						while (colorMapIdx < 0) colorMapIdx += 256;
-						colorMapIdx %= 256;
-					}
-					
-//					if (colorMapIdx > 255) 
-//					{
-//						System.out.println("intercept cmIdx:" + colorMapIdx);
-//						System.out.println("stage2Mode:" + stage2Mode[channelGroupIdx]);
-//					}
-					
-					rPixel += ColorAxis.getRed(cMapData[channelGroupIdx][colorMapIdx]) * weight[channelGroupIdx];
-					gPixel += ColorAxis.getGreen(cMapData[channelGroupIdx][colorMapIdx]) * weight[channelGroupIdx];
-					bPixel += ColorAxis.getBlue(cMapData[channelGroupIdx][colorMapIdx]) * weight[channelGroupIdx];
-				
-				}
-				pixel = ColorAxis.calculateARGB(255,
-						(int)Math.min(255, Math.max(0, rPixel)),
-						(int)Math.min(255, Math.max(0, gPixel)),
-						(int)Math.min(255, Math.max(0, bPixel)));
-				
-				image.setRGB(i, j, pixel);
+		int[][] pixels = TextureFunctions.combine(textures, getCombineParams());
+
+		for (int j = 0;  j < 256;  j++) {
+			for (int i = 0;  i < 256;  i++) {
+				image.setRGB(i, j, pixels[i][j]);
 			}
 		}
 
-		
-		
-		
 		repaint();
 	}
 
@@ -555,7 +303,6 @@ public class TextureCombiner extends JPanel
 		boolean[] isChannelGrouped = new boolean[channels];
 		
 		ColorAxis matchColorAxis;
-//		boolean matchUseColorMap;
 		int matchChannelMode;
 		
 		for (int i = 0; i < channels; i++)
@@ -571,14 +318,12 @@ public class TextureCombiner extends JPanel
 				// info for match test
 				matchColorAxis = sts[i].colorAxis;
 				matchChannelMode = stage1Mode[i];
-//				matchUseColorMap = sts[i].useColorMapSelected;
-				
+
 				// are there other matches in remaining channels?
 				for (int j = i + 1; j < channels; j++)
 				{
 					if (matchColorAxis == sts[j].colorAxis
 							&& matchChannelMode == stage1Mode[j])
-//							&& matchUseColorMap == sts[j].useColorMapSelected)
 					{
 						newGroup.members.add(j);
 						isChannelGrouped[j] = true;
@@ -615,23 +360,60 @@ public class TextureCombiner extends JPanel
 		}
 	}
 	
-	private class ChannelGroup
-	{
+	private class ChannelGroup {
 		ArrayList<Integer> members = new ArrayList<Integer>();
-		// x, y noise data, merged via "mode" function
-		float[][] noiseVals = new float[256][256];
-		
+	}
+
+	private CombineParams getCombineParams() {
+		CombineParams.ChannelMode[] channelModes = new CombineParams.ChannelMode[channels];
+		int[] channelValues = new int[channels];
+		Map<CombineParams.ChannelMode, CombineParams.GroupMode> groupModes = new HashMap<CombineParams.ChannelMode, CombineParams.GroupMode>();
+		Map<CombineParams.ChannelMode, Integer> groupValues = new HashMap<CombineParams.ChannelMode, Integer>();
+
+		for (int i = 0; i < channels; i++) {
+			switch (stage1Mode[i]) {
+				case ADD: channelModes[i] = CombineParams.ChannelMode.ADD;  break;
+				case LERP: channelModes[i] = CombineParams.ChannelMode.LERP;  break;
+				case SIN: channelModes[i] = CombineParams.ChannelMode.SIN;  break;
+				case XDIM: channelModes[i] = CombineParams.ChannelMode.XDIM;  break;
+				case YDIM: channelModes[i] = CombineParams.ChannelMode.YDIM;  break;
+				case CIRC: channelModes[i] = CombineParams.ChannelMode.CIRC;  break;
+				default: throw new RuntimeException("invalid stage 1 mode " + stage1Mode[i]);
+			}
+
+			channelValues[i] = weightStage1[i];
+		}
+
+		ArrayList<CombineParams.ChannelMode> channelArray = new ArrayList<CombineParams.ChannelMode>();
+		for (int c = 0;  c < channels;  c++) {
+			CombineParams.ChannelMode channelMode = channelModes[c];
+
+			if (!channelArray.contains(channelMode)) {
+				channelArray.add(channelMode);
+			}
+		}
+
+		for (int c = 0;  c < channelArray.size();  c++) {
+			switch (stage2Mode[c]) {
+				case ADD: groupModes.put(channelArray.get(c), CombineParams.GroupMode.ADD);  break;
+				case LERP: groupModes.put(channelArray.get(c), CombineParams.GroupMode.LERP);  break;
+				case RING: groupModes.put(channelArray.get(c), CombineParams.GroupMode.RING);  break;
+				default: throw new RuntimeException("invalid stage 2 mode " + stage2Mode[c]);
+			}
+
+			groupValues.put(channelArray.get(c), weightStage2[c]);
+		}
+
+		return new CombineParams(channelModes, channelValues, groupModes, groupValues);
 	}
 
 	@Override
-	public Dimension getPreferredSize()
-	{
+	public Dimension getPreferredSize() {
 		return new Dimension(width, height);
 	}
 
 	@Override
-	public void paintComponent(Graphics g)
-	{
+	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
 		Graphics2D g2 = (Graphics2D) g;
