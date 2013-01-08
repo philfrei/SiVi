@@ -547,7 +547,7 @@ public class SimplexTextureSource extends JPanel
 				int pixel = 0;
 				if (tp.normalize == TextureParams.NoiseNormalization.SMOOTH ||
 						tp.normalize == TextureParams.NoiseNormalization.ABS) {
-					int argb = data.spectrum.getARGB(idx);
+					int argb = data.colorMap.data[idx];
 					pixel = ColorAxis.calculateARGB(255,
 							ColorAxis.getRed(argb),
 							ColorAxis.getGreen(argb),
@@ -589,7 +589,7 @@ public class SimplexTextureSource extends JPanel
 				minClamp,
 				maxClamp,
 				normalize,
-				new ColorSpectrum(colorAxis.data)
+				new ColorMap(colorAxis.data)
 		);
 	}
 }

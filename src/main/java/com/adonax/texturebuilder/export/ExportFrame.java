@@ -17,6 +17,7 @@
  */
 package com.adonax.texturebuilder.export;
 
+import com.adonax.texturebuilder.CombineParams;
 import com.adonax.texturebuilder.TextureParams;
 
 import javax.swing.*;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 
 public class ExportFrame extends JDialog {
 
-	public ExportFrame(JFrame parent) {
+	public ExportFrame(JFrame parent, java.util.List<TextureParams> textureParamsList, CombineParams combineParams) {
 		super(parent);
 
 		setTitle("Export");
@@ -43,26 +44,23 @@ public class ExportFrame extends JDialog {
 
 		final JTabbedPane cards = new JTabbedPane();
 
-		// TODO: properly instantiate the texture parameters
-		TextureParams params = null;
-
 		// supported langauges instantiated here
 		final java.util.List<ExportCode> supportedLangs = new ArrayList<ExportCode>();
 		final java.util.List<JTextArea> textAreas = new ArrayList<JTextArea>();
 
-		supportedLangs.add(new ExportCodeJava(params));
-		supportedLangs.add(new ExportCodeScala(params));
+		supportedLangs.add(new ExportCodeJava(textureParamsList, combineParams));
+		//supportedLangs.add(new ExportCodeScala(textureParamsList, combineParams));
 
 		for (ExportCode code : supportedLangs) {
 			JTextArea textArea = new JTextArea();
 
 			String codeStr = code.getCode();
-			int pos = codeStr.indexOf("// --- end dynamically generated code");
+			int pos = codeStr.indexOf("// --- begin dynamically generated code");
 			if (pos < 0) {
 				pos = 0;
 			}
 
-			textArea.setText(code.getCode());
+			textArea.setText(codeStr);
 			textArea.setCaretPosition(pos);
 			textAreas.add(textArea);
 

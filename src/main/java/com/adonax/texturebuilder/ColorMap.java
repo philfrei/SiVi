@@ -20,13 +20,13 @@ package com.adonax.texturebuilder;
 import java.util.Arrays;
 
 /**
- * Immutable class representing a color spectrum.
+ * Immutable class representing a color map.
  */
-public class ColorSpectrum {
+public class ColorMap {
 
-	public final int[] data;  // TODO-SK: temporarily public for TextureFunctions
+	public final int[] data;
 
-	public ColorSpectrum() {
+	public ColorMap() {
 		data = new int[256];
 
 		// default data will be black to white gradient
@@ -35,27 +35,27 @@ public class ColorSpectrum {
 		}
 	}
 
-	public ColorSpectrum(int[] data) {
+	public ColorMap(int[] data) {
 		this.data = Arrays.copyOf(data, 256);
 	}
 
-	public int getRed(int index) {
-		return (data[index] & 0x00FF0000) >> 16;
+	public static int getAlpha(int pixel) {
+		return (pixel & 0xFF000000) >> 24;
 	}
 
-	public int getGreen(int index) {
-		return (data[index] & 0x0000FF00) >> 8;
+	public static int getRed(int pixel) {
+		return (pixel & 0x00FF0000) >> 16;
 	}
 
-	public int getBlue(int index) {
-		return (data[index] & 0x000000FF);
+	public static int getGreen(int pixel) {
+		return (pixel & 0x0000FF00) >> 8;
 	}
 
-	public int getARGB(int index) {
-		return data[index];
+	public static int getBlue(int pixel) {
+		return (pixel & 0x000000FF);
 	}
 
-	private int calculateARGB(int a, int r, int g, int b) {
+	public static int calculateARGB(int a, int r, int g, int b) {
 		return b + (g << 8) + (r <<16) + (a << 24);
 	}
 }

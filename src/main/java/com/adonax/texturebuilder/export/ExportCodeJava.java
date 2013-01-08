@@ -17,6 +17,7 @@
  */
 package com.adonax.texturebuilder.export;
 
+import com.adonax.texturebuilder.CombineParams;
 import com.adonax.texturebuilder.TextureParams;
 
 import java.io.BufferedReader;
@@ -24,34 +25,95 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.CharBuffer;
+import java.util.List;
 
 public class ExportCodeJava extends ExportCode {
 
-	public ExportCodeJava(TextureParams params) {
-		super("Java", params);
+	public ExportCodeJava(List<TextureParams> textureParamsList, CombineParams combineParams) {
+		super("Java", textureParamsList, combineParams);
+	}
+
+	private String generateCodeFor(TextureParams tp) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("        textures.add(TextureFunctions.generate(256, 256, new TextureParams(\n");
+		sb.append("                ").append(tp.xScale).append("f,\n");
+		sb.append("                ").append(tp.yScale).append("f,\n");
+		sb.append("                ").append(tp.xTranslate).append("f,\n");
+		sb.append("                ").append(tp.yTranslate).append("f,\n");
+		sb.append("                ").append(tp.minClamp).append("f,\n");
+		sb.append("                ").append(tp.maxClamp).append("f,\n");
+		sb.append("                TextureParams.NoiseNormalization.").append(tp.normalize).append(",\n");
+		sb.append("                new ColorMap( new int[] { ").append(tp.colorMap.data[0]);
+		for (int i = 1;  i < tp.colorMap.data.length;  i++) {
+			sb.append(", ").append(tp.colorMap.data[i]);
+		}
+		sb.append("} )\n");
+		sb.append("        )));\n");
+
+		return sb.toString();
+	}
+
+	private String generateCodeFor(CombineParams cp) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("        Map<CombineParams.ChannelMode, CombineParams.GroupMode> groupModes = new HashMap<CombineParams.ChannelMode, CombineParams.GroupMode>();\n");
+		for (CombineParams.ChannelMode channelMode : cp.getGroups()) {
+			sb.append("        groupModes.put(CombineParams.ChannelMode.");
+			sb.append(channelMode);
+			sb.append(", CombineParams.GroupMode.");
+			sb.append(cp.getGroupMode(channelMode));
+			sb.append(");\n");
+		}
+
+		sb.append("\n");
+		sb.append("        Map<CombineParams.ChannelMode, Integer> stage2weights = new HashMap<CombineParams.ChannelMode, Integer>();\n");
+		for (CombineParams.ChannelMode channelMode : cp.getGroups()) {
+			sb.append("        stage2weights.put(CombineParams.ChannelMode.");
+			sb.append(channelMode);
+			sb.append(", ");
+			sb.append(cp.getStage2Weight(channelMode));
+			sb.append(");\n");
+		}
+
+		sb.append("\n");
+		sb.append("        CombineParams combine = new CombineParams(\n");
+		sb.append("                ").append(cp.numChannels).append(",\n");
+
+		sb.append("                new CombineParams.ChannelMode[] { CombineParams.ChannelMode.");
+		sb.append(cp.getChannelMode(0));
+		for (int i = 1;  i < cp.numChannels;  i++) {
+			sb.append(", CombineParams.ChannelMode.").append(cp.getChannelMode(i));
+		}
+		sb.append(" },\n");
+
+		sb.append("                new int[] { ");
+		sb.append(cp.getStage1Weight(0));
+		for (int i = 1;  i < cp.numChannels;  i++) {
+			sb.append(", ").append(cp.getStage1Weight(i));
+		}
+		sb.append(" },\n");
+
+		sb.append("                groupModes,\n");
+		sb.append("                stage2weights\n");
+		sb.append("        );\n");
+
+		return sb.toString();
+
 	}
 
 	private String generateBlock() {
-		String result =
-				"        for (int y = 0; y < height; y++) {\n" +
-				"            for (int x = 0; x < width; x++) {\n" +
-				"                double noiseValue = SimplexNoise.noise(x/128f, y/128f);\n" +
-				"\n" +
-				"                // normalization function - 3 possibilties\n" +
-				"                // none, average, or abs\n" +
-				"                noiseValue = (noiseValue + 1) / 2;\n" +
-				"                noiseValue *= 256;\n" +
-				"\n" +
-				"                pixel[0] = (int)noiseValue;\n" +
-				"                pixel[1] = (int)noiseValue;\n" +
-				"                pixel[2] = (int)noiseValue;\n" +
-				"                pixel[3] = 255; // opaque;\n" +
-				"\n" +
-				"                raster.setPixel(x, y, pixel);\n" +
-				"            }\n" +
-				"        }\n";
+		StringBuilder sb = new StringBuilder();
 
-		return result;
+		sb.append("\n");
+		sb.append("        List<TextureData> textures = new ArrayList<TextureData>();\n");
+		for (TextureParams tp : textureParamsList) {
+			sb.append(generateCodeFor(tp));
+		}
+		sb.append("\n");
+		sb.append(generateCodeFor(combineParams));
+
+		return sb.toString();
 	}
 
 	@Override
