@@ -42,7 +42,7 @@ public class TextureParams {
 
 	public final NoiseNormalization normalize;
 
-	public final ColorSpectrum spectrum;
+	public final ColorMap colorMap;
 
 	public TextureParams(float xScale,
 						 float yScale,
@@ -51,7 +51,7 @@ public class TextureParams {
 						 float minClamp,
 						 float maxClamp,
 			NoiseNormalization normalize,
-				 ColorSpectrum spectrum) {
+					  ColorMap colorMap) {
 		this.xScale = xScale;
 		this.yScale = yScale;
 		this.xTranslate = xTranslate;
@@ -59,6 +59,6 @@ public class TextureParams {
 		this.minClamp = minClamp;
 		this.maxClamp = maxClamp;
 		this.normalize = normalize;
-		this.spectrum = spectrum;
+		this.colorMap = colorMap;
 	}
 }

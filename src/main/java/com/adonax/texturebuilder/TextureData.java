@@ -27,9 +27,9 @@ public class TextureData {
 	public final int height;
 
 	public final float[][] noiseArray;
-	public final ColorSpectrum spectrum;
+	public final ColorMap colorMap;
 
-	public TextureData(int width, int height, float[][] noiseArray, ColorSpectrum spectrum) {
+	public TextureData(int width, int height, float[][] noiseArray, ColorMap colorMap) {
 		this.width = width;
 		this.height = height;
 
@@ -37,6 +37,6 @@ public class TextureData {
 		assert(height > 0);
 		assert(noiseArray.length == width * height);
 		this.noiseArray = noiseArray;
-		this.spectrum = spectrum;
+		this.colorMap = colorMap;
 	}
 }

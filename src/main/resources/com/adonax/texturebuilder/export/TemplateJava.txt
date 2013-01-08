@@ -90,10 +90,10 @@ public class TestTemplate extends JPanel {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int[] pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
-                pixel[0] = ColorSpectrum.getRed(pixels[x][y]);
-                pixel[1] = ColorSpectrum.getGreen(pixels[x][y]);
-                pixel[2] = ColorSpectrum.getBlue(pixels[x][y]);
-                pixel[3] = ColorSpectrum.getAlpha(pixels[x][y]);
+                pixel[0] = ColorMap.getRed(pixels[x][y]);
+                pixel[1] = ColorMap.getGreen(pixels[x][y]);
+                pixel[2] = ColorMap.getBlue(pixels[x][y]);
+                pixel[3] = ColorMap.getAlpha(pixels[x][y]);
                 raster.setPixel(x, y, pixel);
             }
         }
@@ -122,13 +122,13 @@ public class TestTemplate extends JPanel {
 
 
 /**
- * Immutable class representing a color spectrum.
+ * Immutable class representing a color map.
  */
-class ColorSpectrum {
+class ColorMap {
 
     public final int[] data;
 
-    public ColorSpectrum() {
+    public ColorMap() {
         data = new int[256];
 
         // default data will be black to white gradient
@@ -137,7 +137,7 @@ class ColorSpectrum {
         }
     }
 
-    public ColorSpectrum(int[] data) {
+    public ColorMap(int[] data) {
         this.data = Arrays.copyOf(data, 256);
     }
 
@@ -157,7 +157,7 @@ class ColorSpectrum {
         return (pixel & 0x000000FF);
     }
 
-    private int calculateARGB(int a, int r, int g, int b) {
+    public static int calculateARGB(int a, int r, int g, int b) {
         return b + (g << 8) + (r <<16) + (a << 24);
     }
 }
@@ -188,7 +188,7 @@ class TextureParams {
 
     public final NoiseNormalization normalize;
 
-    public final ColorSpectrum spectrum;
+    public final ColorMap colorMap;
 
     public TextureParams(float xScale,
                          float yScale,
@@ -197,7 +197,7 @@ class TextureParams {
                          float minClamp,
                          float maxClamp,
             NoiseNormalization normalize,
-                 ColorSpectrum spectrum) {
+                      ColorMap colorMap) {
         this.xScale = xScale;
         this.yScale = yScale;
         this.xTranslate = xTranslate;
@@ -205,7 +205,7 @@ class TextureParams {
         this.minClamp = minClamp;
         this.maxClamp = maxClamp;
         this.normalize = normalize;
-        this.spectrum = spectrum;
+        this.colorMap = colorMap;
     }
 }
 
@@ -302,9 +302,9 @@ class TextureData {
     public final int height;
 
     public final float[][] noiseArray;
-    public final ColorSpectrum spectrum;
+    public final ColorMap colorMap;
 
-    public TextureData(int width, int height, float[][] noiseArray, ColorSpectrum spectrum) {
+    public TextureData(int width, int height, float[][] noiseArray, ColorMap colorMap) {
         this.width = width;
         this.height = height;
 
@@ -312,7 +312,7 @@ class TextureData {
         assert(height > 0);
         assert(noiseArray.length == width * height);
         this.noiseArray = noiseArray;
-        this.spectrum = spectrum;
+        this.colorMap = colorMap;
     }
 }
 
@@ -363,7 +363,7 @@ class TextureFunctions {
             }
         }
 
-        return new TextureData(width, height, noiseArray, tp.spectrum);
+        return new TextureData(width, height, noiseArray, tp.colorMap);
     }
 
     /**
@@ -528,11 +528,11 @@ class TextureFunctions {
 
         int chCount = channelArray.size();
         double[] weight = new double[chCount];
-        ColorSpectrum[] colorMaps = new ColorSpectrum[chCount];
+        ColorMap[] colorMaps = new ColorMap[chCount];
 
         for (int i = 0; i < chCount; i++) {
             weight[i] = cp.getStage2Weight(channelArray.get(i));  // value from slider/txtfield
-            colorMaps[i] = textures.get(channelData.get(channelArray.get(i)).members.get(0)).spectrum;  //colormap data, shared
+            colorMaps[i] = textures.get(channelData.get(channelArray.get(i)).members.get(0)).colorMap;  //colormap data, shared
         }
 
         double lerpSum = 0;
@@ -574,11 +574,11 @@ class TextureFunctions {
                         throw new RuntimeException("not handled! " + stage1ChannelModeKey);
                     }
 
-                    rPixel += ColorSpectrum.getRed(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
-                    gPixel += ColorSpectrum.getGreen(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
-                    bPixel += ColorSpectrum.getBlue(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+                    rPixel += ColorMap.getRed(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+                    gPixel += ColorMap.getGreen(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+                    bPixel += ColorMap.getBlue(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
                 }
-                int pixel = ColorAxis.calculateARGB(255,
+                int pixel = ColorMap.calculateARGB(255,
                         (int)Math.min(255, Math.max(0, rPixel)),
                         (int)Math.min(255, Math.max(0, gPixel)),
                         (int)Math.min(255, Math.max(0, bPixel)));

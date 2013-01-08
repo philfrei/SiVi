@@ -72,7 +72,7 @@ public class TextureFunctions {
 			}
 		}
 
-		return new TextureData(width, height, noiseArray, tp.spectrum);
+		return new TextureData(width, height, noiseArray, tp.colorMap);
 	}
 
 	/**
@@ -237,11 +237,11 @@ public class TextureFunctions {
 
 		int chCount = channelArray.size();
 		double[] weight = new double[chCount];
-		ColorSpectrum[] colorMaps = new ColorSpectrum[chCount];
+		ColorMap[] colorMaps = new ColorMap[chCount];
 
 		for (int i = 0; i < chCount; i++) {
 			weight[i] = cp.getStage2Weight(channelArray.get(i));  // value from slider/txtfield
-			colorMaps[i] = textures.get(channelData.get(channelArray.get(i)).members.get(0)).spectrum;  //colormap data, shared
+			colorMaps[i] = textures.get(channelData.get(channelArray.get(i)).members.get(0)).colorMap;  //colormap data, shared
 		}
 
 		double lerpSum = 0;
@@ -283,11 +283,11 @@ public class TextureFunctions {
 						throw new RuntimeException("not handled! " + stage1ChannelModeKey);
 					}
 
-					rPixel += ColorSpectrum.getRed(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
-					gPixel += ColorSpectrum.getGreen(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
-					bPixel += ColorSpectrum.getBlue(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+					rPixel += ColorMap.getRed(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+					gPixel += ColorMap.getGreen(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+					bPixel += ColorMap.getBlue(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
 				}
-				int pixel = ColorAxis.calculateARGB(255,
+				int pixel = ColorMap.calculateARGB(255,
 						(int)Math.min(255, Math.max(0, rPixel)),
 						(int)Math.min(255, Math.max(0, gPixel)),
 						(int)Math.min(255, Math.max(0, bPixel)));
