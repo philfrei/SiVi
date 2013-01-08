@@ -34,20 +34,22 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 /**
- * TEST TEMPLATE
+ * The following code is provided to allow the reader to view and use in
+ * their own programs.  It will faithfully reproduce the combined texture.
  *
- * The following code template is provided to allow the reader a
- * convenient way to test the code examples in each tutorial
- * section.
+ * This exported code is licensed under the BSD license while the actual
+ * source code to the SiVi application is licensed under the GPL.
  *
  * To use, save this code to a file of the name: "TestTemplate.java"
- * and be saved without formatting (as a Plain Text file.)
+ * Save it without formatting (i.e. as a Plain Text file).
+ *
+ * Tip: to avoid clutter save the .java file in its own folder because
+ * several .class files will be generated on compilation.
  *
  * From the command prompt, compile by typing:
  *     javac TestTemplate.java
  *
- * Assuming it compiles with no errors, you can then run it via
- * the command:
+ * Then run it via the command:
  *     java TestTemplate
  */
 import java.awt.EventQueue;
