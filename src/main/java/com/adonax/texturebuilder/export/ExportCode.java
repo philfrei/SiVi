@@ -17,7 +17,10 @@
  */
 package com.adonax.texturebuilder.export;
 
+import com.adonax.texturebuilder.CombineParams;
 import com.adonax.texturebuilder.TextureParams;
+
+import java.util.List;
 
 /**
  * Extend to support a new language for export.
@@ -25,11 +28,13 @@ import com.adonax.texturebuilder.TextureParams;
 abstract public class ExportCode {
 
 	private final String lang;
-	private final TextureParams params;
+	protected final List<TextureParams> textureParamsList;
+	protected final CombineParams combineParams;
 
-	public ExportCode(String lang, TextureParams params) {
+	public ExportCode(String lang, List<TextureParams> textureParamsList, CombineParams combineParams) {
 		this.lang = lang;
-		this.params = params;
+		this.textureParamsList = textureParamsList;
+		this.combineParams = combineParams;
 	}
 
 	/**

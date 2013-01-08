@@ -364,7 +364,7 @@ public class TextureCombiner extends JPanel
 		ArrayList<Integer> members = new ArrayList<Integer>();
 	}
 
-	private CombineParams getCombineParams() {
+	public CombineParams getCombineParams() {
 		CombineParams.ChannelMode[] channelModes = new CombineParams.ChannelMode[channels];
 		int[] channelValues = new int[channels];
 		Map<CombineParams.ChannelMode, CombineParams.GroupMode> groupModes = new HashMap<CombineParams.ChannelMode, CombineParams.GroupMode>();
@@ -404,7 +404,7 @@ public class TextureCombiner extends JPanel
 			groupValues.put(channelArray.get(c), weightStage2[c]);
 		}
 
-		return new CombineParams(channelModes, channelValues, groupModes, groupValues);
+		return new CombineParams(channels, channelModes, channelValues, groupModes, groupValues);
 	}
 
 	@Override

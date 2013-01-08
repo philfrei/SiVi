@@ -237,12 +237,11 @@ public class TextureFunctions {
 
 		int chCount = channelArray.size();
 		double[] weight = new double[chCount];
-		int[][] cMapData = new int[chCount][256]; // ch, x,
-				//sts[cg.members.get(0)].colorAxis.data;
+		ColorSpectrum[] colorMaps = new ColorSpectrum[chCount];
 
 		for (int i = 0; i < chCount; i++) {
 			weight[i] = cp.getStage2Weight(channelArray.get(i));  // value from slider/txtfield
-			cMapData[i] = textures.get(channelData.get(channelArray.get(i)).members.get(0)).spectrum.data;  //colormap data, shared
+			colorMaps[i] = textures.get(channelData.get(channelArray.get(i)).members.get(0)).spectrum;  //colormap data, shared
 		}
 
 		double lerpSum = 0;
@@ -284,10 +283,9 @@ public class TextureFunctions {
 						throw new RuntimeException("not handled! " + stage1ChannelModeKey);
 					}
 
-					rPixel += ColorAxis.getRed(cMapData[channelGroupIdx][colorMapIdx]) * weight[channelGroupIdx];
-					gPixel += ColorAxis.getGreen(cMapData[channelGroupIdx][colorMapIdx]) * weight[channelGroupIdx];
-					bPixel += ColorAxis.getBlue(cMapData[channelGroupIdx][colorMapIdx]) * weight[channelGroupIdx];
-
+					rPixel += ColorSpectrum.getRed(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+					gPixel += ColorSpectrum.getGreen(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+					bPixel += ColorSpectrum.getBlue(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
 				}
 				int pixel = ColorAxis.calculateARGB(255,
 						(int)Math.min(255, Math.max(0, rPixel)),

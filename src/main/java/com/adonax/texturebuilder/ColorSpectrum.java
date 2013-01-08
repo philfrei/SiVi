@@ -24,7 +24,7 @@ import java.util.Arrays;
  */
 public class ColorSpectrum {
 
-	public final int[] data;  // TODO-SK: temporarily public for TextureFunctions
+	public final int[] data;
 
 	public ColorSpectrum() {
 		data = new int[256];
@@ -39,20 +39,20 @@ public class ColorSpectrum {
 		this.data = Arrays.copyOf(data, 256);
 	}
 
-	public int getRed(int index) {
-		return (data[index] & 0x00FF0000) >> 16;
+	public static int getAlpha(int pixel) {
+		return (pixel & 0xFF000000) >> 24;
 	}
 
-	public int getGreen(int index) {
-		return (data[index] & 0x0000FF00) >> 8;
+	public static int getRed(int pixel) {
+		return (pixel & 0x00FF0000) >> 16;
 	}
 
-	public int getBlue(int index) {
-		return (data[index] & 0x000000FF);
+	public static int getGreen(int pixel) {
+		return (pixel & 0x0000FF00) >> 8;
 	}
 
-	public int getARGB(int index) {
-		return data[index];
+	public static int getBlue(int pixel) {
+		return (pixel & 0x000000FF);
 	}
 
 	private int calculateARGB(int a, int r, int g, int b) {

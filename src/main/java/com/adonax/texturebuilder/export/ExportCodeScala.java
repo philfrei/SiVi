@@ -17,12 +17,15 @@
  */
 package com.adonax.texturebuilder.export;
 
+import com.adonax.texturebuilder.CombineParams;
 import com.adonax.texturebuilder.TextureParams;
+
+import java.util.List;
 
 public class ExportCodeScala extends ExportCode {
 
-	public ExportCodeScala(TextureParams params) {
-		super("Scala", params);
+	public ExportCodeScala(List<TextureParams> textureParamsList, CombineParams combineParams) {
+		super("Scala", textureParamsList, combineParams);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2012, Phil Freihofner
+Copyright (c) 2013, Phil Freihofner, Sumio Kiyooka
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -54,6 +54,15 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.awt.Point;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -71,11 +80,23 @@ public class TestTemplate extends JPanel {
         BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_ARGB);
         WritableRaster raster = image.getRaster();
-        int[] pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
 
 // --- begin dynamically generated code ---
 {0}
 // --- end dynamically generated code ---
+
+        int[][] pixels = TextureFunctions.combine(textures, combine);
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int[] pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
+                pixel[0] = ColorSpectrum.getRed(pixels[x][y]);
+                pixel[1] = ColorSpectrum.getGreen(pixels[x][y]);
+                pixel[2] = ColorSpectrum.getBlue(pixels[x][y]);
+                pixel[3] = ColorSpectrum.getAlpha(pixels[x][y]);
+                raster.setPixel(x, y, pixel);
+            }
+        }
 
         testImage = image;
     }
@@ -90,12 +111,483 @@ public class TestTemplate extends JPanel {
             public void run() {
                 JFrame frame = new JFrame("Test Simplex Texture Image");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setSize(710, 194);
-                TestTemplate panel = new TestTemplate(700, 160);
+                frame.setSize(710, 300);  // TODO-SK: 256 is hardcoded everywhere... test 710, 194
+                TestTemplate panel = new TestTemplate(256, 256);  // TODO-SK: 256 is hardcoded everywhere... test 700, 160
                 frame.add(panel);
                 frame.setVisible(true);
             }
         });
+    }
+}
+
+
+/**
+ * Immutable class representing a color spectrum.
+ */
+class ColorSpectrum {
+
+    public final int[] data;
+
+    public ColorSpectrum() {
+        data = new int[256];
+
+        // default data will be black to white gradient
+        for (int i = 0;  i < 256;  i++) {
+            data[i] = calculateARGB(255, i, i, i);
+        }
+    }
+
+    public ColorSpectrum(int[] data) {
+        this.data = Arrays.copyOf(data, 256);
+    }
+
+    public static int getAlpha(int pixel) {
+        return (pixel & 0xFF000000) >> 24;
+    }
+
+    public static int getRed(int pixel) {
+        return (pixel & 0x00FF0000) >> 16;
+    }
+
+    public static int getGreen(int pixel) {
+        return (pixel & 0x0000FF00) >> 8;
+    }
+
+    public static int getBlue(int pixel) {
+        return (pixel & 0x000000FF);
+    }
+
+    private int calculateARGB(int a, int r, int g, int b) {
+        return b + (g << 8) + (r <<16) + (a << 24);
+    }
+}
+
+
+/**
+ * Immutable class representing parameters for a single texture source.
+ */
+class TextureParams {
+
+    public enum NoiseNormalization {
+        SMOOTH,
+        ABS,
+        NONE
+    }
+
+    // typically ranges from 0.125 to 128.0
+    public final float xScale;
+    public final float yScale;
+
+    // typically ranges from -256.0 to 256.0
+    public final float xTranslate;
+    public final float yTranslate;
+
+    // typically ranges from -1.0 to 1.0
+    public final float minClamp;
+    public final float maxClamp;
+
+    public final NoiseNormalization normalize;
+
+    public final ColorSpectrum spectrum;
+
+    public TextureParams(float xScale,
+                         float yScale,
+                         float xTranslate,
+                         float yTranslate,
+                         float minClamp,
+                         float maxClamp,
+            NoiseNormalization normalize,
+                 ColorSpectrum spectrum) {
+        this.xScale = xScale;
+        this.yScale = yScale;
+        this.xTranslate = xTranslate;
+        this.yTranslate = yTranslate;
+        this.minClamp = minClamp;
+        this.maxClamp = maxClamp;
+        this.normalize = normalize;
+        this.spectrum = spectrum;
+    }
+}
+
+
+/**
+ * Immutable class that contains the parameters for combining the textures
+ * into a single texture.
+ *
+ * There are 4 channels and each one has a channel mode and slider value.
+ *
+ * Channels are then grouped by their channel mode.  Each group then has its own
+ * group mode and slider value.
+ */
+class CombineParams {
+
+    public enum ChannelMode {
+        ADD,
+        LERP,
+        SIN,
+        XDIM,
+        YDIM,
+        CIRC
+    }
+
+    public enum GroupMode {
+        ADD,
+        LERP,
+        RING
+    }
+
+    public final int numChannels;
+
+    private final ChannelMode[] channelModes;
+    private final int[] stage1weights;  // weight stage 1
+
+    private final Map<ChannelMode, GroupMode> groupModes;
+    private final Map<ChannelMode, Integer> stage2weights;  // weight stage 2
+
+    public CombineParams(           int numChannels,
+                          ChannelMode[] channelModes,
+                                  int[] stage1weights,
+            Map<ChannelMode, GroupMode> groupModes,
+            Map<ChannelMode, Integer>   stage2weights) {
+
+        this.numChannels = numChannels;
+
+        assert(channelModes.length == numChannels);
+        assert(stage1weights.length == numChannels);
+
+        Set<ChannelMode> specifiedModes = new HashSet<ChannelMode>();
+
+        this.channelModes = channelModes;
+        this.stage1weights = stage1weights;
+        for (int i = 0;  i < numChannels;  i++) {
+            specifiedModes.add(channelModes[i]);
+        }
+
+        assert(specifiedModes.equals(groupModes.keySet()));
+        assert(specifiedModes.equals(stage2weights.keySet()));
+
+        this.groupModes = groupModes;
+        this.stage2weights = stage2weights;
+    }
+
+    public ChannelMode getChannelMode(int index) {
+        return channelModes[index];
+    }
+
+    public int getStage1Weight(int index) {
+        return stage1weights[index];
+    }
+
+    public Set<ChannelMode> getGroups() {
+        return groupModes.keySet();
+    }
+
+    public GroupMode getGroupMode(ChannelMode mode) {
+        return groupModes.get(mode);
+    }
+
+    public int getStage2Weight(ChannelMode mode) {
+        return stage2weights.get(mode);
+    }
+}
+
+
+/**
+ * Immutable data structure containing the return result from a single texture
+ * generation function.  Contains all necessary data to generate an image.
+ */
+class TextureData {
+
+    public final int width;
+    public final int height;
+
+    public final float[][] noiseArray;
+    public final ColorSpectrum spectrum;
+
+    public TextureData(int width, int height, float[][] noiseArray, ColorSpectrum spectrum) {
+        this.width = width;
+        this.height = height;
+
+        assert(width > 0);
+        assert(height > 0);
+        assert(noiseArray.length == width * height);
+        this.noiseArray = noiseArray;
+        this.spectrum = spectrum;
+    }
+}
+
+
+// temporarily used by combine()
+class ChannelGroup {
+    ArrayList<Integer> members = new ArrayList<Integer>();
+    // x, y noise data, merged via "mode" function
+    float[][] noiseVals = new float[256][256];
+}
+
+
+/**
+ * Pure functions to generate and combine textures.
+ */
+class TextureFunctions {
+
+    /**
+     * Generate the data necessary to create a single texture.
+     *
+     * This is a pure function.
+     *
+     * @param width     image width
+     * @param height    image height
+     * @param tp        texture parameters from SimplexTextureSource
+     *
+     * @return TextureData
+     */
+    public static TextureData generate(int width, int height, TextureParams tp) {
+        float[][] noiseArray = new float[width][height];
+
+        for (int j = 0; j < height; j++) {
+            float y = (j * tp.yScale) / height + tp.yTranslate;
+
+            for (int i = 0; i < width; i++) {
+                float x = (i * tp.xScale) / width + tp.xTranslate;
+
+                float noiseVal = (float) SimplexNoise.noise(x, y);
+                noiseVal = Math.min(Math.max(noiseVal, tp.minClamp), tp.maxClamp);
+
+                if (tp.normalize == TextureParams.NoiseNormalization.SMOOTH) {
+                    noiseVal = (noiseVal + 1) / 2;
+                } else if (tp.normalize == TextureParams.NoiseNormalization.ABS) {
+                    noiseVal = Math.abs(noiseVal);
+                }
+
+                noiseArray[i][j] = noiseVal;
+            }
+        }
+
+        return new TextureData(width, height, noiseArray, tp.spectrum);
+    }
+
+    /**
+     * Combine multiple textures into one.
+     *
+     * This is a pure function.
+     *
+     * @param textures    to combine
+     * @param cp          combine parameters from TextureCombiner
+     *
+     * @return pixel array containing argb values suitable for BufferedImage.setRGB
+     */
+    public static int[][] combine(List<TextureData> textures, CombineParams cp) {
+        int channels = textures.size();
+
+        int width = -1;
+        int height = -1;
+
+        // ensure all textures are the same size
+        for (TextureData texture : textures) {
+            if (width == -1) {
+                width = texture.width;
+            } else {
+                assert(width == texture.width);
+            }
+
+            if (height == -1) {
+                height = texture.height;
+            } else {
+                assert(height == texture.height);
+            }
+        }
+
+        // There are between 1-4 channel groups and each one has at least one member.
+        // ChannelGroup.members is a set of indices ranging from 0-3
+        Map<CombineParams.ChannelMode, ChannelGroup> channelData = new HashMap<CombineParams.ChannelMode, ChannelGroup>();
+
+        for (CombineParams.ChannelMode stage1ChannelMode : cp.getGroups())
+        {
+            ChannelGroup cg = new ChannelGroup();
+            for (int i = 0;  i < channels;  i++) {
+                if (stage1ChannelMode == cp.getChannelMode(i)) {
+                    cg.members.add(i);
+                }
+            }
+            channelData.put(stage1ChannelMode, cg);
+
+            // SUM mode
+            if (stage1ChannelMode == CombineParams.ChannelMode.ADD)
+            {
+                float[] weight = new float[channels];
+                for (int i : cg.members) {
+                    weight[i] = cp.getStage1Weight(i) / 64f;
+                }
+
+                for (int j = 0; j < 256; j++) {
+                    for (int i = 0; i < 256; i++) {
+                        float sum = 0;
+                        for (int idx : cg.members) {
+                            sum += textures.get(idx).noiseArray[i][j] * weight[idx];
+                        }
+                        cg.noiseVals[i][j] = sum;
+                    }
+                }
+            }
+
+            if (stage1ChannelMode == CombineParams.ChannelMode.LERP)
+            {
+                float[] weight = new float[channels];
+                float weightSum = 0;
+
+                for (int i : cg.members) {
+                    weightSum += cp.getStage1Weight(i);
+                }
+                for (int i : cg.members) {
+                    weight[i] = cp.getStage1Weight(i) / weightSum;
+                }
+
+                for (int j = 0; j < 256; j++) {
+                    for (int i = 0; i < 256; i++) {
+                        float sum = 0;
+                        for (int idx : cg.members) {
+                            sum += textures.get(idx).noiseArray[i][j] * weight[idx];
+                        }
+                        cg.noiseVals[i][j] = sum;
+                    }
+                }
+            }
+
+            if (stage1ChannelMode == CombineParams.ChannelMode.SIN)
+            {
+                for (int j = 0; j < 256; j++) {
+                    for (int i = 0; i < 256; i++) {
+                        float sum = 0;
+                        for (int idx : cg.members) {
+                            sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
+                        }
+                        cg.noiseVals[i][j] = (float)Math.sin(i/24f + sum);
+                    }
+                }
+            }
+
+            if (stage1ChannelMode == CombineParams.ChannelMode.XDIM)
+            {
+                for (int j = 0; j < 256; j++) {
+                    for (int i = 0; i < 256; i++) {
+                        float sum = 0;
+                        for (int idx : cg.members) {
+                            sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
+                        }
+                        cg.noiseVals[i][j] = (i/256f + sum);
+                    }
+                }
+            }
+
+            if (stage1ChannelMode == CombineParams.ChannelMode.YDIM)
+            {
+                for (int j = 0; j < 256; j++) {
+                    for (int i = 0; i < 256; i++) {
+                        float sum = 0;
+                        for (int idx : cg.members) {
+                            sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
+                        }
+                        cg.noiseVals[i][j] = (j/256f + sum);
+                    }
+                }
+            }
+
+
+            if (stage1ChannelMode == CombineParams.ChannelMode.CIRC)
+            {
+                Point middle = new Point(128, 128);
+
+                for (int j = 0; j < 256; j++) {
+                    for (int i = 0; i < 256; i++) {
+                        float sum = 0;
+                        for (int idx : cg.members) {
+                            sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
+                        }
+                        float r = (float)middle.distance(i, j)/192f;
+                        r = Math.min(r, 1);
+
+                        cg.noiseVals[i][j] = (r + sum);
+                    }
+                }
+            }
+        }
+
+        // now turn this into a graphic...via the colormap
+        int[][] pixelArray = new int[width][height];
+
+        // stage 2
+
+        ArrayList<CombineParams.ChannelMode> channelArray = new ArrayList<CombineParams.ChannelMode>();
+        for (int c = 0;  c < channels;  c++) {
+            CombineParams.ChannelMode channelMode = cp.getChannelMode(c);
+
+            if (!channelArray.contains(channelMode)) {
+                channelArray.add(channelMode);
+            }
+        }
+
+        int chCount = channelArray.size();
+        double[] weight = new double[chCount];
+        ColorSpectrum[] colorMaps = new ColorSpectrum[chCount];
+
+        for (int i = 0; i < chCount; i++) {
+            weight[i] = cp.getStage2Weight(channelArray.get(i));  // value from slider/txtfield
+            colorMaps[i] = textures.get(channelData.get(channelArray.get(i)).members.get(0)).spectrum;  //colormap data, shared
+        }
+
+        double lerpSum = 0;
+        for (int cgIdx = 0; cgIdx < chCount; cgIdx++) {
+            if (cp.getGroupMode(channelArray.get(cgIdx)) == CombineParams.GroupMode.LERP) {
+                lerpSum += weight[cgIdx];
+            }
+        }
+        for (int cgIdx = 0; cgIdx < chCount; cgIdx++) {
+            if (cp.getGroupMode(channelArray.get(cgIdx)) == CombineParams.GroupMode.LERP) {
+                weight[cgIdx] /= lerpSum;  // lerp factor
+            } else {
+                // presumably SUM or MOD
+                weight[cgIdx] /= 64;  // add factor
+            }
+        }  // weights are now a fraction of 1
+
+        double rPixel, gPixel, bPixel;
+        for (int j = 0; j < 256; j++) {
+            for (int i = 0; i < 256; i++) {
+                // for each pixel
+                rPixel = 0;
+                gPixel = 0;
+                bPixel = 0;
+
+                float denormalizingFactor = 255f;
+                for (int channelGroupIdx = 0; channelGroupIdx < chCount; channelGroupIdx++) {
+                    CombineParams.ChannelMode stage1ChannelModeKey = channelArray.get(channelGroupIdx);
+
+                    int colorMapIdx = (int)(channelData.get(stage1ChannelModeKey).noiseVals[i][j] * denormalizingFactor);
+
+                    if (cp.getGroupMode(stage1ChannelModeKey) == CombineParams.GroupMode.ADD ||
+                            cp.getGroupMode(stage1ChannelModeKey) == CombineParams.GroupMode.LERP) {
+                        colorMapIdx = Math.min(255, Math.max(0, colorMapIdx));
+                    } else if (cp.getGroupMode(stage1ChannelModeKey) == CombineParams.GroupMode.RING) {
+                        while (colorMapIdx < 0) colorMapIdx += 256;
+                        colorMapIdx %= 256;
+                    } else {
+                        throw new RuntimeException("not handled! " + stage1ChannelModeKey);
+                    }
+
+                    rPixel += ColorSpectrum.getRed(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+                    gPixel += ColorSpectrum.getGreen(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+                    bPixel += ColorSpectrum.getBlue(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+                }
+                int pixel = ColorAxis.calculateARGB(255,
+                        (int)Math.min(255, Math.max(0, rPixel)),
+                        (int)Math.min(255, Math.max(0, gPixel)),
+                        (int)Math.min(255, Math.max(0, bPixel)));
+
+                pixelArray[i][j] = pixel;
+            }
+        }
+
+        return pixelArray;
     }
 }
 
