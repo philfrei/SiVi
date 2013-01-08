@@ -19,6 +19,7 @@ package com.adonax.texturebuilder;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -123,7 +124,13 @@ public class STBPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				new ExportFrame(STBPanel.this.host);
+				java.util.List<TextureParams> textureParamsList = new ArrayList<TextureParams>(4);
+				textureParamsList.add(sts1.getTextureParams());
+				textureParamsList.add(sts2.getTextureParams());
+				textureParamsList.add(sts3.getTextureParams());
+				textureParamsList.add(sts4.getTextureParams());
+
+				new ExportFrame(STBPanel.this.host, textureParamsList, tc.getCombineParams());
 			}
 		});
 
@@ -131,7 +138,7 @@ public class STBPanel extends JPanel
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
 		buttonPanel.add(tutorialBtn);
-		// TODO-SK: disabled until feature is complete buttonPanel.add(exportBtn);
+		buttonPanel.add(exportBtn);
 
 		add(buttonPanel, BorderLayout.SOUTH);
 

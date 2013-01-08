@@ -47,27 +47,30 @@ public class CombineParams {
 		RING
 	}
 
-	private final int CHANNELS = 4;
+	public final int numChannels;
 
-	private final ChannelMode[] channelModes = new ChannelMode[CHANNELS];
-	private final int[] stage1weights = new int[CHANNELS];  // weight stage 1
+	private final ChannelMode[] channelModes;
+	private final int[] stage1weights;  // weight stage 1
 
 	private final Map<ChannelMode, GroupMode> groupModes;
 	private final Map<ChannelMode, Integer> stage2weights;  // weight stage 2
 
-	public CombineParams( ChannelMode[] channelModes,
+	public CombineParams(           int numChannels,
+						  ChannelMode[] channelModes,
 						          int[] stage1weights,
 			Map<ChannelMode, GroupMode> groupModes,
 			Map<ChannelMode, Integer>   stage2weights) {
 
-		assert(channelModes.length == CHANNELS);
-		assert(stage1weights.length == CHANNELS);
+		this.numChannels = numChannels;
+
+		assert(channelModes.length == numChannels);
+		assert(stage1weights.length == numChannels);
 
 		Set<ChannelMode> specifiedModes = new HashSet<ChannelMode>();
 
-		for (int i = 0;  i < CHANNELS;  i++) {
-			this.channelModes[i] = channelModes[i];
-			this.stage1weights[i] = stage1weights[i];
+		this.channelModes = channelModes;
+		this.stage1weights = stage1weights;
+		for (int i = 0;  i < numChannels;  i++) {
 			specifiedModes.add(channelModes[i]);
 		}
 
