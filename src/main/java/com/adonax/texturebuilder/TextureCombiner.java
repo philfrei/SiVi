@@ -30,8 +30,11 @@ import javax.swing.event.*;
 
 public class TextureCombiner extends JPanel
 {
+	private final int IMAGE_WIDTH = 256;
+	private final int IMAGE_HEIGHT = 256;
 	private BufferedImage image;
-  	private int width, height;
+
+  	private int width, height;  // of gui block
 
 	private final int channels = 4;
 
@@ -108,7 +111,7 @@ public class TextureCombiner extends JPanel
 		this.width = width;
 		this.height = height;
 
-		image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+		image = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 
 		setLayout(null);
 
@@ -282,14 +285,14 @@ public class TextureCombiner extends JPanel
 		java.util.List<TextureData> textures = new ArrayList<TextureData>(4);
 
 		for (int c = 0;  c < channels;  c++) {
-			TextureData data = TextureFunctions.generate(256, 256, sts[c].getTextureParams());
+			TextureData data = TextureFunctions.generate(IMAGE_WIDTH, IMAGE_HEIGHT, sts[c].getTextureParams());
 			textures.add(data);
 		}
 
 		int[][] pixels = TextureFunctions.combine(textures, getCombineParams());
 
-		for (int j = 0;  j < 256;  j++) {
-			for (int i = 0;  i < 256;  i++) {
+		for (int j = 0;  j < IMAGE_HEIGHT;  j++) {
+			for (int i = 0;  i < IMAGE_WIDTH;  i++) {
 				image.setRGB(i, j, pixels[i][j]);
 			}
 		}
@@ -420,7 +423,7 @@ public class TextureCombiner extends JPanel
 
 		Insets insets = getBorder().getBorderInsets(this);
 
-		g2.drawLine(insets.left, insets.top + 124, insets.left + width - 256 - insets.right, insets.top + 124);
-		g2.drawImage(image, width - 256 - insets.right, insets.top, null);
+		g2.drawLine(insets.left, insets.top + 124, insets.left + width - IMAGE_WIDTH - insets.right, insets.top + 124);
+		g2.drawImage(image, width - IMAGE_WIDTH - insets.right, insets.top, null);
 	}
 }

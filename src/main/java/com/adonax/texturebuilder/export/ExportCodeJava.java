@@ -36,7 +36,7 @@ public class ExportCodeJava extends ExportCode {
 	private String generateCodeFor(TextureParams tp) {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("        textures.add(TextureFunctions.generate(256, 256, new TextureParams(\n");
+		sb.append("        textures.add(TextureFunctions.generate(width, height, new TextureParams(\n");
 		sb.append("                ").append(tp.xScale).append("f,\n");
 		sb.append("                ").append(tp.yScale).append("f,\n");
 		sb.append("                ").append(tp.xTranslate).append("f,\n");
