@@ -1,0 +1,623 @@
+/*
+
+Copyright (c) 2013, Phil Freihofner, Sumio Kiyooka
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    (1) Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+    (2) Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the
+    distribution.
+
+    (3) The name of the author may not be used to
+    endorse or promote products derived from this software without
+    specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+
+/**
+ * The following code is provided to allow the reader to view and use in
+ * their own programs.  It will faithfully reproduce the combined texture.
+ *
+ * This exported code is licensed under the BSD license while the actual
+ * source code to the SiVi application is licensed under the GPL.
+ *
+ * To use, save this code to a file of the name: "TestTemplate.scala"
+ * Save it without formatting (i.e. as a Plain Text file).
+ *
+ * Tip: to avoid clutter save the .scala file in its own folder because
+ * several .class files will be generated on compilation.
+ *
+ * Compile it via the command:
+ *     scalac TestTemplate.scala
+ *
+ * Run it via the command:
+ *     scala Main
+ */
+import java.awt.{Point, Dimension, Graphics2D}
+import java.awt.image.BufferedImage
+import scala.swing.{Panel, SimpleSwingApplication, MainFrame}
+
+
+object Main extends SimpleSwingApplication {
+  def top = new MainFrame {
+    title = "Test Simplex Texture Image"
+
+    val imageWidth = 600
+    val imageHeight = 400
+
+    preferredSize = new Dimension(imageWidth+10, imageHeight+40)
+    contents = new TestTemplate(imageWidth, imageHeight)
+  }
+}
+
+
+/**
+ * @param width     image width
+ * @param height    image height
+ */
+class TestTemplate(width: Int, height: Int) extends Panel {
+
+  private val testImage: BufferedImage = createImage
+
+  private def createImage: BufferedImage = {
+    val image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+    val raster = image.getRaster
+
+// --- begin dynamically generated code ---
+{0}
+// --- end dynamically generated code ---
+
+    val pixels: Array[Array[Int]] = TextureFunctions.combine(textures, combine)
+
+    for (y <- 0 until height) {
+      for (x <- 0 until width) {
+        val pixel: Array[Int] = new Array[Int](4)  //[0]=r, [1]=g, [2]=b, [3]=alpha
+        pixel(0) = ColorMap.getRed(pixels(x)(y))
+        pixel(1) = ColorMap.getGreen(pixels(x)(y))
+        pixel(2) = ColorMap.getBlue(pixels(x)(y))
+        pixel(3) = ColorMap.getAlpha(pixels(x)(y))
+        raster.setPixel(x, y, pixel)
+      }
+    }
+
+    image
+  }
+
+  override def paintComponent(g: Graphics2D) {
+    g.drawImage(testImage, 0, 0, null)
+  }
+}
+
+
+/**
+ * Immutable class representing a color map.
+ */
+case class ColorMap(data: Array[Int])
+
+object ColorMap {
+  def getAlpha(pixel: Int): Int = {
+    (pixel & 0xFF000000) >> 24
+  }
+
+  def getRed(pixel: Int): Int = {
+    (pixel & 0x00FF0000) >> 16
+  }
+
+  def getGreen(pixel: Int): Int = {
+    (pixel & 0x0000FF00) >> 8
+  }
+
+  def getBlue(pixel: Int): Int = {
+    (pixel & 0x000000FF)
+  }
+
+  def calculateARGB(a: Int, r: Int, g: Int, b: Int): Int = {
+    b + (g << 8) + (r <<16) + (a << 24)
+  }
+}
+
+
+/**
+ * Immutable class representing parameters for a single texture source.
+ */
+object NoiseNormalization extends Enumeration {
+  val SMOOTH = Value
+  val    ABS = Value
+  val   NONE = Value
+}
+
+case class TextureParams(
+      xScale: Float,     yScale: Float,  // typically ranges from 0.125 to 128.0
+  xTranslate: Float, yTranslate: Float,  // typically ranges from -256.0 to 256.0
+    minClamp: Float,   maxClamp: Float,  // typically ranges from -1.0 to 1.0
+   normalize: NoiseNormalization.Value,
+    colorMap: ColorMap)
+
+
+/**
+ * Immutable class that contains the parameters for combining the textures
+ * into a single texture.
+ *
+ * There are 4 channels and each one has a channel mode and slider value.
+ *
+ * Channels are then grouped by their channel mode.  Each group then has its own
+ * group mode and slider value.
+ */
+object ChannelMode extends Enumeration {
+  val  ADD = Value
+  val LERP = Value
+  val  SIN = Value
+  val XDIM = Value
+  val YDIM = Value
+  val CIRC = Value
+}
+
+object GroupMode extends Enumeration {
+  val  ADD = Value
+  val LERP = Value
+  val RING = Value
+}
+
+case class CombineParams(
+    numChannels: Int,
+   channelModes: Array[ChannelMode.Value],
+  stage1weights: Array[Int],
+     groupModes: Map[ChannelMode.Value, GroupMode.Value],
+  stage2weights: Map[ChannelMode.Value, Int]) {
+
+  // some more sanity checking
+  assert(channelModes.length == numChannels)
+  assert(stage1weights.length == numChannels)
+
+  private val specifiedModes: Set[ChannelMode.Value] = channelModes.toSet
+
+  assert(specifiedModes == groupModes.keySet)
+  assert(specifiedModes == stage2weights.keySet)
+}
+
+
+/**
+ * Immutable data structure containing the return result from a single texture
+ * generation function.  Contains all necessary data to generate an image.
+ */
+case class TextureData(
+       width: Int,
+      height: Int,
+  noiseArray: Array[Array[Float]],
+    colorMap: ColorMap) {
+
+  assert(width > 0)
+  assert(height > 0)
+  assert(noiseArray.length == width)
+}
+
+
+// temporarily used by combine()
+class ChannelGroup(width: Int, height: Int) {
+  var members: List[Int] = Nil
+
+  // x, y noise data, merged via "mode" function
+  val noiseVals: Array[Array[Float]] = Array.ofDim(width, height)
+}
+
+/**
+ * Pure functions to generate and combine textures.
+ */
+object TextureFunctions {
+
+  /**
+   * Generate the data necessary to create a single texture.
+   *
+   * This is a pure function.
+   *
+   * @param width     image width
+   * @param height    image height
+   * @param tp        texture parameters from SimplexTextureSource
+   *
+   * @return TextureData
+   */
+  def generate(width: Int, height: Int, tp: TextureParams): TextureData = {
+    val noiseArray: Array[Array[Float]] = Array.ofDim(width, height)
+
+    for (j <- 0 until height) {
+      val y: Float = (j * tp.yScale) / 256.0f + tp.yTranslate
+      for (i <- 0 until width) {
+        val x: Float = (i * tp.xScale) / 256.0f + tp.xTranslate
+
+        var noiseVal: Float = SimplexNoise.noise(x, y).toFloat
+        noiseVal = math.min(math.max(noiseVal, tp.minClamp), tp.maxClamp)
+
+        if (tp.normalize == NoiseNormalization.SMOOTH) {
+          noiseVal = (noiseVal + 1) / 2
+        } else if (tp.normalize == NoiseNormalization.ABS) {
+          noiseVal = math.abs(noiseVal)
+        }
+
+        noiseArray(i)(j) = noiseVal
+      }
+    }
+
+    TextureData(width, height, noiseArray, tp.colorMap)
+  }
+
+  /**
+   * Combine multiple textures into one.
+   *
+   * This is a pure function.
+   *
+   * @param textures    to combine
+   * @param cp          combine parameters from TextureCombiner
+   *
+   * @return pixel array containing argb values suitable for BufferedImage.setRGB
+   */
+  def combine(textures: List[TextureData], cp: CombineParams): Array[Array[Int]] = {
+    val channels: Int = textures.size
+
+    var width: Int = -1
+    var height: Int = -1
+
+    // ensure all textures are the same size
+    for (texture <- textures) {
+      if (width == -1) {
+        width = texture.width
+      } else {
+        assert(width == texture.width)
+      }
+
+      if (height == -1) {
+        height = texture.height
+      } else {
+        assert(height == texture.height)
+      }
+    }
+
+    // There are between 1-4 channel groups and each one has at least one member.
+    // ChannelGroup.members is a set of indices ranging from 0-3
+    var channelData: Map[ChannelMode.Value, ChannelGroup] = Map.empty
+
+    for (stage1ChannelMode <- cp.groupModes.keySet) {
+      val cg = new ChannelGroup(width, height)
+      for (i <- 0 until channels) {
+        if (stage1ChannelMode == cp.channelModes(i)) {
+          cg.members = cg.members ::: List(i)
+        }
+      }
+
+      channelData += stage1ChannelMode -> cg
+
+      // SUM mode
+      if (stage1ChannelMode == ChannelMode.ADD) {
+        val weight: Array[Float] = Array.ofDim(channels)
+        for (i <- cg.members) {
+          weight(i) = cp.stage1weights(i) / 64f
+        }
+
+        for (j <- 0 until height) {
+          for (i <- 0 until width) {
+            var sum = 0.0f
+            for (idx <- cg.members) {
+              sum += textures(idx).noiseArray(i)(j) * weight(idx)
+            }
+            cg.noiseVals(i)(j) = sum
+          }
+        }
+      }
+
+      if (stage1ChannelMode == ChannelMode.LERP) {
+        val weight: Array[Float] = Array.ofDim(channels)
+        var weightSum = 0.0f
+
+        for (i <- cg.members) {
+          weightSum += cp.stage1weights(i)
+        }
+        for (i <- cg.members) {
+          weight(i) = cp.stage1weights(i) / weightSum
+        }
+
+        for (j <- 0 until height) {
+          for (i <- 0 until width) {
+            var sum = 0.0f
+            for (idx <- cg.members) {
+              sum += textures(idx).noiseArray(i)(j) * weight(idx)
+            }
+            cg.noiseVals(i)(j) = sum
+          }
+        }
+      }
+
+      if (stage1ChannelMode == ChannelMode.SIN) {
+        for (j <- 0 until height) {
+          for (i <- 0 until width) {
+            var sum = 0.0f
+            for (idx <- cg.members) {
+              sum += textures(idx).noiseArray(i)(j) * (cp.stage1weights(idx) / 128f)
+            }
+            cg.noiseVals(i)(j) = math.sin(i/24f + sum).toFloat
+          }
+        }
+      }
+
+      if (stage1ChannelMode == ChannelMode.XDIM) {
+        for (j <- 0 until height) {
+          for (i <- 0 until width) {
+            var sum = 0.0f
+            for (idx <- cg.members) {
+              sum += textures(idx).noiseArray(i)(j) * (cp.stage1weights(idx) / 128f)
+            }
+            cg.noiseVals(i)(j) = (i/256f + sum)
+          }
+        }
+      }
+
+      if (stage1ChannelMode == ChannelMode.YDIM) {
+        for (j <- 0 until height) {
+          for (i <- 0 until width) {
+            var sum = 0.0f
+            for (idx <- cg.members) {
+              sum += textures(idx).noiseArray(i)(j) * (cp.stage1weights(idx) / 128f)
+            }
+            cg.noiseVals(i)(j) = (j/256f + sum)
+          }
+        }
+      }
+
+      if (stage1ChannelMode == ChannelMode.CIRC) {
+        val middle = new Point(128, 128)
+
+        for (j <- 0 until height) {
+          for (i <- 0 until width) {
+            var sum = 0.0f
+            for (idx <- cg.members) {
+              sum += textures(idx).noiseArray(i)(j) * (cp.stage1weights(idx) / 128f)
+            }
+            var r: Float = (middle.distance(i, j)/192f).toFloat
+            r = math.min(r, 1)
+
+            cg.noiseVals(i)(j) = (r + sum)
+          }
+        }
+      }
+    }
+
+    // now turn this into a graphic...via the colormap
+    val pixelArray: Array[Array[Int]] = Array.ofDim(width, height)
+
+    // stage 2
+
+    var channelArray: List[ChannelMode.Value] = Nil
+    for (c <- 0 until channels) {
+      val channelMode: ChannelMode.Value = cp.channelModes(c)
+
+      if (!channelArray.contains(channelMode)) {
+        channelArray = channelArray ::: List(channelMode)
+      }
+    }
+
+    val chCount: Int = channelArray.size
+    val weight: Array[Double] = Array.ofDim(chCount)
+    val colorMaps: Array[ColorMap] = Array.ofDim(chCount)
+
+    for (i <- 0 until chCount) {
+      weight(i) = cp.stage2weights(channelArray(i))  // value from slider/txtfield
+      colorMaps(i) = textures(channelData(channelArray(i)).members(0)).colorMap  //colormap data, shared
+    }
+
+    var lerpSum = 0.0
+    for (cgIdx <- 0 until chCount) {
+      if (cp.groupModes(channelArray(cgIdx)) == GroupMode.LERP) {
+        lerpSum += weight(cgIdx)
+      }
+    }
+    for (cgIdx <- 0 until chCount) {
+      if (cp.groupModes(channelArray(cgIdx)) == GroupMode.LERP) {
+        weight(cgIdx) /= lerpSum;  // lerp factor
+      } else {
+        // presumably SUM or MOD
+        weight(cgIdx) /= 64;  // add factor
+      }
+    }  // weights are now a fraction of 1
+
+    var rPixel: Double = 0.0
+    var gPixel: Double = 0.0
+    var bPixel: Double = 0.0
+    for (j <- 0 until height) {
+      for (i <- 0 until width) {
+        // for each pixel
+        rPixel = 0
+        gPixel = 0
+        bPixel = 0
+
+        val denormalizingFactor = 255f
+        for (channelGroupIdx <- 0 until chCount) {
+          val stage1ChannelModeKey: ChannelMode.Value = channelArray(channelGroupIdx)
+
+          var colorMapIdx: Int = (channelData(stage1ChannelModeKey).noiseVals(i)(j) * denormalizingFactor).toInt
+
+          if (cp.groupModes(stage1ChannelModeKey) == GroupMode.ADD ||
+              cp.groupModes(stage1ChannelModeKey) == GroupMode.LERP) {
+            colorMapIdx = math.min(255, math.max(0, colorMapIdx))
+          } else if (cp.groupModes(stage1ChannelModeKey) == GroupMode.RING) {
+            while (colorMapIdx < 0) { colorMapIdx += 256 }
+            colorMapIdx %= 256
+          } else {
+            throw new RuntimeException("not handled! " + stage1ChannelModeKey)
+          }
+
+          rPixel += ColorMap.getRed(colorMaps(channelGroupIdx).data(colorMapIdx)) * weight(channelGroupIdx)
+          gPixel += ColorMap.getGreen(colorMaps(channelGroupIdx).data(colorMapIdx)) * weight(channelGroupIdx)
+          bPixel += ColorMap.getBlue(colorMaps(channelGroupIdx).data(colorMapIdx)) * weight(channelGroupIdx)
+        }
+        val pixel: Int = ColorMap.calculateARGB(255,
+            math.min(255, math.max(0, rPixel)).toInt,
+            math.min(255, math.max(0, gPixel)).toInt,
+            math.min(255, math.max(0, bPixel)).toInt)
+
+        pixelArray(i)(j) = pixel
+      }
+    }
+
+    pixelArray
+  }
+}
+
+
+/**
+ * Simplex noise in 2D.
+ *
+ * Based on example code by Stefan Gustavson (stegu@itn.liu.se).
+ * Optimisations by Peter Eastman (peastman@drizzle.stanford.edu).
+ * Better rank ordering method by Stefan Gustavson in 2012.
+ *
+ * This code was placed in the public domain by its original author,
+ * Stefan Gustavson. You may use it as you see fit, but
+ * attribution is appreciated.
+ */
+object SimplexNoise {
+
+  private val grad3 = Array(
+    Grad(1,1,0),Grad(-1,1,0),Grad(1,-1,0),Grad(-1,-1,0),
+    Grad(1,0,1),Grad(-1,0,1),Grad(1,0,-1),Grad(-1,0,-1),
+    Grad(0,1,1),Grad(0,-1,1),Grad(0,1,-1),Grad(0,-1,-1)
+  )
+
+  private val p = Array(151,160,137,91,90,15,131,13,201,95,96,53,194,
+    233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,190,6,148,247,120,234,
+    75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,88,237,149,56,87,174,
+    20,125,136,171,168,68,175,74,165,71,134,139,48,27,166,77,146,158,231,83,
+    111,229,122,60,211,133,230,220,105,92,41,55,46,245,40,244,102,143,54,65,
+    25,63,161,1,216,80,73,209,76,132,187,208,89,18,169,200,196,135,130,116,
+    188,159,86,164,100,109,198,173,186,3,64,52,217,226,250,124,123,5,202,38,
+    147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,223,
+    183,170,213,119,248,152,2,44,154,163,70,221,153,101,155,167,43,172,9,129,
+    22,39,253,19,98,108,110,79,113,224,232,178,185,112,104,218,246,97,228,251,
+    34,242,193,238,210,144,12,191,179,162,241,81,51,145,235,249,14,239,107,49,
+    192,214,31,181,199,106,157,184,84,204,176,115,121,50,45,127,4,150,254,138,
+    236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
+  )
+
+  // To remove the need for index wrapping, double the permutation table
+  // length.
+  private val perm: Array[Short] = Array.ofDim(512)
+  private val permMod12: Array[Short] = Array.ofDim(512)
+
+  for (i <- 0 until 512) {
+    perm(i) = (p(i & 255)).asInstanceOf[Short]
+    permMod12(i) = (perm(i) % 12).asInstanceOf[Short]
+  }
+
+  // Skewing and unskewing factors for 2 dimensions
+  private val F2: Double = 0.5 * (math.sqrt(3.0) - 1.0)
+  private val G2: Double = (3.0 - math.sqrt(3.0)) / 6.0
+
+  // This method is a *lot* faster than using (int)Math.floor(x)
+  private def fastfloor(x: Double): Int = {
+    val xi: Int = x.asInstanceOf[Int]
+    if (x < xi) {
+      xi - 1
+    } else {
+      xi
+    }
+  }
+
+  private def dot(g: SimplexNoise.Grad, x: Double, y: Double): Double = {
+    g.x * x + g.y * y
+  }
+
+  // 2D simplex noise
+  def noise(xin: Double, yin: Double): Double = {
+    // Noise contributions from the three corners
+    var n0: Double = 0
+    var n1: Double = 0
+    var n2: Double = 0
+
+    // Skew the input space to determine which simplex cell we're in
+    val s: Double = (xin+yin)*F2; // Hairy factor for 2D
+    val i: Int = fastfloor(xin+s)
+    val j: Int = fastfloor(yin+s)
+    val t: Double = (i+j)*G2
+    val X0: Double = i-t  // Unskew the cell origin back to (x,y) space
+    val Y0: Double = j-t
+    val x0: Double = xin-X0  // The x,y distances from the cell origin
+    val y0: Double = yin-Y0
+
+    // For the 2D case, the simplex shape is an equilateral triangle.
+    // Determine which simplex we are in.
+
+    // Offsets for second (middle) corner of simplex in (i,j) coords
+    var i1: Int = 0
+    var j1: Int = 0
+
+    if (x0>y0) {
+      i1=1
+      j1=0
+    } // lower triangle, XY order: (0,0)->(1,0)->(1,1)
+    else {i1=0; j1=1}  // upper triangle, YX order: (0,0)->(0,1)->(1,1)
+
+    // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
+    // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
+    // c = (3-sqrt(3))/6
+    val x1: Double = x0 - i1 + G2  // Offsets for middle corner in (x,y) unskewed coords
+    val y1: Double = y0 - j1 + G2
+    val x2: Double = x0 - 1.0 + 2.0 * G2  // Offsets for last corner in (x,y) unskewed coords
+    val y2: Double = y0 - 1.0 + 2.0 * G2
+
+    // Work out the hashed gradient indices of the three simplex corners
+    val ii: Int = i & 255
+    val jj: Int = j & 255
+    val gi0: Int = permMod12(ii+perm(jj))
+    val gi1: Int = permMod12(ii+i1+perm(jj+j1))
+    val gi2: Int = permMod12(ii+1+perm(jj+1))
+
+    // Calculate the contribution from the three corners
+    var t0: Double = 0.5 - x0*x0-y0*y0
+    if (t0 < 0) {
+      n0 = 0.0
+    } else {
+      t0 *= t0
+      n0 = t0 * t0 * dot(grad3(gi0), x0, y0);  // (x,y) of grad3 used for 2D gradient
+    }
+
+    var t1: Double = 0.5 - x1*x1-y1*y1
+    if (t1<0) {
+      n1 = 0.0
+    } else {
+      t1 *= t1
+      n1 = t1 * t1 * dot(grad3(gi1), x1, y1)
+    }
+
+    var t2: Double = 0.5 - x2*x2-y2*y2
+    if (t2 < 0) {
+      n2 = 0.0
+    } else {
+      t2 *= t2
+      n2 = t2 * t2 * dot(grad3(gi2), x2, y2)
+    }
+
+    // Add contributions from each corner to get the final noise value.
+    // The result is scaled to return values in the interval [-1,1].
+    70.0 * (n0 + n1 + n2)
+  }
+
+  // Inner class to speed up gradient computations
+  // (array access is a lot slower than member access)
+  private case class Grad(x: Double, y: Double, z: Double)
+}

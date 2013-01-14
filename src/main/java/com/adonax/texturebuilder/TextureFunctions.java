@@ -30,7 +30,11 @@ import java.util.Map;
 class ChannelGroup {
 	ArrayList<Integer> members = new ArrayList<Integer>();
 	// x, y noise data, merged via "mode" function
-	float[][] noiseVals = new float[256][256];
+	float[][] noiseVals;
+
+	public ChannelGroup(int width, int height) {
+		noiseVals = new float[width][height];
+	}
 }
 
 
@@ -54,10 +58,10 @@ public class TextureFunctions {
 		float[][] noiseArray = new float[width][height];
 
 		for (int j = 0; j < height; j++) {
-			float y = (j * tp.yScale) / height + tp.yTranslate;
+			float y = (j * tp.yScale) / 256.0f + tp.yTranslate;
 
 			for (int i = 0; i < width; i++) {
-				float x = (i * tp.xScale) / width + tp.xTranslate;
+				float x = (i * tp.xScale) / 256.0f + tp.xTranslate;
 
 				float noiseVal = (float) SimplexNoise.noise(x, y);
 				noiseVal = Math.min(Math.max(noiseVal, tp.minClamp), tp.maxClamp);
@@ -112,7 +116,7 @@ public class TextureFunctions {
 
 		for (CombineParams.ChannelMode stage1ChannelMode : cp.getGroups())
 		{
-			ChannelGroup cg = new ChannelGroup();
+			ChannelGroup cg = new ChannelGroup(width, height);
 			for (int i = 0;  i < channels;  i++) {
 				if (stage1ChannelMode == cp.getChannelMode(i)) {
 					cg.members.add(i);
@@ -128,8 +132,8 @@ public class TextureFunctions {
 					weight[i] = cp.getStage1Weight(i) / 64f;
 				}
 
-				for (int j = 0; j < 256; j++) {
-					for (int i = 0; i < 256; i++) {
+				for (int j = 0; j < height; j++) {
+					for (int i = 0; i < width; i++) {
 						float sum = 0;
 						for (int idx : cg.members) {
 							sum += textures.get(idx).noiseArray[i][j] * weight[idx];
@@ -151,8 +155,8 @@ public class TextureFunctions {
 					weight[i] = cp.getStage1Weight(i) / weightSum;
 				}
 
-				for (int j = 0; j < 256; j++) {
-					for (int i = 0; i < 256; i++) {
+				for (int j = 0; j < height; j++) {
+					for (int i = 0; i < width; i++) {
 						float sum = 0;
 						for (int idx : cg.members) {
 							sum += textures.get(idx).noiseArray[i][j] * weight[idx];
@@ -164,8 +168,8 @@ public class TextureFunctions {
 
 			if (stage1ChannelMode == CombineParams.ChannelMode.SIN)
 			{
-				for (int j = 0; j < 256; j++) {
-					for (int i = 0; i < 256; i++) {
+				for (int j = 0; j < height; j++) {
+					for (int i = 0; i < width; i++) {
 						float sum = 0;
 						for (int idx : cg.members) {
 							sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
@@ -177,8 +181,8 @@ public class TextureFunctions {
 
 			if (stage1ChannelMode == CombineParams.ChannelMode.XDIM)
 			{
-				for (int j = 0; j < 256; j++) {
-					for (int i = 0; i < 256; i++) {
+				for (int j = 0; j < height; j++) {
+					for (int i = 0; i < width; i++) {
 						float sum = 0;
 						for (int idx : cg.members) {
 							sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
@@ -190,8 +194,8 @@ public class TextureFunctions {
 
 			if (stage1ChannelMode == CombineParams.ChannelMode.YDIM)
 			{
-				for (int j = 0; j < 256; j++) {
-					for (int i = 0; i < 256; i++) {
+				for (int j = 0; j < height; j++) {
+					for (int i = 0; i < width; i++) {
 						float sum = 0;
 						for (int idx : cg.members) {
 							sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
@@ -206,8 +210,8 @@ public class TextureFunctions {
 			{
 				Point middle = new Point(128, 128);
 
-				for (int j = 0; j < 256; j++) {
-					for (int i = 0; i < 256; i++) {
+				for (int j = 0; j < height; j++) {
+					for (int i = 0; i < width; i++) {
 						float sum = 0;
 						for (int idx : cg.members) {
 							sum += textures.get(idx).noiseArray[i][j] * (cp.getStage1Weight(idx) / 128f);
@@ -260,8 +264,8 @@ public class TextureFunctions {
 		}  // weights are now a fraction of 1
 
 		double rPixel, gPixel, bPixel;
-		for (int j = 0; j < 256; j++) {
-			for (int i = 0; i < 256; i++) {
+		for (int j = 0; j < height; j++) {
+			for (int i = 0; i < width; i++) {
 				// for each pixel
 				rPixel = 0;
 				gPixel = 0;
