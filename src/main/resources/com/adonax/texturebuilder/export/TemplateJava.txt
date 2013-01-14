@@ -725,7 +725,7 @@ class SimplexNoise {
         return 70.0 * (n0 + n1 + n2);
     }
 
-    // Inner class to speed upp gradient computations
+    // Inner class to speed up gradient computations
     // (array access is a lot slower than member access)
     private static class Grad {
         final double x, y, z;

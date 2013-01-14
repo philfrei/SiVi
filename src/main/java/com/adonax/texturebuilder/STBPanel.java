@@ -119,7 +119,7 @@ public class STBPanel extends JPanel
 			}
 		});
 
-		JButton exportBtn = new JButton("Export");
+		JButton exportBtn = new JButton("Export Code");
 		exportBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0)
