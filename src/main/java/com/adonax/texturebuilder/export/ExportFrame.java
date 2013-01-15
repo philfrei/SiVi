@@ -37,7 +37,7 @@ public class ExportFrame extends JDialog {
 	public ExportFrame(JFrame parent, java.util.List<TextureParams> textureParamsList, CombineParams combineParams) {
 		super(parent);
 
-		setTitle("Export");
+		setTitle("Export Code");
 		setModal(true);
 
 		setLayout(new BorderLayout());
@@ -49,7 +49,7 @@ public class ExportFrame extends JDialog {
 		final java.util.List<JTextArea> textAreas = new ArrayList<JTextArea>();
 
 		supportedLangs.add(new ExportCodeJava(textureParamsList, combineParams));
-		//supportedLangs.add(new ExportCodeScala(textureParamsList, combineParams));
+		supportedLangs.add(new ExportCodeScala(textureParamsList, combineParams));
 
 		for (ExportCode code : supportedLangs) {
 			JTextArea textArea = new JTextArea();
