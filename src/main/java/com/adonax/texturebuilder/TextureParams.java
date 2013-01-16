@@ -22,6 +22,17 @@ package com.adonax.texturebuilder;
  */
 public class TextureParams {
 
+	public enum Fields {
+		XSCALE,
+		YSCALE,
+		XTRANSLATE,
+		YTRANSLATE,
+		MINCLAMP,
+		MAXCLAMP,
+		NORMALIZE,
+		COLORMAP
+	}
+	
 	public enum NoiseNormalization {
 		SMOOTH,
 		ABS,

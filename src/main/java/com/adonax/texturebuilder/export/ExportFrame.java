@@ -34,6 +34,8 @@ import java.util.ArrayList;
 
 public class ExportFrame extends JDialog {
 
+	private static final long serialVersionUID = 1L;
+
 	public ExportFrame(JFrame parent, java.util.List<TextureParams> textureParamsList, CombineParams combineParams) {
 		super(parent);
 

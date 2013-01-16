@@ -30,6 +30,8 @@ import javax.swing.event.*;
 
 public class TextureCombiner extends JPanel
 {
+
+	private static final long serialVersionUID = 1L;
 	private final int IMAGE_WIDTH = 256;
 	private final int IMAGE_HEIGHT = 256;
 	private BufferedImage image;
@@ -282,14 +284,18 @@ public class TextureCombiner extends JPanel
 	{
 		update2ndStage();
 
-		java.util.List<TextureData> textures = new ArrayList<TextureData>(4);
+		java.util.List<TextureData> textures = 
+				new ArrayList<TextureData>(4);
 
 		for (int c = 0;  c < channels;  c++) {
-			TextureData data = TextureFunctions.generate(IMAGE_WIDTH, IMAGE_HEIGHT, sts[c].getTextureParams());
+			TextureData data = TextureFunctions.generate(
+					IMAGE_WIDTH, IMAGE_HEIGHT, 
+					sts[c].getTextureParams());
 			textures.add(data);
 		}
 
-		int[][] pixels = TextureFunctions.combine(textures, getCombineParams());
+		int[][] pixels = TextureFunctions.combine(
+				textures, getCombineParams());
 
 		for (int j = 0;  j < IMAGE_HEIGHT;  j++) {
 			for (int i = 0;  i < IMAGE_WIDTH;  i++) {
@@ -305,7 +311,8 @@ public class TextureCombiner extends JPanel
 		channelGroups = new ArrayList<ChannelGroup>();
 		boolean[] isChannelGrouped = new boolean[channels];
 		
-		ColorAxis matchColorAxis;
+		ColorMap matchColorMap;
+//		ColorAxis matchColorAxis;
 		int matchChannelMode;
 		
 		for (int i = 0; i < channels; i++)
@@ -319,13 +326,17 @@ public class TextureCombiner extends JPanel
 				channelGroups.add(newGroup);
 				
 				// info for match test
-				matchColorAxis = sts[i].colorAxis;
+				matchColorMap = 
+						sts[i].getTextureParams().colorMap;
+//				matchColorAxis = sts[i].colorAxis;
 				matchChannelMode = stage1Mode[i];
 
 				// are there other matches in remaining channels?
 				for (int j = i + 1; j < channels; j++)
 				{
-					if (matchColorAxis == sts[j].colorAxis
+//					if (matchColorAxis == sts[j].colorAxis
+//							&& matchChannelMode == stage1Mode[j])
+					if (matchColorMap == sts[j].getTextureParams().colorMap
 							&& matchChannelMode == stage1Mode[j])
 					{
 						newGroup.members.add(j);

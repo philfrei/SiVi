@@ -49,16 +49,21 @@ public class ColorBarSet extends JPanel {
 		this.width = width;
 		this.height = height;
 		
-		TitledBorder combineTitledBorder = BorderFactory.createTitledBorder("Color Axis");
+		TitledBorder combineTitledBorder = 
+				BorderFactory.createTitledBorder("Color Maps");
 		setBorder(combineTitledBorder);
-		Insets insets = combineTitledBorder.getBorderInsets(this);
+		Insets insets = 
+				combineTitledBorder.getBorderInsets(this);
 
 		cb = new ColorBar[bars];
 		for (int i = 0; i < bars; i++)
 		{
 			cb[i] = new ColorBar(left, top, 256, 24, 
 					colorAxis[i], host, this);
-			cb[i].setBounds(insets.left+10, insets.top + i*32 + 4 + 32, insets.left + 256 + 10, insets.top + 24);
+			cb[i].setBounds(
+					insets.left + 10, 
+					insets.top + (i * 32) + 4 + 32, 
+					256, 24);
 			add(cb[i]);
 		}	
 		

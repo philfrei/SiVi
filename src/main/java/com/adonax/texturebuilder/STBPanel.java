@@ -69,7 +69,7 @@ public class STBPanel extends JPanel
 		}
 		
 		cbSelector = new ColorBarSelectorDialog(colorAxisSet);
-		cbSelector.setTitle("Select a Color Axis");
+		cbSelector.setTitle("Select a Color Map");
 		cbSelector.setModal(true);
 		
 		tc = new TextureCombiner(640, 286);
