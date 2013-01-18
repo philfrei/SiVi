@@ -45,7 +45,7 @@ public class STBPanel extends JPanel
 	public SimplexTextureSource sts4;
 	
 	public ColorBarSet cbSet;	
-	ColorBarSelectorDialog cbSelector;
+	ColorMapSelectorDialog cbSelector;
 	final static int BARS = 7;
 	
 	private TutorialFramework tutorial;
@@ -68,7 +68,7 @@ public class STBPanel extends JPanel
 			colorAxisSet[i] = new ColorAxis();
 		}
 		
-		cbSelector = new ColorBarSelectorDialog(colorAxisSet);
+		cbSelector = new ColorMapSelectorDialog(colorAxisSet);
 		cbSelector.setTitle("Select a Color Map");
 		cbSelector.setModal(true);
 		

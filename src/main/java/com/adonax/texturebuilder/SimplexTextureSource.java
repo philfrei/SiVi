@@ -115,8 +115,9 @@ public class SimplexTextureSource extends JPanel
 			noMap.setSelected(true);
 		}
 	}
-		
-	private ColorAxis colorAxis;  
+	
+	//TODO: colorAxis should be private
+	ColorAxis colorAxis;  
 	private BufferedImage colorMapImg; 
 	public void setColorAxis(ColorAxis colorAxis)
 	{

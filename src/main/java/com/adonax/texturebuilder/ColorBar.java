@@ -32,7 +32,7 @@ public class ColorBar extends JComponent implements MouseListener {
 	private int width, height;
 	private boolean hover;
 
-	private ColorDialog colorDialog;
+	private ColorBarEditorDialog colorDialog;
 	private ColorAxis colorAxis;
 	private ColorBarSet parent;
 	private STBPanel grandParent;
@@ -60,7 +60,7 @@ public class ColorBar extends JComponent implements MouseListener {
 		this.height = height;
 		
 		
-		colorDialog = new ColorDialog(300, 330, colorAxis, grandParent);
+		colorDialog = new ColorBarEditorDialog(300, 330, colorAxis, grandParent);
 		colorDialog.setBounds(left, top - 16, 308, 364);
 		colorDialog.setModal(true);
 		
