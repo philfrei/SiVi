@@ -26,31 +26,27 @@ import javax.swing.*;
 public class ColorBarEditorPanel extends JPanel implements ActionListener,
 	MouseListener, MouseMotionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	int width, height;
+	private int width, height;
 	
-	Rectangle[] colorPad;
-	JTextField[] locationVal, redVal, greenVal, blueVal;
-	JButton[] delButton;
-	JLabel barPixel;
-	JButton flip, negative;
+	private Rectangle[] colorPad;
+	private JTextField[] locationVal, redVal, greenVal, blueVal;
+	private JButton[] delButton;
+	private JLabel barPixel;
+	private JButton flip, negative;
 
-	boolean useHsbLerp;
+	private boolean useHsbLerp;
 	
-	ArrayList<ColorBarPeg> colorBarPegs;
-	ColorAxis colorAxis;
+	private ArrayList<ColorBarPeg> colorBarPegs;
+	private ColorAxis colorAxis;
 	
-	public void setColorAxis(ColorAxis sourceColorAxis)
+	public void setColorAxis(ColorAxis sourceCA)
 	{
-		colorAxis.data = sourceColorAxis.data;
-		colorAxis.img = sourceColorAxis.img;
-		colorAxis.colorBarPegs = sourceColorAxis.colorBarPegs;
+		colorAxis = sourceCA;
 		this.colorBarPegs = colorAxis.colorBarPegs;
 	}
+	
 	
 	STBPanel host;
 	
@@ -167,8 +163,6 @@ public class ColorBarEditorPanel extends JPanel implements ActionListener,
 			add(delButton[i]);
 		}
 		
-		// Spec is derived from the data????
-
 		sortAndDisplay();	
 		
 		addMouseListener(this);
@@ -177,6 +171,7 @@ public class ColorBarEditorPanel extends JPanel implements ActionListener,
 
 	public void sortAndDisplay()
 	{
+		
 		Collections.sort(colorBarPegs, new ColorBarPegSort());
 		
 		for (int index = 0; index < ROWS; index++)
@@ -224,8 +219,6 @@ public class ColorBarEditorPanel extends JPanel implements ActionListener,
 		
 		colorAxis.update();
 		host.update();
-		
-		
 	}
 	
 	private int clickInColorPad(Point clickPoint)
@@ -251,7 +244,6 @@ public class ColorBarEditorPanel extends JPanel implements ActionListener,
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -278,11 +270,12 @@ public class ColorBarEditorPanel extends JPanel implements ActionListener,
 		int cpIdx = clickInColorPad(arg0.getPoint());
 		if (cpIdx > -1)
 		{
-			int argb = colorAxis.data[cpIdx];
+//			int argb = colorAxis.data[cpIdx];
+			int argb = colorAxis.colorMap.get(cpIdx);
 			Color pickedColor = new Color(
-					ColorAxis.getRed(argb),
-					ColorAxis.getGreen(argb),
-					ColorAxis.getBlue(argb),
+					ColorAxis.extractRed(argb),
+					ColorAxis.extractGreen(argb),
+					ColorAxis.extractBlue(argb),
 					255);
 					
 			Color newColor = JColorChooser.showDialog(this, 
@@ -307,11 +300,11 @@ public class ColorBarEditorPanel extends JPanel implements ActionListener,
 		if (inTopColorBar(arg0.getPoint()))
 		{
 			int idx = arg0.getX() - 16;
-			int argb = colorAxis.data[idx];
+			int argb = colorAxis.colorMap.get(idx);
 			Color pickedColor = new Color(
-					ColorAxis.getRed(argb),
-					ColorAxis.getGreen(argb),
-					ColorAxis.getBlue(argb),
+					ColorAxis.extractRed(argb),
+					ColorAxis.extractGreen(argb),
+					ColorAxis.extractBlue(argb),
 					255);
 	
 				Color newColor = JColorChooser.showDialog(this, 

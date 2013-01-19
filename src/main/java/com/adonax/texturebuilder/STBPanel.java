@@ -28,15 +28,12 @@ import com.adonax.tutorial.TutorialFramework;
 
 public class STBPanel extends JPanel
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	// stored to be parent of sub-dialogs
 	private final STBFrame host;
 
-	private ColorAxis[] colorAxisSet;
+	private final ColorAxis[] colorAxisSet;
 	
 	public TextureCombiner tc;
 	public SimplexTextureSource sts1;
@@ -54,8 +51,7 @@ public class STBPanel extends JPanel
 	{
 		return colorAxisSet[index];
 	}
-
-
+	
 	STBPanel(int width, int height, final STBFrame host)
 	{
 		this.host = host;
@@ -66,6 +62,7 @@ public class STBPanel extends JPanel
 		for (int i = 0; i < BARS; i++)
 		{
 			colorAxisSet[i] = new ColorAxis();
+//			System.out.println(i + ":" + colorAxisSet[i]);
 		}
 		
 		cbSelector = new ColorMapSelectorDialog(colorAxisSet);

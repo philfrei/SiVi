@@ -311,13 +311,8 @@ public class TextureCombiner extends JPanel
 		channelGroups = new ArrayList<ChannelGroup>();
 		boolean[] isChannelGrouped = new boolean[channels];
 		
-//		ColorMap matchColorMap;
-		ColorAxis matchColorAxis;
+		ColorMap matchColorMap;
 		int matchChannelMode;
-		
-		//TODO:
-		System.out.println("in 2nd Stage. channels =" + channels);
-		System.out.println("                groups =" + channelGroups.size());
 		
 		for (int i = 0; i < channels; i++)
 		{
@@ -330,29 +325,15 @@ public class TextureCombiner extends JPanel
 				channelGroups.add(newGroup);
 				
 				// info for match test
-//				matchColorMap = 
-//						sts[i].getTextureParams().colorMap;
-				matchColorAxis = sts[i].colorAxis;
+				matchColorMap = 
+						sts[i].getTextureParams().colorMap;
 				matchChannelMode = stage1Mode[i];
 
-				//TODO:
-				System.out.println("   sts[i], i=" + i);
-//				System.out.println("   matchColorMap:" + matchColorMap);
-				System.out.println("   matchColorAxis:" + matchColorAxis);
-				System.out.println("   matchChannelMode:" + matchChannelMode);
-				
 				// are there other matches in remaining channels?
 				for (int j = i + 1; j < channels; j++)
 				{
-					//TODO:
-					System.out.println(" sts[j], j=" + j);
-					System.out.println("   sts[j] ColorMap:" + sts[j].getTextureParams().colorMap);
-					System.out.println("   sts[j] ChannelMode:" + stage1Mode[j]);
-				
-					if (matchColorAxis == sts[j].colorAxis
+					if (matchColorMap == sts[j].getTextureParams().colorMap
 							&& matchChannelMode == stage1Mode[j])
-//					if (matchColorMap == sts[j].getTextureParams().colorMap
-//							&& matchChannelMode == stage1Mode[j])
 					{
 						newGroup.members.add(j);
 						isChannelGrouped[j] = true;

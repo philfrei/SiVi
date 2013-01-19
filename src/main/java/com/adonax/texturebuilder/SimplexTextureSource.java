@@ -116,8 +116,7 @@ public class SimplexTextureSource extends JPanel
 		}
 	}
 	
-	//TODO: colorAxis should be private
-	ColorAxis colorAxis;  
+	private ColorAxis colorAxis;  
 	private BufferedImage colorMapImg; 
 	public void setColorAxis(ColorAxis colorAxis)
 	{
@@ -129,7 +128,8 @@ public class SimplexTextureSource extends JPanel
 	{
 		textureParams = setTextureParam(
 				TextureParams.Fields.COLORMAP,
-				new ColorMap(colorAxis.data));
+				colorAxis.colorMap
+				);
 
 		colorMapImg = colorAxis.img;
 	}
@@ -145,7 +145,9 @@ public class SimplexTextureSource extends JPanel
 		this.textureParams = new TextureParams(1f, 1f, 0f, 0f, 
 				-1f, 1f, 
 				TextureParams.NoiseNormalization.SMOOTH, 
-				new ColorMap(colorAxis.data));
+//				new ColorMap(colorAxis.data)
+				colorAxis.colorMap
+		);
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbConstraints = new GridBagConstraints();
@@ -627,11 +629,11 @@ public class SimplexTextureSource extends JPanel
 						textureParams.normalize == 
 						TextureParams.NoiseNormalization.ABS) 
 				{
-					int argb = data.colorMap.data[idx];
+					int argb = data.colorMap.get(idx);
 					pixel = ColorAxis.calculateARGB(255,
-							ColorAxis.getRed(argb),
-							ColorAxis.getGreen(argb),
-							ColorAxis.getBlue(argb));
+							ColorAxis.extractRed(argb),
+							ColorAxis.extractGreen(argb),
+							ColorAxis.extractBlue(argb));
 				} else if (textureParams.normalize == TextureParams.NoiseNormalization.NONE) {
 					pixel = ColorAxis.calculateARGB(255, idx, idx, idx);
 				}

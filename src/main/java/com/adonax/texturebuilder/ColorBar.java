@@ -24,22 +24,19 @@ import javax.swing.JComponent;
 
 public class ColorBar extends JComponent implements MouseListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private int width, height;
 	private boolean hover;
 
 	private ColorBarEditorDialog colorDialog;
-	private ColorAxis colorAxis;
+	private final ColorAxis colorAxis;
 	private ColorBarSet parent;
 	private STBPanel grandParent;
 	
 	public void setColorAxis(ColorAxis colorAxis)
 	{
-		this.colorAxis = colorAxis;
+		colorAxis.copyTo(this.colorAxis);
 	}
 	public ColorAxis getColorAxis()
 	{
@@ -70,6 +67,8 @@ public class ColorBar extends JComponent implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent arg0) 
 	{
+		System.out.println("clicked in:" + colorAxis);
+		
 		if (parent.mode == parent.EDIT)
 		{
 			colorDialog.updatePanel();
@@ -78,12 +77,12 @@ public class ColorBar extends JComponent implements MouseListener {
 		}
 		if (parent.mode == parent.COPY)
 		{
-			parent.colorAxis = this.colorAxis.copy();
+			parent.colorAxis = this.colorAxis;
 		}
 		if (parent.mode == parent.PASTE)
 		{
-			this.colorAxis = parent.colorAxis.copy();
-			colorDialog.setColorAxis(colorAxis);
+			parent.colorAxis.copyTo(this.colorAxis);
+			colorDialog.setColorAxis(this.colorAxis);
 			grandParent.update();
 		}
 	}

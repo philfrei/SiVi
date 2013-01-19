@@ -24,7 +24,9 @@ import java.util.ArrayList;
 
 public class ColorAxis {
 
-	public int[] data;
+	public ColorMap colorMap;
+	
+	private int[] data;
 	BufferedImage img;
 	boolean hover;
 	ArrayList<ColorBarPeg>colorBarPegs;
@@ -50,12 +52,14 @@ public class ColorAxis {
 		}
 		
 		colorBarPegs = new ArrayList<ColorBarPeg>();
-		colorBarPegs.add(new ColorBarPeg(0, getRed(data[0]), 
-				getGreen(data[0]), getBlue(data[0]),
+		colorBarPegs.add(new ColorBarPeg(0, extractRed(data[0]), 
+				extractGreen(data[0]), extractBlue(data[0]),
 				255));
-		colorBarPegs.add(new ColorBarPeg(255, getRed(data[255]), 
-				getGreen(data[255]), getBlue(data[255]),
+		colorBarPegs.add(new ColorBarPeg(255, extractRed(data[255]), 
+				extractGreen(data[255]), extractBlue(data[255]),
 				255));
+		
+		colorMap = new ColorMap(data);
 	}
 	
 	public static int calculateARGB(int a, int r, int g, int b)
@@ -63,35 +67,35 @@ public class ColorAxis {
 		return b + (g << 8) + (r <<16) + (a << 24);
 	}
 	
-	public static int getRed(int colorARGB)
+	public static int extractAlpha(int colorARGB)
+	{
+		return (colorARGB & 0xFF000000) >> 24;
+	}
+
+	
+	public static int extractRed(int colorARGB)
 	{
 		return (colorARGB & 0x00FF0000) >> 16;
 	}
 
-	public static int getGreen(int colorARGB)
+	public static int extractGreen(int colorARGB)
 	{
 		return (colorARGB & 0x0000FF00) >> 8;
 	}
 	
-	public static int getBlue(int colorARGB)
+	public static int extractBlue(int colorARGB)
 	{
 		return (colorARGB & 0x000000FF);
 	}
 	
-	public ColorAxis copy()
+	public ColorAxis copyTo(ColorAxis target)
 	{
-		ColorAxis newCA = new ColorAxis();
-		newCA.hover = hover;
-		newCA.useHsbLerp = useHsbLerp;
-		WritableRaster raster = newCA.img.getRaster();
-		img.copyData(raster);
-		for (int i = 0; i < 256; i++)
-		{
-			newCA.data[i] = data[i];
-		}
-		newCA.setColorBarPegs(colorBarPegs);
+		target.hover = hover;
+		target.useHsbLerp = useHsbLerp;
+		target.setColorBarPegs(colorBarPegs); // makes a new set
+		target.update(); // will derive data and ColorMap and img
 		
-		return newCA;
+		return target;
 	}
 	
 	public ArrayList<ColorBarPeg> getColorBarPegs()
@@ -106,15 +110,15 @@ public class ColorAxis {
 	}
 	
 	public void setColorBarPegs(ArrayList<ColorBarPeg> colorBarPegs)
-	{
+	{	
 		this.colorBarPegs.clear();
+
 		for (ColorBarPeg rd : colorBarPegs)
 		{
 			this.colorBarPegs.add(
 					new ColorBarPeg(rd.getLocation(), 
 							rd.getrColor(), rd.getgColor(), 
 							rd.getbColor(), rd.getAlpha()));
-
 		}
 		update();
 	}
@@ -146,8 +150,8 @@ public class ColorAxis {
 		
 			if (useHsbLerp)
 			{
-				hsbStartVals = Color.RGBtoHSB(getRed(data[idx]), 
-						getGreen(data[idx]), getBlue(data[idx]),
+				hsbStartVals = Color.RGBtoHSB(extractRed(data[idx]), 
+						extractGreen(data[idx]), extractBlue(data[idx]),
 						hsbStartVals);
 				
 				hsbEndVals = Color.RGBtoHSB(
@@ -160,8 +164,6 @@ public class ColorAxis {
 				saturationSum = hsbStartVals[1];
 				brightnessSum = hsbStartVals[2];
 		
-//				System.out.println("a:" + hsbStartVals[0] +
-//						" b:" + hsbEndVals[0]);
 				if (Math.abs(hsbEndVals[0] - hsbStartVals[0]) > 0.5)
 				{
 					if (hsbEndVals[0] > hsbStartVals[0])
@@ -177,16 +179,6 @@ public class ColorAxis {
 				saturationIncr = (hsbEndVals[1] - hsbStartVals[1])/cols;
 				brightnessIncr = (hsbEndVals[2] - hsbStartVals[2])/cols;
 				
-//				System.out.println(
-//						"hueStart:" + hueSum
-//						+ " saturationStart" + saturationSum
-//						+ " brightnessStart" + brightnessSum
-//						+ " hueEnd:" + hsbEndVals[0]
-//						+ " hueIncr:" + hueIncr
-//						+ " satIncr:" + saturationIncr
-//						+ " brightIncr:" + brightnessIncr
-//								);
-				
 				for (int x = idx, n = idx + cols; x < n; x++)
 				{
 					hueSum += hueIncr;
@@ -199,12 +191,6 @@ public class ColorAxis {
 							color.getGreen(), 
 							color.getBlue());
 					
-//					{System.out.println("h:" + hueSum + " s:" + saturationSum 
-//							+ " b:" + brightnessSum + " color:" + color
-//							+ " R:" + colorAxis.data[x][0]
-//							+ " G:" + colorAxis.data[x][1]
-//							+ " B:" + colorAxis.data[x][2]);
-//					}
 				}
 				
 				
@@ -235,7 +221,6 @@ public class ColorAxis {
 				colorBarPegs.get(lastRow).getbColor());
 		
 		// update the ColorBar image
-		
 		for (int i = 0; i < 256; i++)
 		{
 			for (int j = 0; j < 16; j++)
@@ -243,5 +228,7 @@ public class ColorAxis {
 				img.setRGB(i, j, data[i]);
 			}
 		}		
+		
+		colorMap = new ColorMap(data);
 	}
 }

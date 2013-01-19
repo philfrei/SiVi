@@ -38,6 +38,7 @@ public class ColorBarEditorDialog extends JDialog {
 	public void setColorAxis(ColorAxis colorAxis)
 	{
 		colorPanel.setColorAxis(colorAxis);
+		
 	}
 
 	public void updatePanel()

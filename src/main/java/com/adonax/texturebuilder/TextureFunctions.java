@@ -286,12 +286,12 @@ public class TextureFunctions {
 					} else {
 						throw new RuntimeException("not handled! " + stage1ChannelModeKey);
 					}
-
-					rPixel += ColorMap.getRed(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
-					gPixel += ColorMap.getGreen(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
-					bPixel += ColorMap.getBlue(colorMaps[channelGroupIdx].data[colorMapIdx]) * weight[channelGroupIdx];
+					int argbPixel = colorMaps[channelGroupIdx].get(colorMapIdx);
+					rPixel += ColorAxis.extractRed(argbPixel) * weight[channelGroupIdx];
+					gPixel += ColorAxis.extractGreen(argbPixel) * weight[channelGroupIdx];
+					bPixel += ColorAxis.extractBlue(argbPixel) * weight[channelGroupIdx];
 				}
-				int pixel = ColorMap.calculateARGB(255,
+				int pixel = ColorAxis.calculateARGB(255,
 						(int)Math.min(255, Math.max(0, rPixel)),
 						(int)Math.min(255, Math.max(0, gPixel)),
 						(int)Math.min(255, Math.max(0, bPixel)));

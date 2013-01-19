@@ -96,7 +96,8 @@ public class MakeTexturedImage
 				}				
 				
 
-				image.setRGB(i, j, colorAxis.data[cbIdx]);
+//				image.setRGB(i, j, colorAxis.data[cbIdx]);
+				image.setRGB(i, j, colorAxis.colorMap.get(cbIdx));
 			}
 		}
 		

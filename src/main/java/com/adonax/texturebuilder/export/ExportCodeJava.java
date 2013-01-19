@@ -44,9 +44,9 @@ public class ExportCodeJava extends ExportCode {
 		sb.append("                ").append(tp.minClamp).append("f,\n");
 		sb.append("                ").append(tp.maxClamp).append("f,\n");
 		sb.append("                TextureParams.NoiseNormalization.").append(tp.normalize).append(",\n");
-		sb.append("                new ColorMap( new int[] { ").append(tp.colorMap.data[0]);
-		for (int i = 1;  i < tp.colorMap.data.length;  i++) {
-			sb.append(", ").append(tp.colorMap.data[i]);
+		sb.append("                new ColorMap( new int[] { ").append(tp.colorMap.get(0));
+		for (int i = 1;  i < tp.colorMap.size();  i++) {
+			sb.append(", ").append(tp.colorMap.get(i));
 		}
 		sb.append("} )\n");
 		sb.append("        )));\n");

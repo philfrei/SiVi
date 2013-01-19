@@ -4,8 +4,6 @@ package com.adonax.texturebuilder.test;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
-import com.adonax.texturebuilder.ColorMap;
-
 public class QuikTest
 {
 
@@ -58,12 +56,6 @@ public class QuikTest
 		
 		System.out.println("255 << 16: " + (255 << 24) + "   r:" + pixel[0] + "  g:" + pixel[1] 
 				+ "  b:" + pixel[2] + "  a:" + pixel[3]);
-		
-		
-		ColorMap cm = new ColorMap();
-		System.out.println("ColorMap, 0:" + cm.data[0]);
-		cm.data[0] = 99;
-		System.out.println("ColorMap, 0:" + cm.data[0]);
 		
 	}
 

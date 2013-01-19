@@ -69,8 +69,6 @@ public class ColorMapSelectorPanel extends JPanel {
 				if (hover > -1)
 				{
 					// then update sts.setColorAxis()
-
-//					sts.colorAxis = colorAxisSet[hover];
 					sts.setColorAxis(colorAxisSet[hover]);
 					sts.update();
 					dialogHost.setVisible(false);
