@@ -83,6 +83,42 @@ public class TitleCard extends JPanel
 		introLabel.setBounds(106, 270, 300, labelHeight);
 		add(introLabel);
 		
+		JButton templateButton = new JButton();
+		templateButton.setBounds(width - 88, 270, 48, buttonHeight);
+		templateButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tf.setCard("Template Card");
+			}
+		});
+		add(templateButton);
+
+		JLabel templateLabel = new JLabel("Code Template");
+		templateLabel.setFont(new java.awt.Font(
+				"Serif", java.awt.Font.ITALIC, 24) );
+		templateLabel.setBounds(width - (88 + 150), 270, 
+				300, labelHeight);
+		add(templateLabel);
+		
+		JButton perlinButton = new JButton();
+		perlinButton.setBounds(width - 88, 320, 48, buttonHeight);
+		perlinButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tf.setCard("Simplex Card");
+			}
+		});
+		add(perlinButton);
+
+		JLabel perlinLabel = new JLabel("Simplex Source");
+		perlinLabel.setFont(new java.awt.Font(
+				"Serif", java.awt.Font.ITALIC, 24) );
+		perlinLabel.setBounds(width - (93 + 150), 320, 
+				300, labelHeight);
+		add(perlinLabel);
+		
 		JButton smoothNoiseButton = new JButton();
 		smoothNoiseButton.setBounds(50, 320, 48, buttonHeight);
 		smoothNoiseButton.addActionListener(new ActionListener() {
@@ -150,6 +186,25 @@ public class TitleCard extends JPanel
 				"Serif", java.awt.Font.PLAIN, 24) );
 		terrainLabel.setBounds(106, 470, 494, labelHeight);
 		add(terrainLabel);		
+	
+	
+		JButton colorMapButton = new JButton();
+		colorMapButton.setBounds(width - 88, 470, 48, buttonHeight);
+		colorMapButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tf.setCard("ColorMap Card");
+			}
+		});
+		add(colorMapButton);
+	
+		JLabel colorMapLabel = new JLabel("ColorMap Source");
+		colorMapLabel.setFont(new java.awt.Font(
+				"Serif", java.awt.Font.ITALIC, 24) );
+		colorMapLabel.setBounds(width - (120 + 150), 470, 
+				300, labelHeight);
+		add(colorMapLabel);
 
 		JButton flamesButton = new JButton();
 		flamesButton.setBounds(50, 520, 48, buttonHeight);
