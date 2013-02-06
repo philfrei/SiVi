@@ -49,6 +49,9 @@ public class TutorialFramework extends JFrame {
 	    JPanel card4 = new TreeRingCard(800, 750, this);
 	    JPanel card5 = new CloudCard(800, 750, this);
 	    JPanel card6 = new TerraCard(800, 750, this);
+	    JPanel card7 = new TemplateCard(800, 750, this);
+	    JPanel card8 = new SimplexCard(800, 750, this);
+	    JPanel card9 = new ColorMapCard(800, 750, this);
 	    JPanel card10 = new FlamesCard(800, 750, this);
 	    cards.add(card1, "Title Card");
 	    cards.add(card2, "Intro Card");
@@ -56,6 +59,9 @@ public class TutorialFramework extends JFrame {
 	    cards.add(card4, "Tree Rings");
 	    cards.add(card5, "Classic Clouds");
 	    cards.add(card6, "Planet Terrain");
+	    cards.add(card7, "Template Card");
+	    cards.add(card8, "Simplex Card");
+	    cards.add(card9, "ColorMap Card");
 	    cards.add(card10, "Flames Card");
 	    
 	    add(cards);
