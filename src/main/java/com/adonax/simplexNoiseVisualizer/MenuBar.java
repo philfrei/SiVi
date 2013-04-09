@@ -126,8 +126,8 @@ public class MenuBar
 				settingsDialog.add(new SettingsPanel(topPanel));
 				settingsDialog.setTitle("Edit Application Settings");
 				settingsDialog.setBounds(0, 0, 250, 150);
-				settingsDialog.setModal(false);
-				settingsDialog.setAlwaysOnTop(true);
+				settingsDialog.setModal(true);
+//				settingsDialog.setAlwaysOnTop(true);
 				settingsDialog.setVisible(true);
 			}
 		});

@@ -244,8 +244,6 @@ public class GradientGUI extends JPanel implements ActionListener
 	}
 	
 	
-	
-	
 	class EditListener implements MouseListener
 	{
 		@Override
@@ -289,10 +287,11 @@ public class GradientGUI extends JPanel implements ActionListener
 				gf.setName(arg0.getComponent().getName());
 				gf.setTitle("Edit gradient");
 				gf.setBounds(0, 0, 450, 200);
-				gf.setAlwaysOnTop(true);
+//				gf.setAlwaysOnTop(true);
+				gf.setModal(true);
 				gf.setVisible(true);
 						
-				openWindows.add(gf);
+//				openWindows.add(gf);
 				
 			}	
 		}

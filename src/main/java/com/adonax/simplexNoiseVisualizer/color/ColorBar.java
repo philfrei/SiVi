@@ -101,8 +101,8 @@ public class ColorBar extends JPanel implements MouseListener,
 			colorDialog.add(new ColorBarEditingGUI(colorAxis));
 			colorDialog.setTitle("Edit Color Map");
 			colorDialog.setBounds(0, 0, 360, 420);
-//			colorDialog.setModal(true);
-			colorDialog.setAlwaysOnTop(true);
+			colorDialog.setModal(true);
+//			colorDialog.setAlwaysOnTop(true);
 			colorDialog.setVisible(true);
 		}	
 	}
