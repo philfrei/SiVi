@@ -1,0 +1,252 @@
+<html lang="en-us">
+<head>
+<title>Tree Rings Effect - Mod Div vs. clamping</title>
+<style>
+    h1 {font: sans-serif;
+    	font-weight: bold;
+    	font-size: 16}
+
+    h2 {font: sans-serif;
+    	font-weight: normal;
+    	font-size: 14;
+    	color: "maroon"}	
+
+    p {font: Ariel;
+    	font-size: 14}
+    	
+	code {font-size: 16;
+		font-family: Courier;
+		}
+	
+	pre {color: "navy";
+		font-size: 15;
+		background-color: #ffffcf }        
+
+</style>
+</head>
+
+<body>
+<h1>Tree Rings Effect - cycling vs. clamping</i></h1>
+
+<h2>Click on the graphic to load settings into the Texture Editing 
+tool.</h2>
+
+<p><i>This section looks at various things that can happen when you 
+expand the returned noise values beyond the range of -1 to 1, then 
+use another operation to bring the values to normalization. One 
+method uses a form of modular division, resulting in a set 
+of rings through the color space, sometimes likened to tree
+rings. You will also see an alternative method for bringing noise
+values into normalization range: a </i>clamping<i> technique which 
+produces an effect that reminds me of over-exposed light.</i></p>
+
+<p>The following code will create a <code>BufferedImage</code> that 
+matches the above graphic. A template has been provided (see the 
+"Code Template" button) where you can copy and paste this code and
+run it as a stand-alone Java program. Code lines that are different
+from previous examples are <b>bolded</b>.</p>
+
+<pre> 
+        BufferedImage image = new BufferedImage(width, height,
+                BufferedImage.TYPE_INT_ARGB);
+        WritableRaster raster = image.getRaster();
+
+        int[] pixel = new int[4]; 
+        <b>pixel[2] = 0; // blue, none used</b>
+        pixel[3] = 255; // alpha channel, always opaque
+
+        <b>// dark brown = Color(64, 32, 0)
+        int redA = 64;
+        int greenA = 32;
+    
+        // medium brown = Color(128, 96, 0)
+        int redB = 128;
+        int greenB = 96;
+
+        int rings = 4;</b>
+        
+        double noiseValue;
+
+        for (int y = 0; y &lt; height; y++)
+        {
+            for (int x = 0; x &lt; width; x++)
+            {
+                noiseValue = SimplexNoise.noise(x/128f, y/128f);
+                <b>noiseValue *= rings; 
+                noiseValue = noiseValue - Math.floor(noiseValue);
+
+                pixel[0] = (int)(noiseValue * (redB - redA) + redA);
+                pixel[1] = (int)(noiseValue * (greenB - greenA) 
+                             + greenA);</b>
+
+                raster.setPixel(x, y, pixel);
+            }
+        }
+</pre>
+
+<p><U><b>Rings</b></U></p>
+
+<p>In the above sample code, at the heart of the <code>for</code>
+loops, the variable <code>noiseValue</code> is given a value in the 
+range of -1.0 to 1.0 by the Simplex noise function, exactly as we 
+had done in the previous tutorial section. Then, this value is 
+amplified to the range of -4 to 4 in the very next line, by 
+multiplying it by the <code>rings</code> variable.</p>
+
+<p>The value is then brought back into normalization range by using a 
+function similar to modular division by 1, which creates a remainder
+that repeatedly cycles through the range 0 to 1.</p>
+
+<p>Instead of modular division by one, we use the Math.floor() 
+function, in which the return value is always the first integer less
+than or equal to the argument. When the <i>floor</i> value is 
+subtracted from the original noiseValue, the result will always be 
+in the range 0 (inclusive) up to but not including 1. A similar
+result occurs via modular division by 1. But with modular 
+division, you must make special provisions for negative noise 
+values, as the remainders will also be negative and will progress in
+the opposite direction than the remainders of positive noise values. 
+The following chart illustrates this.</p>
+<br>
+<pre>
+<i>Fig 1. Comparison of modular division by one and the subtraction
+of the floor value to achieve cycling in the range 0 to 1</i>
+
+  noiseValue     nV % 1      nV - floor(nV)
+  ----------     ------      --------------
+     -1.2         -0.2            0.8
+     -1           -0              0
+     -0.8         -0.8            0.2
+     -0.6         -0.6            0.4
+     -0.4         -0.4            0.6
+     -0.2         -0.2            0.8
+      0            0              0
+      0.2          0.2            0.2
+      0.4          0.4            0.4
+      0.6          0.6            0.6
+      0.8          0.8            0.8
+      1            0              0
+      1.2          0.2            0.2
+</pre>
+ 
+<p><i>[According to Stefan Gustavson: the following achieves the 
+same results, but is faster than the Math.floor() function:</i></p>
+<pre>    n = (n < 0)? (int)(n + 1) : (int)n; </pre>
+<p><i>But I will leave the floor function in the demo code for the
+sake of clarity.]</i></p>
+
+<p>Of course, you may <i>want</i> to have the color rings oriented
+in opposing directions, in which case modular division by 1 would
+be perfectly appropriate. Or one might translate the entire range
+into the positive number space (by adding 4 in this case) prior to 
+the modular division and thus avoid the need to deal with negatives. 
+This just goes to show a basic truth, which is that there are 
+innumerable techniques for operating on the noise values, as long as 
+you eventually end up with a range that can be mapped to legal colors.</p>
+
+<p>In this example we map to a color range bounded by two shades of 
+brown. The darker brown has a Red value of 64 and a Green value of 
+32. The lighter has a Red value of 128 and a Green value of 96. To 
+scale our normalized values, we use a standard formula: multiply the
+normalized value by the difference of the two target values, and add 
+the result to the first value.</p>
+
+<p>This following line of code from the example does this for the 
+green channel:</p>
+<pre>
+    colorValue = (int)(noiseValue * (greenB - greenA) + greenA);
+</pre>
+
+<p>In our example, the desired range is 96 - 32 = 64. Thus we 
+multiply the normalized <code>noiseValue</code> by 64, then add it
+to 32. Thus, the result will equal 32 if the noise Value is 0 or 96 
+if it is 1, or an intermediate green value for all noise values in
+between 0 and 1.</p>
+
+<p><U><b>Clamps</b></U></p>
+
+<p>Another way to ensure that we don't try to assign out-of-range 
+values to pixel colors is to run the noise Values through a 
+<code>min</code> and a <code>max</code> function.</p>
+
+<pre>
+    noiseValue = Math.max(noiseValue, 0);
+    noiseValue = Math.min(noiseValue, 1);
+    colorValue = (int)(noiseValue * (greenB - greenA) + greenA);
+</pre>
+
+<p><i>[Some prefer to combine the Max and Min functions into a single
+line, though I suspect the latest Java compilers automatically handle
+this optimization for us.]</i></p>
+
+<p>In the following figure, we use the same the noise values that 
+have been multiplied by <code>rings</code>, and range from -4 to 4.
+Only now, only the values that are within the range 0 to 1 result in 
+intermediate brown colors. Values from -4 to 0 display the darker
+brown, and values from 1 to 4 display as the lighter brown.</p>
+
+<p><i><b>Fig. 2, Clamping data that ranges from -4 to 4, to 0 to 1 
+with the use of Min and Max functions.</b></i></p>
+<img SRC="../images/clampIllustration.JPG" width="265" height="265" 
+hspace="10" vspace="10" ALT="Clamping example"/>
+
+<p><U><b>Using the Texture Tool example</b></U></p>
+
+<h2>Clicking on the graphic loads the Texture Editing tool with 
+settings that will generate the graphic, and this tutorial window 
+will disappear. To bring back the tutorial at any time, click on 
+the "Tutorial" button on the bottom center right of the tool.</h2>
+
+<p>Because of a design decision with the Texture Tool, I had to be
+a little tricky to create the "overflow" condition that allows us to
+transform the data to where the <i>rings</i> or <i>clamp</i> effects
+are possible. You will notice that the Tool presents four channels of
+the graphic, and that all four channels are set to "64" in the mixer.
+</p>
+
+<p><i><b>Fig. 3, Mixer settings for the Rings effect.</b></i></p>
+<img SRC="../images/treeRingMixer.JPG" width="595" height="260" 
+hspace="10" vspace="10" ALT="Clamping example"/>
+
+<p>The mixer programmed so that the actual value that is used
+is the number present on the slider divided by 64. Thus a single 
+channel can't cause an overflow. To achieve an overflow, we have the
+four channels each add it's 100% to a total sum. This is equivalent 
+mathematically to the code example where we multiply the noise value
+by a <code>rings</code> factor of 4. If you draw down the individual
+slider volumes, you can see the rings effect lessen.</p>
+
+<p>You can also lessen the number of rings by selecting the "smooth"
+normalization in the contributing channels. If all the channels are
+set to "(v+1)/2", then the data will range purely from 0 to 4,
+allowing a max of 4 rings. With "none" selected, the data can
+range from -4 to 4, allowing a maximum of 8 rings.</p> 
+
+<p>Note that 2nd stage of the mixer is set to "ring". With this 
+setting, the Math.floor function is performed on the data from stage
+1. There are two other settings on this slider. One can select "add" 
+or "lerp". With "add", all the 2nd stage tracks being combined have 
+their individual track values added into a grand sum that is then 
+clamped. With "lerp" the contributing tracks are averaged together, 
+their weights being determined by the values of the stage 2 sliders.
+</p>
+
+<p>The light green label at the left of the stage 2 slider lists 
+which tracks are contributing. The selection of contributing tracks 
+is determined automatically, based upon the Color Bar selected for 
+the channel (top color gradient graphic on the channel stacks in the
+top half of the tool). The 2nd stage also splits out channels by
+the function selected in the stage 1 mixer (e.g., "add", "lerp", 
+"sin", "xDim", "yDim"--choices available as of this iteration).</p>
+
+<p>One last note: one can cause an "underflow" by selecting "none" 
+instead of either the "smooth" or "turbulent" normalization options,
+via the channel radio buttons. Selecting "none" allows values from 
+-1 to 0 to reach the function which converts the numbers to color
+data. If the 2nd stage setting is "ring", the underflow will appear 
+as a single ring. If the 2nd stage setting is either "add" or "lerp"
+the data will be clamped and all values below zero will be reported as
+zero.</p> 
+
+</body>
+</HTML>

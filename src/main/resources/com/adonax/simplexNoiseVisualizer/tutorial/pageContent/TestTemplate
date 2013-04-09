@@ -1,0 +1,113 @@
+/**************************************************************
+* TEST TEMPLATE
+*
+* The following code template is provided to allow the reader a 
+* convenient way to test the code examples in each tutorial 
+* section. 
+*
+* To use, first copy this program into a plain text file and 
+* save it with the name "TestTemplate.java". The capitalizations
+* must be exactly as seen. (Alternatively, you can paste it into
+* a new class file named "TestTemplate" in your IDE.)
+*
+* Then copy the example code and paste it into the your copy of 
+* this class, and paste the code between the two DROP comments 
+* inside the TestTemplate constructor, replacing what might already
+* be there.
+*
+* The file should have the name: "TestTemplate.java"
+* and be saved without formatting (as a Plain Text file.) 
+*
+* To compile and run, you will also need a copy of the source 
+* SimplexNoise.java  saved in the same directory. This can be 
+* obtained via the "Simplex Source" button.
+*
+* From the command prompt, compile by typing:
+*     javac TestTemplate.java
+*
+* Assuming it compiles with no errors, you can then run it via 
+* the command:
+*     java TestTemplate
+* 
+* You may also need the ColorMap source as well, saved to the 
+* same directory, for some of the later tutorials. The
+* instructions for these tutorials will specify if it is needed.
+**************************************************************/
+
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+class TestTemplate extends JPanel
+{
+    TestTemplate(int width, int height)
+    {
+        this.width = width;
+        this.height = height;
+        
+//***DROP test code (overwriting) between the two comments (TOP)
+        BufferedImage image = new BufferedImage(width, height,
+                    BufferedImage.TYPE_INT_ARGB);
+        WritableRaster raster = image.getRaster();
+        int[] pixel = new int[4]; //[0]=r, [1]=g, [2]=b, [3]=alpha
+        double noiseValue = 0;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                noiseValue = SimplexNoise.noise(x/128f, y/128f);
+                noiseValue = (noiseValue + 1) / 2;
+                noiseValue *= 256;
+
+                pixel[0] = (int)noiseValue;
+                pixel[1] = (int)noiseValue;
+                pixel[2] = (int)noiseValue;
+                pixel[3] = 255; // opaque;
+
+                raster.setPixel(x, y, pixel);
+            }
+        }
+//***DROP test code (overwriting) between the two comments (BOTTOM)
+
+        testImage = image;        
+    }
+
+    public void paintComponent(Graphics g)
+    {
+        Graphics2D g2 = (Graphics2D) g;
+        
+        g2.setBackground(Color.WHITE);
+        g2.clearRect(0, 0, width, height);
+
+        g2.drawImage(testImage, 10, 10, null);
+    }    
+
+    public static void main(String[] args) {
+
+        EventQueue.invokeLater(new Runnable(){
+
+            public void run()
+            {    
+                JFrame frame = new JFrame();
+                frame.setDefaultCloseOperation(
+                        JFrame.EXIT_ON_CLOSE);
+                frame.setSize(708, 194);
+                frame.setTitle("Test Simplex Texture Image");
+                TestTemplate panel = new TestTemplate(700, 160);
+                frame.add(panel);
+                frame.setVisible(true);
+            }
+        });
+    }
+    
+    private static final long serialVersionUID = 1L;
+    private int width, height;
+    private BufferedImage testImage;
+}
