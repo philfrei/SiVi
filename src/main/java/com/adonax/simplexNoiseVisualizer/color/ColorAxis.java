@@ -81,22 +81,22 @@ public class ColorAxis {
 	public ColorAxis copyTo(ColorAxis target)
 	{
 		target.useHsbLerp = useHsbLerp;
-		target.setColorBarPegs(colorBarPegs); // makes a new set
+		target.setColorBarPegs(colorBarPegs); // makes a NEW set
 		target.update(); // will derive data and ColorMap and img
 		
 		return target;
 	}
 	
-	public ArrayList<ColorBarPeg> copyColorBarPegs()
-	{
-		ArrayList<ColorBarPeg> newRowData = new ArrayList<ColorBarPeg>();
-		for (ColorBarPeg rd : colorBarPegs)
-		{
-			newRowData.add(new ColorBarPeg(rd.getLocation(), 
-					rd.getrColor(), rd.getgColor(), rd.getbColor(), 255));
-		}
-		return newRowData;	
-	}
+//	public ArrayList<ColorBarPeg> copyColorBarPegs()
+//	{
+//		ArrayList<ColorBarPeg> newRowData = new ArrayList<ColorBarPeg>();
+//		for (ColorBarPeg rd : colorBarPegs)
+//		{
+//			newRowData.add(new ColorBarPeg(rd.getLocation(), 
+//					rd.getrColor(), rd.getgColor(), rd.getbColor(), 255));
+//		}
+//		return newRowData;	
+//	}
 	
 	public void setColorBarPegs(ArrayList<ColorBarPeg> colorBarPegs)
 	{	
@@ -116,8 +116,8 @@ public class ColorAxis {
 	{
 		int[] data = new int[256];
 		int idx, cols;
-		float redIncr, greenIncr, blueIncr;
-		float redSum, greenSum, blueSum;
+		float redIncr, greenIncr, blueIncr, alphaIncr;
+		float redSum, greenSum, blueSum, alphaSum;
 		float hueIncr, saturationIncr, brightnessIncr;
 		float hueSum, saturationSum, brightnessSum;
 		float[] hsbStartVals = new float[3];
@@ -132,8 +132,10 @@ public class ColorAxis {
 			redSum = colorBarPegs.get(i).getrColor(); 
 			greenSum = colorBarPegs.get(i).getgColor();
 			blueSum = colorBarPegs.get(i).getbColor();
+			alphaSum = colorBarPegs.get(i).getAlpha();
 			
-			data[idx] = ColorMap.calculateARGB(255, (int)redSum, 
+			data[idx] = ColorMap.calculateARGB(
+					(int)alphaSum, (int)redSum, 
 					(int)greenSum, (int)blueSum); 
 			
 			cols = colorBarPegs.get(i + 1).getLocation() - idx;
@@ -192,13 +194,16 @@ public class ColorAxis {
 				redIncr = (colorBarPegs.get(i + 1).getrColor() - redSum)/cols;
 				greenIncr = (colorBarPegs.get(i + 1).getgColor() - greenSum)/cols;
 				blueIncr = (colorBarPegs.get(i + 1).getbColor() - blueSum)/cols;
+				alphaIncr = (colorBarPegs.get(i + 1).getAlpha() - alphaSum)/cols;
 				
 				for (int x = idx; x < idx + cols; x++)
 				{
 					redSum += redIncr;
 					greenSum += greenIncr;
 					blueSum += blueIncr;
-					data[x] = ColorMap.calculateARGB(255,
+					alphaSum += alphaIncr;
+					data[x] = ColorMap.calculateARGB(
+							Math.round(alphaSum),
 							Math.round(redSum),
 							Math.round(greenSum), 
 							Math.round(blueSum));
@@ -206,7 +211,8 @@ public class ColorAxis {
 			}
 		}
 		
-		data[255] = ColorMap.calculateARGB(255,
+		data[255] = ColorMap.calculateARGB(
+				colorBarPegs.get(lastRow).getAlpha(),
 				colorBarPegs.get(lastRow).getrColor(),
 				colorBarPegs.get(lastRow).getgColor(),
 				colorBarPegs.get(lastRow).getbColor());

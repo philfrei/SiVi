@@ -100,7 +100,7 @@ public class TitleCard extends JPanel
 		gbConstraints.gridy = 1;
 		add(introButton, gbConstraints);
 		
-		JLabel introLabel = new JLabel(" Introduction");
+		JLabel introLabel = new JLabel(" Preface");
 		introLabel.setFont(new java.awt.Font(
 				"Serif", java.awt.Font.ITALIC, 24) );
 		gbConstraints.gridx = 1;
