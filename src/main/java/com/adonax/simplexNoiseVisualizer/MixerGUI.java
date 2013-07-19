@@ -75,6 +75,7 @@ public class MixerGUI extends JPanel
 				BorderFactory.createTitledBorder("Mix");
 		mixPanel.setBorder(mixBorder);
 		mixPanel.setLayout(new GridBagLayout());
+		// note: mm weights are pre-multiplied by master
 		for (int i = 0; i < channels; i++)
 		{
 			weightSlider[i] = makeWeightingSlider(i);
@@ -104,9 +105,11 @@ public class MixerGUI extends JPanel
 			public void stateChanged(ChangeEvent arg0)
 			{
 				updateModelWeights();
+				topPanel.remix();
 			}
 		});
 		mixPanel.add(masterSlider, gbConstraints);
+//		updateModelWeights(); //TODO: check if okay
 		
 		gbConstraints.gridx = 0;
 		gbConstraints.gridy = 1;
@@ -168,6 +171,8 @@ public class MixerGUI extends JPanel
 	
 	private JSlider makeWeightingSlider(final int idx) 
 	{
+//		final JSlider weightSlider = new JSlider(0, 100, 
+//				(int)(mixerModel.weights[idx] * 100));
 		final JSlider weightSlider = new JSlider(0, 100, 
 				(int)((mixerModel.weights[idx] * 100)
 						/ mixerModel.master));
@@ -180,6 +185,7 @@ public class MixerGUI extends JPanel
 				weightTextField[idx].setText(
 						String.valueOf(weight));
 				updateModelWeights();
+				topPanel.remix();
 			}
 		});
 
@@ -190,6 +196,8 @@ public class MixerGUI extends JPanel
 	{
 		JTextField tf = new JTextField();
 		tf.setColumns(2);
+//		tf.setText(String.valueOf((int)
+//				(mixerModel.weights[idx] * 100)));
 		tf.setText(String.valueOf((int)
 				((mixerModel.weights[idx] * 100) / 
 						mixerModel.master)));
@@ -217,7 +225,7 @@ public class MixerGUI extends JPanel
 		 * TopPanel.update() instead of .remix(). But there 
 		 * would be a significant performance cost.
 		 */
-		topPanel.remix();
+//		topPanel.remix();
 	}
 	
 	private float[] getWeights()

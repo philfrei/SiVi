@@ -26,7 +26,6 @@ public class SiViApplet extends JApplet {
 	
 	public void init() 
 	{
-		//Execute a job on the event-dispatching thread; creating this applet's GUI.
 		try 
 		{
 			SwingUtilities.invokeLater(new Runnable() {

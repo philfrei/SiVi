@@ -23,6 +23,7 @@ import java.awt.Dimension;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import com.adonax.simplexNoiseVisualizer.TopPanel;
 
@@ -42,31 +43,42 @@ public class TutorialFramework extends JDialog {
 	    
 	    cardLayout = new CardLayout();
 	    cards = new JPanel(cardLayout);
-	    cards.setPreferredSize(new Dimension(800, 750));
+//	    cards.setPreferredSize(new Dimension(800, 750));
+	    cards.setPreferredSize(new Dimension(1200, 1500));
+	    
+//	    JPanel card1 = new TitleCard(this);
+//	    JPanel card2 = new IntroCard(800, 750, this);
+//	    JPanel card3 = new SmoothNoiseCard(this);
+//	    JPanel card4 = new TreeRingCard(this);
+//	    JPanel card5 = new CloudCard(this);
+//	    JPanel card6 = new TerraCard(this);
+//	    JPanel card7 = new TemplateCard(800, 750, this);
+//	    JPanel card8 = new SimplexCard(800, 750, this);
+//	    JPanel card9 = new ColorMapCard(800, 750, this);
+//	    JPanel card10 = new SolarFlareCard(this);
+//	    cards.add(card1, "Title Card");
+//	    cards.add(card2, "Intro Card");
+//	    cards.add(card3, "Smooth Noise");
+//	    cards.add(card4, "Tree Rings");
+//	    cards.add(card5, "Classic Clouds");
+//	    cards.add(card6, "Planet Terrain");
+//	    cards.add(card7, "Template Card");
+//	    cards.add(card8, "Simplex Card");
+//	    cards.add(card9, "ColorMap Card");
+//	    cards.add(card10, "Flare Card");
+	    
+	    JPanel galleryCard = new GalleryCard(this);
+	    cards.add(galleryCard, "Gallery Card");
+	    
+//	    add(cards);
+	    
+	    JScrollPane scroll = new JScrollPane(cards,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	
+	    add(scroll);
 	    
 	    
-	    JPanel card1 = new TitleCard(this);
-	    JPanel card2 = new IntroCard(800, 750, this);
-	    JPanel card3 = new SmoothNoiseCard(this);
-	    JPanel card4 = new TreeRingCard(this);
-	    JPanel card5 = new CloudCard(this);
-	    JPanel card6 = new TerraCard(this);
-	    JPanel card7 = new TemplateCard(800, 750, this);
-	    JPanel card8 = new SimplexCard(800, 750, this);
-	    JPanel card9 = new ColorMapCard(800, 750, this);
-	    JPanel card10 = new SolarFlareCard(this);
-	    cards.add(card1, "Title Card");
-	    cards.add(card2, "Intro Card");
-	    cards.add(card3, "Smooth Noise");
-	    cards.add(card4, "Tree Rings");
-	    cards.add(card5, "Classic Clouds");
-	    cards.add(card6, "Planet Terrain");
-	    cards.add(card7, "Template Card");
-	    cards.add(card8, "Simplex Card");
-	    cards.add(card9, "ColorMap Card");
-	    cards.add(card10, "Flare Card");
-	    
-	    add(cards);
 	}
 
 	public void setCard(String string) 

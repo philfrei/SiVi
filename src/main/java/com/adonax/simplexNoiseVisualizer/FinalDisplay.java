@@ -29,6 +29,10 @@ public class FinalDisplay extends JPanel
 	private static final long serialVersionUID = 1L;
 
 	private BufferedImage image;
+	public BufferedImage getImage()
+	{
+		return image;
+	}
 		
 	public FinalDisplay(final TopPanelModel settings)
 	{	

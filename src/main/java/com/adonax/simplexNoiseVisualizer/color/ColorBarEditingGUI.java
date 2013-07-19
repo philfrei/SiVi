@@ -158,7 +158,7 @@ public class ColorBarEditingGUI extends JPanel
 		});
 		buttonPanel.add(negative);
 	
-		final JCheckBox hsbCheckBox = new JCheckBox("HSB lerp");
+		final JCheckBox hsbCheckBox = new JCheckBox("Use HSB");
 		hsbCheckBox.setBounds(206, 32, 100, 24);
 		
 		hsbCheckBox.addActionListener(new ActionListener(){

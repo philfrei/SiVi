@@ -3,11 +3,17 @@ package com.adonax.simplexNoiseVisualizer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.adonax.simplexNoiseVisualizer.color.ColorAxis;
 import com.adonax.simplexNoiseVisualizer.gradients.GradientGUIModel;
@@ -17,6 +23,8 @@ import com.adonax.simplexNoiseVisualizer.tutorial.TutorialFramework;
 public class MenuBar
 {
 	private TopPanel topPanel;
+	
+	private JMenuItem exportGIF, exportPNG, exportJPG;
 	
 	MenuBar(TopPanel topPanel)
 	{
@@ -66,10 +74,24 @@ public class MenuBar
 		closeFile.setEnabled(false);
 		JMenuItem saveFile = new JMenuItem("Save", KeyEvent.VK_S);
 		saveFile.setEnabled(false);
-		JMenuItem importSubMenu = new JMenuItem("Import", KeyEvent.VK_I);
+		JMenu importSubMenu = new JMenu("Import");
 		importSubMenu.setEnabled(false);
-		JMenuItem exportSubMenu = new JMenuItem("Export", KeyEvent.VK_E);
-		exportSubMenu.setEnabled(false);
+		JMenu exportSubMenu = new JMenu("Export");
+		exportSubMenu.setEnabled(true);
+		
+			exportGIF = new JMenuItem("Export GIF", KeyEvent.VK_G);
+			exportGIF.addActionListener(new ExportMenuListener());
+			exportSubMenu.add(exportGIF);
+			
+			exportPNG = new JMenuItem("Export PNG", KeyEvent.VK_P);
+			exportPNG.addActionListener(new ExportMenuListener());
+			exportSubMenu.add(exportPNG);
+			
+			exportJPG = new JMenuItem("Export JPG", KeyEvent.VK_J);
+			exportJPG.addActionListener(new ExportMenuListener());
+			exportSubMenu.add(exportJPG);
+		
+		
 		JMenuItem quitApplication = new JMenuItem("Quit", KeyEvent.VK_Q);
 		quitApplication.addActionListener(new ActionListener()
 		{
@@ -94,8 +116,8 @@ public class MenuBar
 		menuBar.add(fileMenu);
 
 		JMenu viewMenu = new JMenu("View");
-		JMenuItem viewTutorial = new JMenuItem("Tutorial", KeyEvent.VK_T);
-		viewTutorial.addActionListener(new ActionListener()
+		JMenuItem viewGallery = new JMenuItem("Gallery", KeyEvent.VK_T);
+		viewGallery.addActionListener(new ActionListener()
 		{
 			
 			@Override
@@ -103,7 +125,7 @@ public class MenuBar
 			{
 			    TutorialFramework tutorial = 
 			    		new TutorialFramework(topPanel);
-		        tutorial.setBounds(100, 100, 800 + 8, 700 + 34);
+		        tutorial.setBounds(100, 100, 900 + 8, 700 + 34);
 				tutorial.setVisible(true);
 			}
 		});
@@ -132,7 +154,7 @@ public class MenuBar
 			}
 		});
 	    
-		viewMenu.add(viewTutorial);
+		viewMenu.add(viewGallery);
 		viewMenu.add(codeGeneratorSubMenu);
 		viewMenu.add(animatorPanel);
 		viewMenu.addSeparator();
@@ -147,5 +169,59 @@ public class MenuBar
 		menuBar.add(helpMenu);
 
 		return menuBar;
+	}
+	
+	class ExportMenuListener implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0)
+		{
+			String graphicFormat = "";
+			if (arg0.getSource() == exportGIF)
+			{
+				graphicFormat = "gif";
+			}
+			else if (arg0.getSource() == exportPNG)
+			{
+				graphicFormat = "png";
+			}
+			else if (arg0.getSource() == exportJPG)
+			{
+				graphicFormat = "jpg";
+			}
+			
+			BufferedImage bi = topPanel.getFinalImage();
+			
+			String fileName;
+			JFileChooser fs = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter(
+			        "Graphic format " + graphicFormat, graphicFormat);
+			fs.setFileFilter(filter);
+			int returnVal = fs.showSaveDialog(null);
+			if(returnVal == JFileChooser.APPROVE_OPTION) 
+			{
+				fileName = fs.getSelectedFile().getAbsoluteFile()+ "." 
+						+ graphicFormat;
+				
+				try
+				{
+					ImageIO.write(bi, "png", new FileOutputStream(fileName));
+				} 
+				catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				System.out.println("You saved to file: " +
+						fileName);      
+			}
+			else 
+			{
+				System.out.println("File not saved.");
+			}
+		}
+		
 	}
 }

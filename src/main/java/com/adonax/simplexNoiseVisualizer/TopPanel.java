@@ -53,6 +53,10 @@ public class TopPanel extends JPanel
 	
 	private JPanel centerPanel;
 	private FinalDisplay finalDisplay;
+	public BufferedImage getFinalImage()
+	{
+		return finalDisplay.getImage();
+	}
 	private JScrollPane octaveScroll;
 	
 	private OctaveModel[] octaveModels;
