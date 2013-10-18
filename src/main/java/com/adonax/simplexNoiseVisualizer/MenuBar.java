@@ -163,7 +163,44 @@ public class MenuBar
 		menuBar.add(viewMenu);
 		
 		JMenu helpMenu = new JMenu("Help");
+		JMenuItem codeSampleItem = new JMenuItem("Code Sample");
+		codeSampleItem.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				JDialog codeSampleDialog = new JDialog(){
+					private static final long serialVersionUID = 1L;
+				};
+				codeSampleDialog.add(CodeSample.getCodeSamplePane());
+				codeSampleDialog.setTitle("Code Sample");
+				codeSampleDialog.setBounds(0, 0, 600, 700);
+				codeSampleDialog.setModal(true);
+//				settingsDialog.setAlwaysOnTop(true);
+				codeSampleDialog.setVisible(true);				
+			}
+		});
+		helpMenu.add(codeSampleItem);
+		
+		
 		JMenuItem aboutItem = new JMenuItem("About", KeyEvent.VK_A);
+		aboutItem.addActionListener(new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				JDialog aboutDialog = new JDialog(){
+					private static final long serialVersionUID = 1L;
+				};
+				aboutDialog.add(AboutPane.getAboutText());
+				aboutDialog.setTitle("About");
+				aboutDialog.setBounds(0, 0, 400, 200);
+				aboutDialog.setModal(true);
+//				settingsDialog.setAlwaysOnTop(true);
+				aboutDialog.setVisible(true);
+			}
+		});
 		helpMenu.add(aboutItem);
 		
 		menuBar.add(helpMenu);
