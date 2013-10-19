@@ -62,6 +62,10 @@ public class GradientGUI extends JPanel implements ActionListener
 		setMinimumSize(new Dimension(250, 100));
 		setPreferredSize(getMinimumSize());
 		
+		blackBorder = BorderFactory.createLineBorder(Color.BLACK);
+		redBorder = BorderFactory.createLineBorder(Color.RED);
+
+		
 		// TODO: new gradientGUIs are added in this area, AND 
 		// in the actionListener, below
 		
@@ -133,7 +137,7 @@ public class GradientGUI extends JPanel implements ActionListener
 		
         String html =
                 "<html><p><font color=\"#000000\" " +
-                "size=\"2\" face=\"SanSerif\">DOUBLE CLICK TO EDIT" +
+                "size=\"2\" face=\"SanSerif\">CLICK TO EDIT" +
                 "</font></p></html>";
         lbl.setToolTipText(html);
 		return lbl;
@@ -249,8 +253,8 @@ public class GradientGUI extends JPanel implements ActionListener
 		@Override
 		public void mouseClicked(MouseEvent arg0)
 		{
-			if (arg0.getClickCount() == 2)
-			{			
+//			if (arg0.getClickCount() == 2)
+//			{			
 				JPanel jp = new JPanel();
 				if (arg0.getComponent().getName().equals("l"))
 				{
@@ -293,7 +297,7 @@ public class GradientGUI extends JPanel implements ActionListener
 						
 //				openWindows.add(gf);
 				
-			}	
+//			}	
 		}
 				
 		@Override

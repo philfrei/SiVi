@@ -35,6 +35,7 @@ public class ColorBar extends JPanel implements MouseListener,
 	private final ColorAxis colorAxis;
 	private JLabel colorBarImage;
 	private Border blackBorder, redBorder;
+	private boolean isEditing;
 	
 	private static DataFlavor colorBarFlavor;
 	public static DataFlavor getColorBarFlavor()
@@ -59,7 +60,7 @@ public class ColorBar extends JPanel implements MouseListener,
         String html =
                 "<html><p><font color=\"#000000\" " +
                 "size=\"2\" face=\"SanSerif\"" +
-                ">DOUBLE CLICK TO EDIT--DRAG TO COPY" +
+                ">CLICK TO EDIT, DRAG TO COPY" +
                 "</font></p></html>";
         setToolTipText(html);
 		
@@ -91,21 +92,7 @@ public class ColorBar extends JPanel implements MouseListener,
 	}
 		
 	@Override
-	public void mouseClicked(MouseEvent arg0) 
-	{
-		if (arg0.getClickCount() == 2)
-		{
-			JDialog colorDialog = new JDialog(){
-				private static final long serialVersionUID = 1L;
-			};
-			colorDialog.add(new ColorBarEditingGUI(colorAxis));
-			colorDialog.setTitle("Edit Color Map");
-			colorDialog.setBounds(0, 0, 360, 420);
-			colorDialog.setModal(true);
-//			colorDialog.setAlwaysOnTop(true);
-			colorDialog.setVisible(true);
-		}	
-	}
+	public void mouseClicked(MouseEvent arg0) {}
 	
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
@@ -120,14 +107,32 @@ public class ColorBar extends JPanel implements MouseListener,
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {} 
+	public void mousePressed(MouseEvent arg0) 
+	{
+		isEditing = true;
+	} 
 	
 	@Override
-	public void mouseReleased(MouseEvent arg0) {}
+	public void mouseReleased(MouseEvent arg0) 
+	{
+		if (isEditing)
+		{
+			JDialog colorDialog = new JDialog(){
+				private static final long serialVersionUID = 1L;
+			};
+			colorDialog.add(new ColorBarEditingGUI(colorAxis));
+			colorDialog.setTitle("Edit Color Map");
+			colorDialog.setBounds(0, 0, 360, 420);
+			colorDialog.setModal(true);
+//			colorDialog.setAlwaysOnTop(true);
+			colorDialog.setVisible(true);
+		}	
+	}
 	
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
+		isEditing = false;
 		JComponent comp = (JComponent)e.getSource();
 		TransferHandler th = comp.getTransferHandler();
 		th.exportAsDrag(comp, e, TransferHandler.COPY);
