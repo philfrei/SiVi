@@ -75,19 +75,24 @@ public class ColorBar extends JPanel implements MouseListener,
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		
-		String iAm = this.getClass().getName();
-		String colorBarType = DataFlavor.javaJVMLocalObjectMimeType 
-				+ ";class=\"" + iAm + "\"";	
-		try
-		{
-			colorBarFlavor = new DataFlavor(colorBarType);
-		} 
-		catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		
+
+//		String colorBarType = DataFlavor.javaJVMLocalObjectMimeType 
+//				+ ";class=com.adonax.simplexNoiseVisualizer.color.ColorBar";	
+//
+//		String iAm = this.getClass().getName();
+//		String colorBarType = DataFlavor.javaJVMLocalObjectMimeType 
+//				+ ";class=\"" + iAm + "\"";	
+//		try
+//		{
+//			colorBarFlavor = new DataFlavor(colorBarType);
+////			colorBarFlavor = new DataFlavor(this.getClass(), 
+////					"ColorBar");
+//		} 
+//		catch (ClassNotFoundException e)
+//		{
+//			e.printStackTrace();
+//		}
+//		
 		setTransferHandler(new ColorBarTransferHandler());
 	}
 		
@@ -171,5 +176,30 @@ public class ColorBar extends JPanel implements MouseListener,
 	{
 		if (arg0.equals(colorBarFlavor)) return true;
 		return false;
-	}	
+	}
+	
+	
+	public void createDataFlavor()
+	{
+		String iAm = this.getClass().getName();
+		String colorBarType = DataFlavor.javaJVMLocalObjectMimeType 
+				+ ";class=\"" + iAm + "\"";	
+		
+//		String colorBarType = DataFlavor.javaJVMLocalObjectMimeType 
+//		+ ";class=\"com/adonax/simplexNoiseVisualizer/color/ColorBar\"";	
+	
+		try
+		{
+			colorBarFlavor = new DataFlavor(colorBarType);
+//			colorBarFlavor = new DataFlavor(this.getClass(), 
+//					"ColorBar");
+		} 
+		catch (ClassNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		
+		setTransferHandler(new ColorBarTransferHandler());
+		
+	}
 }

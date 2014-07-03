@@ -581,7 +581,7 @@ public class OctaveGUI extends JPanel
 
 	}
 
-	public OctaveModel getTextureParams() {
+	public OctaveModel getOctaveModel() {
 		return octaveModel;
 	}
 }

@@ -221,7 +221,7 @@ public class SettingsPanel extends JPanel
 		for (int i = 0; i < newSettings.octaves; i++)
 		{
 			octaveModels[i] = 
-					topPanel.octaveGUIs[i].getTextureParams();
+					topPanel.octaveGUIs[i].getOctaveModel();
 		}
 
 		GradientGUIModel gradientGUIModel = 

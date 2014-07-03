@@ -123,6 +123,7 @@ public class ColorMapSelectorGUI extends JPanel
 			});
 			
 			colorBars[i] = new ColorBar(); 
+			colorBars[i].createDataFlavor(); // TODO:
 			colorBars[i].setSize(256, 16);
 			
 			gbConstraints.gridx = 0;

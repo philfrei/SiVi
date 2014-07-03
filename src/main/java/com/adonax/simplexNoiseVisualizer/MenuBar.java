@@ -15,6 +15,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.adonax.simplexNoiseVisualizer.animation.AnimationPanel;
 import com.adonax.simplexNoiseVisualizer.color.ColorAxis;
 import com.adonax.simplexNoiseVisualizer.gradients.GradientGUIModel;
 import com.adonax.simplexNoiseVisualizer.tutorial.TutorialFramework;
@@ -129,13 +130,32 @@ public class MenuBar
 				tutorial.setVisible(true);
 			}
 		});
-		
-		
+				
 		JMenuItem codeGeneratorSubMenu = 
 				new JMenuItem("Code Generator", KeyEvent.VK_C);
 		codeGeneratorSubMenu.setEnabled(false);
-		JMenuItem animatorPanel = new JMenuItem("Animator", KeyEvent.VK_A);
-	    animatorPanel.setEnabled(false);
+		
+		JMenuItem animatorPanel = new JMenuItem("Animation Tool", KeyEvent.VK_A);
+	    animatorPanel.addActionListener(new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				JDialog animationDialog = new JDialog(){
+					private static final long serialVersionUID = 1L;
+				};
+				animationDialog.add(new AnimationPanel(topPanel));
+				animationDialog.setTitle("Z-Axis Animator");
+				animationDialog.setBounds(0, 0, 250, 250);
+				animationDialog.setModal(true);
+//				settingsDialog.setAlwaysOnTop(true);
+				animationDialog.setVisible(true);
+				
+			}
+		});
+	    
+	    
 		JMenuItem settingsDialog = new JMenuItem("Settings", KeyEvent.VK_S);
 	    settingsDialog.addActionListener(new ActionListener()
 		{	

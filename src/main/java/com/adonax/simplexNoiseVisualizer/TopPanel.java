@@ -52,7 +52,7 @@ public class TopPanel extends JPanel
 	public MixerGUI mixerGUI; 
 	
 	private JPanel centerPanel;
-	private FinalDisplay finalDisplay;
+	public FinalDisplay finalDisplay;
 	public BufferedImage getFinalImage()
 	{
 		return finalDisplay.getImage();
@@ -225,7 +225,7 @@ public class TopPanel extends JPanel
 	{
 		for (int i = 0; i < appSettings.octaves; i++)
 		{
-			octaveModels[i] = octaveGUIs[i].getTextureParams();
+			octaveModels[i] = octaveGUIs[i].getOctaveModel();
 		}
 		NoiseData noiseData = TextureFunctions.makeNoiseDataArray(
 				appSettings.finalWidth, 

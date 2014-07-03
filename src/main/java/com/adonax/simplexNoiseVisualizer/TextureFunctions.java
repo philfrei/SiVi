@@ -30,7 +30,7 @@ public class TextureFunctions {
 
 	
 	/**
-	 * Generate a noise data array from a single octave channel
+	 * Generate a 2D noise data array from a single octave channel
 	 * source. Noise data may or may not be normalized in this 
 	 * step.
 	 *
@@ -73,35 +73,81 @@ public class TextureFunctions {
 	}
 
 	/**
-	 * Generate a noise data array from an array of octave 
-	 * channels. Noise data may or may not be normalized in this 
-	 * step, and may or may not be used to modulate a gradient
-	 * function.
+	 * Generate a 2D noise data array from an array of octave 
+	 * channels. The 2D SimplexNoise function is called. Noise data 
+	 * may or may not be normalized in this step depending on values 
+	 * from the OctaveModel, and may or may not be used to modulate 
+	 * a gradient function, depending on settings from the MixerModel. 
 	 *
 	 * This is a pure function.
 	 *
 	 * @param width     image width
 	 * @param height    image height
 	 * @param om        texture parameters from a single OctaveModel
-	 *
+	 * @param mm		mixer & gradient settings/data from MixerModel
+	 * 
 	 * @return TextureData
 	 */
 	public static NoiseData makeNoiseDataArray(int width, int height, 
 			OctaveModel[] om, MixerModel mm) 
 	{
-		float[] noiseArray = new float[width * height];
+		return noiseDataMaker(width, height, om, mm, 0, 2);
+	}
 
+	/**
+	 * Generate a 2D noise data array from an array of octave channels 
+	 * and a Z value. The 3D SimplexNoise function is called. Noise data 
+	 * may or may not be normalized in this step depending on values 
+	 * from the OctaveModel, and may or may not be used to modulate 
+	 * a gradient function, depending on settings from the MixerModel. 
+	 *
+	 * This is a pure function.
+	 *
+	 * @param width     image width
+	 * @param height    image height
+	 * @param om        texture parameters from a single OctaveModel
+	 * @param mm		mixer & gradient settings/data from MixerModel
+	 * @param z			float z-axis value for 3D SimplexNoise function
+	 * 
+	 * @return TextureData
+	 */
+	public static NoiseData makeNoiseDataArray(int width, int height, 
+			OctaveModel[] om, MixerModel mm, float z) 
+	{
+		return noiseDataMaker(width, height, om, mm, z, 3);
+	}
+	
+	// TODO: throw error if dims not 2 or 3?
+	private static NoiseData noiseDataMaker(int width, int height,
+			OctaveModel[] om, MixerModel mm, float z, int dimensions)
+	{
+		float[] noiseArray = new float[width * height];
+		float x, y, noiseVal;
+		
 		for (int j = 0, m = om.length; j < m; j++)
 		{
 			for (int i = 0, n = width * height; i < n; i ++)
 			{
 				//TODO: build 256.0f into the OctaveModel "scale" factors
-				float y = (((i/width) % height) * om[j].yScale / 256.0f)  
+				y = (((i/width) % height) * om[j].yScale / 256.0f)  
 						+ om[j].yTranslate;
-				float x = ((i % width) * om[j].xScale / 256.0f)
+				x = ((i % width) * om[j].xScale / 256.0f)
 						+ om[j].xTranslate;
 	
-				float noiseVal = (float) SimplexNoise.noise(x, y);
+				if (dimensions == 2) 
+				{
+					noiseVal = (float) SimplexNoise.noise(x, y);
+				}
+				else if (dimensions == 3)
+				{
+					noiseVal = (float) SimplexNoise.noise(x, y, z);
+				}
+				else
+				{
+					noiseVal = 0;
+					System.out.println("unprogrammed number of dimensions" 
+							+ " in function 'noiseDataMaker'");
+				}
 				noiseVal = Math.min(
 						Math.max(noiseVal, om[j].minClamp), om[j].maxClamp);
 	
@@ -123,6 +169,10 @@ public class TextureFunctions {
 		return new NoiseData(width, height, noiseArray);
 	}
 
+	
+	
+	
+	
 	/**
 	 * Create an image from a single noise data array.
 	 * 

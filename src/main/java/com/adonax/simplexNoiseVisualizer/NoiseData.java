@@ -36,7 +36,7 @@ public class NoiseData {
 		if (width < 1 || height < 1)
 		{
 			throw new IllegalArgumentException(
-					"width=" + " height=" + height);
+					"width=" + width + " height=" + height);
 		}
 		assert(noiseArray.length == width * height);
 		this.noiseArray = noiseArray;
