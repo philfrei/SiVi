@@ -1,10 +1,6 @@
 package com.adonax.simplexNoiseVisualizer.animation;
 
 /*
- * TODO: Better management of the keyboard input of the data. 
- * It is vexing to always have to hit <Enter>. 
- * Surely this can be better handled.
- * 
  * TODO: Create a provision for incorporating additional 
  * animation vectors, such as translation or scaling.
  */
@@ -44,13 +40,11 @@ import com.adonax.simplexNoiseVisualizer.utils.FloatArrayFunctions;
 
 public class AnimationPanel extends JPanel
 {
-	
 	private BufferedImage[] images;
 	private int imagesCount;
 	private float zIncr;
 	private int overlap;
-	private int imgIndex;
-	private int deltaTime;
+	private volatile int deltaTime;
 	private boolean imagesUpdated;
 	
 	private JButton loadBtn, viewBtn, exportBtn;
@@ -65,10 +59,13 @@ public class AnimationPanel extends JPanel
 		this.topPanel = topPanel;
 		
 		//*********** Controls ************
+		final JTextField stepsFld = new JTextField();
+		final JTextField zIncrFld = new JTextField();
+		final JTextField overlapFld = new JTextField();
+		final JTextField deltaTimeFld = new JTextField();		
 		
 		JLabel stepsLbl = new JLabel("Steps");
 		stepsLbl.setHorizontalTextPosition(SwingConstants.RIGHT);
-		final JTextField stepsFld = new JTextField();
 		stepsFld.setHorizontalAlignment(JTextField.RIGHT);
 		stepsFld.setMargin(new Insets(0, 2, 0, 2));
 		stepsFld.setColumns(4);
@@ -79,13 +76,14 @@ public class AnimationPanel extends JPanel
 			{
 				imagesCount = Integer.valueOf(stepsFld.getText());
 				images = new BufferedImage[imagesCount];
+				if (imgSlider != null) imgSlider.setValue(0);
 				imagesUpdated = false;
 				updateForm();
+				zIncrFld.requestFocus();
 			}
 		});	
 		
 		JLabel zIncrLbl = new JLabel("Z Increment");
-		final JTextField zIncrFld = new JTextField();
 		zIncrFld.setHorizontalAlignment(JTextField.RIGHT);
 		zIncrFld.setMargin(new Insets(0, 2, 0, 2));
 		zIncrFld.setColumns(4);
@@ -97,11 +95,11 @@ public class AnimationPanel extends JPanel
 				zIncr = Float.valueOf(zIncrFld.getText());
 				imagesUpdated = false;
 				updateForm();
+				overlapFld.requestFocus();
 			}
 		});
 	
 		JLabel overlapLbl = new JLabel("Overlap");
-		final JTextField overlapFld = new JTextField();
 		overlapFld.setHorizontalAlignment(JTextField.RIGHT);
 		overlapFld.setMargin(new Insets(0, 2, 0, 2));
 		overlapFld.setColumns(4);
@@ -110,15 +108,22 @@ public class AnimationPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				overlap = Integer.valueOf(overlapFld.getText());
+				try
+				{
+					overlap = Integer.valueOf(overlapFld.getText());
+				}
+				catch (NumberFormatException e)
+				{
+					overlap = 0;
+				}
 				imagesUpdated = false;
 				updateForm();
+				deltaTimeFld.requestFocus();
 			}
 		});		
 		
 		JLabel deltaTimeLbl = new JLabel("Frame time (millis)");
 		deltaTimeLbl.setHorizontalTextPosition(SwingConstants.RIGHT);
-		final JTextField deltaTimeFld = new JTextField();
 		deltaTimeFld.setHorizontalAlignment(JTextField.RIGHT);
 		deltaTimeFld.setMargin(new Insets(0, 2, 0, 2));
 		deltaTimeFld.setColumns(4);
@@ -127,8 +132,16 @@ public class AnimationPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				deltaTime = Integer.valueOf(deltaTimeFld.getText());
+				try
+				{
+					deltaTime = Integer.valueOf(deltaTimeFld.getText());
+				}
+				catch (NumberFormatException e)
+				{
+					deltaTime = 0;
+				}
 				updateForm();
+				loadBtn.requestFocus();
 			}
 		});
 
@@ -154,6 +167,9 @@ public class AnimationPanel extends JPanel
 				loadImageArray();
 				imagesUpdated = true;
 				updateForm();
+				if (imgSlider != null) imgSlider.setValue(0);
+				viewImage(0);
+				viewBtn.requestFocus();
 			}
 		});
 			
@@ -165,8 +181,7 @@ public class AnimationPanel extends JPanel
 			@Override
 			public void stateChanged(ChangeEvent e)
 			{
-				imgIndex = imgSlider.getValue();
-				viewImage(imgIndex);
+				viewImage(imgSlider.getValue());
 			}
 		});
 		
@@ -269,7 +284,7 @@ public class AnimationPanel extends JPanel
 	
 	private void updateControls()
 	{
-		if (imagesCount > 0 && zIncr > 0 )
+		if (imagesCount > 0 && zIncr > 0  && deltaTime > 0)
 		{
 			loadBtn.setEnabled(!imagesUpdated);			
 			imgSlider.setMaximum(Math.max(0, imagesCount - 1));
@@ -304,6 +319,8 @@ public class AnimationPanel extends JPanel
 	 * 
 	 * TODO: This routine can fail due to over taxing memory. No
 	 * exception or management has been implemented for this.
+	 * TODO: Would it make sense to cache calls for known 
+	 * overlaps?
 	 */
 	private void loadImageArray()
 	{
@@ -383,7 +400,6 @@ public class AnimationPanel extends JPanel
 			z += zIncr;
 			
 			images[i] = TextureFunctions.makeImage(nd, mm, cm);
-			
 		}
 	}
 	
@@ -413,6 +429,12 @@ public class AnimationPanel extends JPanel
 		}
 	}
 
+	// intended use: called from container to use when it closes
+	public void stopTimer()
+	{
+		if (timer != null) timer.cancel();
+	}
+	
 	class AnimationTask extends TimerTask
 	{
 		@Override

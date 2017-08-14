@@ -175,10 +175,6 @@ values to pixel colors is to run the noise Values through a
     colorValue = (int)(noiseValue * (greenB - greenA) + greenA);
 </pre>
 
-<p><i>[Some prefer to combine the Max and Min functions into a single
-line, though I suspect the latest Java compilers automatically handle
-this optimization for us.]</i></p>
-
 <p>In the following figure, we use the same the noise values that 
 have been multiplied by <code>rings</code>, and range from -4 to 4.
 Only now, only the values that are within the range 0 to 1 result in 

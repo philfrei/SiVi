@@ -93,7 +93,7 @@ the output of the function and map it to a range of color values.</p>
 
 <p>Another key difference is that instead of generating a series of 
 independent numeric values and linking them via a curve, we create 
-a lattice of random gradients. The output of the gradient noise
+a lattice of random gradients. Then, the output of the gradient noise
 function is computed via the distance of the point in question to
 its surrounding lattice points, and the angles of the gradients at
 those points.</p>
@@ -102,21 +102,13 @@ those points.</p>
 Cartesian coordinates to assign his lattice points. In 2D space, the 
 lattice is a series of squares; in 3D space, the lattice points 
 are cubes. With Simplex noise, the lattice is formed via the 
-"simplest" repeatable shape that can cover the space. [TODO: work in
-the term <i>tesselation</i>.] In 2D space,
+"simplest" repeatable shape that can cover the space. In 2D space,
 that shape is an equilateral triangle. In 3D, the lattice is in the
-form of a series of equilateral tetrahedrons. A benefit is that
-it reduces the number of computations. A point in 2D space is 
+form of a series of equilateral tetrahedrons. A benefit is the
+reduced number of computations. A point in 2D space is 
 surrounded by only 3, not 4 lattice points, and a point in 3D space
 has 4 lattice points, not the 8 that form the corners of a surrounding 
 cube.</p>
-
-<p>TODO: next--explaining the bumpiness between the lattice points,
-and how the predictability of this spacing is the source of our
-ability to create textures.</p>
-
-<p><b>what follows is from the previous tutorial and is to be 
-rewritten</b></p>
 
 <p>The basic concept is to iterate through the individual pixels
 of the graphic, getting a noise value for that pixel by using
@@ -129,8 +121,6 @@ individual pixel values is assumed to be familiar. If not, you can
 learn more about this at the Java 2D tutorial: </p>
 <p><code>http://docs.oracle.com/javase/tutorial/2d/overview/images.html
 </code></p>
-<p><i>[We will introduce more efficient ways of updating the data 
-within an image in later tutorials.]</i></p>
 
 <p>The call to the noise function, for 2D, is <i>static</i>:</p>
 <pre>

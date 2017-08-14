@@ -7,6 +7,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -25,7 +26,9 @@ public class MixerGUI extends JPanel
 	private JSlider[] weightSlider;
 	private JTextField[] weightTextField;
 	private JSlider masterSlider;
+	private JTextField masterTextField;
 	private volatile MixerModel mixerModel;
+	final DecimalFormat decimals2formatter = new DecimalFormat("#.##");
 	
 	private ButtonGroup colorMappingOptions;
 	private JRadioButton clampOption, ringOption;
@@ -41,6 +44,7 @@ public class MixerGUI extends JPanel
 	{
 		this.mixerModel = mixerModel;
 	}
+	
 	
 	public MixerGUI(final TopPanel topPanel, MixerModel mm)
 	{
@@ -98,18 +102,38 @@ public class MixerGUI extends JPanel
 		mixPanel.add(new JLabel("All"), gbConstraints);
 		
 		masterSlider = new JSlider(0, 100, (int)(mixerModel.master * 25));
-		gbConstraints.gridx = 1;
+		masterTextField = new JTextField();
+		masterTextField.setColumns(3);
+		masterTextField.setText(decimals2formatter.format(mixerModel.master));
 		masterSlider.addChangeListener(new ChangeListener()
 		{
 			@Override
 			public void stateChanged(ChangeEvent arg0)
 			{
+				masterTextField.setText(
+					decimals2formatter.format(masterSlider.getValue() * 0.04f));
 				updateModelWeights();
 				topPanel.remix();
 			}
 		});
+		masterTextField.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				int val = (int)((Float.valueOf(
+						masterTextField.getText()) * 25));
+				val = Math.max(0, Math.min(100, val));
+				System.out.println("MixerGUI.masterTextField.actionPerformed.val:" + val);
+				masterSlider.setValue(val);
+				masterTextField.setText(
+						decimals2formatter.format(masterSlider.getValue() * 0.04f));
+			}
+		});
+		gbConstraints.gridx = 1;
 		mixPanel.add(masterSlider, gbConstraints);
-//		updateModelWeights(); //TODO: check if okay
+		gbConstraints.gridx = 2;
+		mixPanel.add(masterTextField,  gbConstraints);
 		
 		gbConstraints.gridx = 0;
 		gbConstraints.gridy = 1;
@@ -171,11 +195,8 @@ public class MixerGUI extends JPanel
 	
 	private JSlider makeWeightingSlider(final int idx) 
 	{
-//		final JSlider weightSlider = new JSlider(0, 100, 
-//				(int)(mixerModel.weights[idx] * 100));
 		final JSlider weightSlider = new JSlider(0, 100, 
-				(int)((mixerModel.weights[idx] * 100)
-						/ mixerModel.master));
+				(int)(mixerModel.weights[idx] * 100));
 		weightSlider.addChangeListener(new ChangeListener(){
 
 			@Override
@@ -183,7 +204,7 @@ public class MixerGUI extends JPanel
 			{
 				int weight = weightSlider.getValue();
 				weightTextField[idx].setText(
-						String.valueOf(weight));
+						decimals2formatter.format(weight / 100f));
 				updateModelWeights();
 				topPanel.remix();
 			}
@@ -195,20 +216,18 @@ public class MixerGUI extends JPanel
 	private JTextField makeTextField(final int idx)
 	{
 		JTextField tf = new JTextField();
-		tf.setColumns(2);
-//		tf.setText(String.valueOf((int)
-//				(mixerModel.weights[idx] * 100)));
-		tf.setText(String.valueOf((int)
-				((mixerModel.weights[idx] * 100) / 
-						mixerModel.master)));
+		tf.setColumns(3);
+		tf.setText(decimals2formatter.format(mixerModel.weights[idx]));
 		tf.addActionListener(new ActionListener()
 		{
-			
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				weightSlider[idx].setValue(Integer.valueOf(
-						weightTextField[idx].getText()));
+				weightSlider[idx].setValue((int)((Float.valueOf(
+						weightTextField[idx].getText()) * 100)));
+				weightTextField[idx].setText(
+						decimals2formatter.format(
+								weightSlider[idx].getValue() / 100f));
 			}
 		});
 	
@@ -236,7 +255,7 @@ public class MixerGUI extends JPanel
 		{
 			weights[i] = weightSlider[i].getValue();
 			weights[i] /= 100f;
-			weights[i] *= (masterSlider.getValue()/25.f);
+			weights[i] *= (masterSlider.getValue()/25f);
 		}
 		return weights;
 	}

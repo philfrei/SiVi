@@ -3,6 +3,8 @@ package com.adonax.simplexNoiseVisualizer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -145,13 +147,19 @@ public class MenuBar
 				JDialog animationDialog = new JDialog(){
 					private static final long serialVersionUID = 1L;
 				};
-				animationDialog.add(new AnimationPanel(topPanel));
+				AnimationPanel animationPanel = new AnimationPanel(topPanel);
+				animationDialog.add(animationPanel);
 				animationDialog.setTitle("Z-Axis Animator");
 				animationDialog.setBounds(0, 0, 250, 250);
 				animationDialog.setModal(true);
-//				settingsDialog.setAlwaysOnTop(true);
-				animationDialog.setVisible(true);
-				
+				animationDialog.addWindowListener(new WindowAdapter() {
+						public void windowClosing(WindowEvent e)
+						{
+						    animationPanel.stopTimer();
+						    topPanel.remix();
+						}
+				});
+				animationDialog.setVisible(true);				
 			}
 		});
 	    

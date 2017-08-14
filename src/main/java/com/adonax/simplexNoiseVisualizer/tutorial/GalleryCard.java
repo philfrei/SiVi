@@ -269,7 +269,7 @@ public class GalleryCard extends JPanel
 				-1, 1, OctaveModel.NoiseNormalization.NONE);
 		float masterWeight = 4;
 		float[] weights = new float[1];
-		weights[0] = 1 * masterWeight;
+		weights[0] = 1;
 		MixerModel mixerModel = new MixerModel(weights, 
 				masterWeight, MixerModel.MapMethod.RING, 
 				new NoiseData(settings.finalWidth, 
@@ -317,7 +317,7 @@ public class GalleryCard extends JPanel
 		
 		float masterWeight = 4;
 		float[] weights = new float[1];
-		weights[0] = 1 * masterWeight;
+		weights[0] = 1;
 		MixerModel mixerModel = new MixerModel(weights, 
 				masterWeight, MixerModel.MapMethod.RING, 
 				sinusoidalGradient,	settings); 
