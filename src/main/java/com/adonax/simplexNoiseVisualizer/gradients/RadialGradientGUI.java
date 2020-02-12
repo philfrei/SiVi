@@ -52,18 +52,18 @@ public class RadialGradientGUI extends JPanel
 		gbConstraints.gridx = 0;
 		gbConstraints.gridy = 0;
 		add(xWidthLBL, gbConstraints);
-		gbConstraints.gridwidth = 1;		
 		
 		JLabel centerLabel = new JLabel(" Center location (in pixels), X: ");
 		centerLabel.setBorder(blackBorder);
 		centerLabel.setBackground(background);
 		centerLabel.setOpaque(true);
 		centerLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		gbConstraints.gridwidth = 1;		
 		gbConstraints.gridx = 0;
 		gbConstraints.gridy = 1;
 		add(centerLabel, gbConstraints);
 
-		final JTextField centerXLocation = new JTextField(6);
+		final JTextField centerXLocation = new JTextField();
 		centerXLocation.setBorder(blackBorder);
 		centerXLocation.setHorizontalAlignment(SwingConstants.CENTER);
 		centerXLocation.setText(String.valueOf(model.centerPoint.x));
@@ -90,7 +90,7 @@ public class RadialGradientGUI extends JPanel
 		gbConstraints.gridy = 1;
 		add(centerYLabel, gbConstraints);
 
-		final JTextField centerYLocation = new JTextField(6);
+		final JTextField centerYLocation = new JTextField(); 
 		centerYLocation.setBorder(blackBorder);
 		centerYLocation.setHorizontalAlignment(SwingConstants.CENTER);
 		centerYLocation.setText(String.valueOf(model.centerPoint.y));
@@ -110,9 +110,6 @@ public class RadialGradientGUI extends JPanel
 		gbConstraints.gridy = 1;
 		add(centerYLocation, gbConstraints);
 		
-		
-		
-		
 		JLabel radiusLabel = new JLabel(" Radius (in pixels):");
 		radiusLabel.setBorder(blackBorder);
 		radiusLabel.setBackground(background);
@@ -122,7 +119,7 @@ public class RadialGradientGUI extends JPanel
 		gbConstraints.gridy = 2;
 		add(radiusLabel, gbConstraints);
 
-		final JTextField radiusValue = new JTextField(6);
+		final JTextField radiusValue = new JTextField();
 		radiusValue.setBorder(blackBorder);
 		radiusValue.setHorizontalAlignment(SwingConstants.CENTER);
 		radiusValue.setText(String.valueOf(model.radius));
@@ -141,8 +138,6 @@ public class RadialGradientGUI extends JPanel
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 2;
 		add(radiusValue, gbConstraints);
-		gbConstraints.gridwidth = 1;
-
 		
 		JLabel edgeValLabel = new JLabel(" Edge value:");
 		edgeValLabel.setBorder(blackBorder);
@@ -153,7 +148,7 @@ public class RadialGradientGUI extends JPanel
 		gbConstraints.gridy = 3;
 		add(edgeValLabel, gbConstraints);		
 		
-		final JTextField edgeValue = new JTextField(6);
+		final JTextField edgeValue = new JTextField();
 		edgeValue.setBorder(blackBorder);
 		edgeValue.setHorizontalAlignment(SwingConstants.CENTER);
 		edgeValue.setText(String.valueOf(model.edgeVal));
@@ -182,7 +177,7 @@ public class RadialGradientGUI extends JPanel
 		gbConstraints.gridy = 3;
 		add(centerValLabel, gbConstraints);		
 		
-		final JTextField centerValue = new JTextField(6);
+		final JTextField centerValue = new JTextField();
 		centerValue.setBorder(blackBorder);
 		centerValue.setHorizontalAlignment(SwingConstants.CENTER);
 		centerValue.setText(String.valueOf(model.centerVal));
@@ -210,7 +205,6 @@ public class RadialGradientGUI extends JPanel
 		gbConstraints.gridx = 0;
 		gbConstraints.gridy = 4;
 		add(equation, gbConstraints);
-		gbConstraints.gridwidth = 1;
 		
 		update();
 	}

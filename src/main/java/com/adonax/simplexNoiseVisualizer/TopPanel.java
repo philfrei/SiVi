@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.*;
 
+import com.adonax.simplexNoiseVisualizer.animation.AnimationPanel;
 import com.adonax.simplexNoiseVisualizer.color.ColorMapSelectorGUI;
 import com.adonax.simplexNoiseVisualizer.gradients.GradientGUIModel;
 import com.adonax.simplexNoiseVisualizer.gradients.LinearGradientFunction;
@@ -60,7 +61,7 @@ public class TopPanel extends JPanel
 	private JScrollPane octaveScroll;
 	
 	private OctaveModel[] octaveModels;
-	
+	private AnimationPanel animationPanel;
 	
 	TopPanel()
 	{
@@ -237,5 +238,15 @@ public class TopPanel extends JPanel
 				ColorMapSelectorGUI.getColorMap());
 
 		finalDisplay.update(image);
+		
+		if (animationPanel != null)
+		{
+			animationPanel.requireReload();
+		}
+	}
+	
+	public void setAnimationPanel(AnimationPanel animationPanel)
+	{
+		this.animationPanel = animationPanel;
 	}
 }

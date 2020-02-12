@@ -151,7 +151,7 @@ public class MenuBar
 				animationDialog.add(animationPanel);
 				animationDialog.setTitle("Z-Axis Animator");
 				animationDialog.setBounds(0, 0, 250, 250);
-				animationDialog.setModal(true);
+//				animationDialog.setModal(true);
 				animationDialog.addWindowListener(new WindowAdapter() {
 						public void windowClosing(WindowEvent e)
 						{
