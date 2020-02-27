@@ -61,11 +61,8 @@ public class MixerModel
 			}
 		}
 
-		this.gradientData = new NoiseData(width, height, 
-				gradientData);
-		
+		this.gradientData = new NoiseData(width, height, gradientData);		
 	}
-	
 	
 	public static MixerModel updateMixSetting(MixerModel mixer,
 			MixerModel.Fields field, Object value)

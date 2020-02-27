@@ -17,11 +17,11 @@
  */
 package com.adonax.simplexNoiseVisualizer;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 public class FinalDisplay extends JPanel
@@ -29,41 +29,30 @@ public class FinalDisplay extends JPanel
 	private static final long serialVersionUID = 1L;
 
 	private BufferedImage image;
+	
 	public BufferedImage getImage()
 	{
 		return image;
 	}
-		
-	public FinalDisplay(final TopPanelModel settings)
+	
+	public FinalDisplay()
 	{	
+		Border border = BorderFactory.createRaisedBevelBorder();
 		TitledBorder combineTitledBorder = 
-				BorderFactory.createTitledBorder(
-						"Final Texture");
+				BorderFactory.createTitledBorder(border, "Final Texture");
 		setBorder(combineTitledBorder);
-		
-		JPanel imagePanel = new JPanel() 
-		{
-
-			private static final long serialVersionUID = 1L;
-			
-			@Override
-			public void paintComponent(Graphics g) {
-				g.drawImage(image, 0, 0, null);
-			}
-			
-			@Override
-			public Dimension getPreferredSize() {
-				return new Dimension(settings.finalWidth, 
-						settings.finalHeight);
-			}
-		};
-		
-		add(imagePanel);
 	}
 	
+	// reminder: this will be called repeatedly by animation logic
 	public void update(BufferedImage image)
 	{
 		this.image = image;
 		repaint();
 	}
+	
+	@Override
+	public void paintComponent(Graphics g) {
+		g.clearRect(0, 0, getWidth(), getHeight());
+		g.drawImage(image, 6, 16, null);
+	}	
 }

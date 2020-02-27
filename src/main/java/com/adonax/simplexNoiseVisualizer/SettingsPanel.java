@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -14,6 +15,7 @@ import com.adonax.simplexNoiseVisualizer.gradients.GradientGUIModel;
 import com.adonax.simplexNoiseVisualizer.gradients.LinearGradientFunction;
 import com.adonax.simplexNoiseVisualizer.gradients.RadialGradientFunction;
 import com.adonax.simplexNoiseVisualizer.gradients.SinusoidalGradientFunction;
+import com.adonax.simplexNoiseVisualizer.utils.NoiseEngines;
 
 public class SettingsPanel extends JPanel
 {
@@ -21,6 +23,7 @@ public class SettingsPanel extends JPanel
 	private static final long serialVersionUID = 1L;
 
 	Object parent;
+	private JComboBox<NoiseEngines.Sources> cboNoiseEngines;
 	
 	SettingsPanel(final TopPanel topPanel)
 	{
@@ -59,18 +62,16 @@ public class SettingsPanel extends JPanel
 					}
 					else
 					{
-						newWeights[i] = 0.25f; //TODO: default weight
+						// default value TODO *magic number* antipattern 
+						newWeights[i] = 0.25f; 
 					}
 				}
 				mm = MixerModel.updateMixSetting(mm, 
 						MixerModel.Fields.WEIGHTS, newWeights);
 				
-				topPanel.updateMixerGUI(
-						new MixerGUI(topPanel, mm, ggm));	
-				
+				topPanel.updateMixerGUI(new MixerGUI(topPanel, mm, ggm));	
 				topPanel.updateOctavesPanel();
 				topPanel.updateOctaveDisplays();
-
 			}
 		});
 		
@@ -119,22 +120,19 @@ public class SettingsPanel extends JPanel
 				rebuildWithNewSizeSettings(topPanel, newSettings);
 			}
 		});
-		
-		JLabel colorMapsLbl = new JLabel("Color Maps");
-		JTextField colorMapsSetting = new JTextField(5);
-		colorMapsSetting.setEnabled(false);
-		colorMapsSetting.addActionListener(new ActionListener()
+	
+		JLabel lblNoiseEngine = new JLabel("Engine");
+		cboNoiseEngines = new JComboBox<NoiseEngines.Sources>(
+				NoiseEngines.Sources.values());
+		cboNoiseEngines.setSelectedItem(TextureFunctions.getNoiseSource());
+		cboNoiseEngines.addActionListener(new ActionListener()
 		{
-			
 			@Override
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(ActionEvent arg0)
 			{
-				// TODO Auto-generated method stub
-				/*
-				 * Goal: change the number of color maps in the
-				 * color map GUI, non-destructively as much as 
-				 * possible.
-				 */
+				TextureFunctions.setNoiseEngine(
+						(NoiseEngines.Sources)cboNoiseEngines.getSelectedItem());
+				topPanel.updateOctaveDisplays();
 			}
 		});
 		
@@ -165,10 +163,10 @@ public class SettingsPanel extends JPanel
 		
 		gbConstraints.gridx = 0;
 		gbConstraints.gridy = 3;
-		add(colorMapsLbl, gbConstraints);
+		add(lblNoiseEngine, gbConstraints);
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 3;
-		add(colorMapsSetting, gbConstraints);
+		add(cboNoiseEngines, gbConstraints);
 		
 	}
 	
@@ -253,12 +251,8 @@ public class SettingsPanel extends JPanel
 		topPanel.loadOctavesPanel(sivi.octaveModels);
 		topPanel.updateMixerGUI(new MixerGUI(
 				topPanel, sivi.mixerModel, 
-				sivi.gradientGUIModel));	
-		topPanel.updateFinalDisplay(
-				new FinalDisplay(sivi.appSettings));
-		
+				sivi.gradientGUIModel));
+		topPanel.updateFinalDisplaySize(sivi.appSettings);
 		topPanel.updateOctaveDisplays();
-		
 	}
-	
 }

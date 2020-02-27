@@ -17,8 +17,8 @@ public class TopPanelModel
 	public TopPanelModel()
 	{
 		this.octaves = 4;
-		this.finalWidth = 500;
-		this.finalHeight = 300;
+		this.finalWidth = 480;
+		this.finalHeight = 240;
 		this.colorMaps = 6;
 	}
 

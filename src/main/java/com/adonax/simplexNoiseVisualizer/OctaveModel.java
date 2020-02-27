@@ -18,8 +18,7 @@
 package com.adonax.simplexNoiseVisualizer;
 
 /**
- * Immutable class representing parameters for a single texture 
- * source.
+ * Immutable class representing parameters for a single texture channel.
  */
 public class OctaveModel {
 
@@ -58,7 +57,6 @@ public class OctaveModel {
 		this(1f, 1f, 0f, 0f, -1f, 1f, 
 				OctaveModel.NoiseNormalization.SMOOTH);
 	}
-	
 	
 	public OctaveModel(float xScale,
 						 float yScale,
@@ -110,5 +108,4 @@ public class OctaveModel {
 				normalize
 		);
 	}
-	
 }

@@ -21,13 +21,27 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
 import com.adonax.simplexNoiseVisualizer.color.ColorMap;
-import com.adonax.simplexNoiseVisualizer.utils.SimplexNoise;
-
+import com.adonax.simplexNoiseVisualizer.utils.NoiseEngine;
+import com.adonax.simplexNoiseVisualizer.utils.NoiseEngines;
 /**
  * Pure functions to generate and combine textures.
  */
 public class TextureFunctions {
 
+	// TODO unclear this is best location
+	// TODO unclear these are best namesk
+	private static NoiseEngines.Sources noiseEngine = NoiseEngines.Sources.OPEN_SIMPLEX;
+	private static NoiseEngine noiseMachine = noiseEngine.getNoiseEngine();
+	public static NoiseEngines.Sources getNoiseSource() 
+	{
+		return noiseEngine;
+	}
+	public static void setNoiseEngine(NoiseEngines.Sources noiseEngine)
+	{
+		TextureFunctions.noiseEngine = noiseEngine;
+		TextureFunctions.noiseMachine = noiseEngine.getNoiseEngine();
+	}
+	
 	
 	/**
 	 * Generate a 2D noise data array from a single octave channel
@@ -56,7 +70,8 @@ public class TextureFunctions {
 			float x = ((i % width) * om.xScale / 256.0f)
 					+ om.xTranslate;
 
-			float noiseVal = (float) SimplexNoise.noise(x, y);
+			float noiseVal = (float) noiseMachine.noise(x, y);
+//			float noiseVal = (float) SimplexNoise.noise(x, y);
 			noiseVal = Math.min(
 					Math.max(noiseVal, om.minClamp), om.maxClamp);
 
@@ -117,18 +132,24 @@ public class TextureFunctions {
 		return noiseDataMaker(width, height, om, mm, z, 3);
 	}
 	
-	// TODO: throw error if dims not 2 or 3?
 	private static NoiseData noiseDataMaker(int width, int height,
 			OctaveModel[] om, MixerModel mm, float z, int dimensions)
 	{
 		float[] noiseArray = new float[width * height];
 		float x, y, noiseVal;
+		int octLen = om.length;
 		
-		for (int j = 0, m = om.length; j < m; j++)
+		final float[] mixWeights = new float[octLen];
+		for (int i = 0; i < octLen; i ++)
+		{
+			mixWeights[i] = mm.weights[i] * mm.master;
+		}
+		
+		for (int j = 0; j < octLen; j++)
 		{
 			for (int i = 0, n = width * height; i < n; i ++)
 			{
-				//TODO: build 256.0f into the OctaveModel "scale" factors
+				//TODO: build 256.0f into the OctaveModel "scale" factors?
 				y = (((i/width) % height) * om[j].yScale / 256.0f)  
 						+ om[j].yTranslate;
 				x = ((i % width) * om[j].xScale / 256.0f)
@@ -136,11 +157,11 @@ public class TextureFunctions {
 	
 				if (dimensions == 2) 
 				{
-					noiseVal = (float) SimplexNoise.noise(x, y);
+					noiseVal = (float) noiseMachine.noise(x, y);
 				}
 				else if (dimensions == 3)
 				{
-					noiseVal = (float) SimplexNoise.noise(x, y, z);
+					noiseVal = (float) noiseMachine.noise(x, y, z);
 				}
 				else
 				{
@@ -157,7 +178,7 @@ public class TextureFunctions {
 					noiseVal = Math.abs(noiseVal);
 				}
 				
-				noiseArray[i] += noiseVal * mm.weights[j];
+				noiseArray[i] += noiseVal * mixWeights[j];
 			}
 		}
 		
@@ -168,10 +189,6 @@ public class TextureFunctions {
 		
 		return new NoiseData(width, height, noiseArray);
 	}
-
-	
-	
-	
 	
 	/**
 	 * Create an image from a single noise data array.

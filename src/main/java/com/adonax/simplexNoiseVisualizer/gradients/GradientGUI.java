@@ -17,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 
 import com.adonax.simplexNoiseVisualizer.MixerGUI;
 import com.adonax.simplexNoiseVisualizer.MixerModel;
@@ -55,16 +54,8 @@ public class GradientGUI extends JPanel implements ActionListener
 		this.model = model;
 		openWindows = new ArrayList<JDialog>();
 		
-		TitledBorder combineTitledBorder = 
-				BorderFactory.createTitledBorder(
-						"Modulate a gradient function");
-		setBorder(combineTitledBorder);
-		setMinimumSize(new Dimension(250, 100));
-		setPreferredSize(getMinimumSize());
-		
 		blackBorder = BorderFactory.createLineBorder(Color.BLACK);
 		redBorder = BorderFactory.createLineBorder(Color.RED);
-
 		
 		// TODO: new gradientGUIs are added in this area, AND 
 		// in the actionListener, below

@@ -1,8 +1,7 @@
 package com.adonax.simplexNoiseVisualizer;
 
-import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -10,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -30,16 +30,16 @@ public class MixerGUI extends JPanel
 	private volatile MixerModel mixerModel;
 	final DecimalFormat decimals2formatter = new DecimalFormat("#.##");
 	
-	private ButtonGroup colorMappingOptions;
-	private JRadioButton clampOption, ringOption;
-	
 	private GradientGUI gradientGUI;
 	public GradientGUI getGradientGUI()
 	{
 		return gradientGUI;
 	}
 
-	public MixerModel getMixerModel() {return mixerModel;}
+	public MixerModel getMixerModel() 
+	{
+		return mixerModel;
+	}
 	public void setMixerModel(MixerModel mixerModel)
 	{
 		this.mixerModel = mixerModel;
@@ -59,6 +59,14 @@ public class MixerGUI extends JPanel
 		
 		int channels = topPanel.getAppSettings().octaves;
 		
+		int heightForGUI = 150 + channels * 25;
+		setPreferredSize(new Dimension(270, heightForGUI));
+		setMaximumSize(new Dimension(380, heightForGUI));
+		setAlignmentY(Component.TOP_ALIGNMENT);
+		
+//		Border debugBorder  = BorderFactory.createDashedBorder(Color.red);
+//		setBorder(debugBorder);
+		
 		weightSlider = new JSlider[channels];
 		weightTextField = new JTextField[channels];
 		
@@ -67,17 +75,25 @@ public class MixerGUI extends JPanel
 		gbConstraints.anchor = GridBagConstraints.LINE_START;
 
 		gradientGUI = new GradientGUI(this, ggm);
-		gradientGUI.setMinimumSize(new Dimension(300,100));
+//		gradientGUI.setMinimumSize(new Dimension(300,100));
+		Border gradientGUIBorder = BorderFactory.createRaisedBevelBorder();
+		TitledBorder combinedGradientGUITitledBorder = 
+				BorderFactory.createTitledBorder(gradientGUIBorder,
+						"Modulate a gradient function");
+		gradientGUI.setBorder(combinedGradientGUITitledBorder);
+		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 0;
+		gbConstraints.gridy = 1;
 		gbConstraints.gridwidth = 3;
 		add(gradientGUI, gbConstraints);
-		gbConstraints.gridwidth = 1;
+		gbConstraints.gridwidth = 1;	// restore default
+		gbConstraints.fill = GridBagConstraints.NONE; // restores default
 		
 		JPanel mixPanel = new JPanel();
-		TitledBorder mixBorder = 
-				BorderFactory.createTitledBorder("Mix");
-		mixPanel.setBorder(mixBorder);
+		Border border = BorderFactory.createRaisedBevelBorder();
+		TitledBorder combineTitledBorder = 
+				BorderFactory.createTitledBorder(border, "Mix");
+		mixPanel.setBorder(combineTitledBorder);
 		mixPanel.setLayout(new GridBagLayout());
 		// note: mm weights are pre-multiplied by master
 		for (int i = 0; i < channels; i++)
@@ -101,6 +117,9 @@ public class MixerGUI extends JPanel
 		gbConstraints.gridy = channels + 1;
 		mixPanel.add(new JLabel("All"), gbConstraints);
 		
+		/*
+		 * Master slider, 0 to 100, representing 0 to 4
+		 */
 		masterSlider = new JSlider(0, 100, (int)(mixerModel.master * 25));
 		masterTextField = new JTextField();
 		masterTextField.setColumns(3);
@@ -110,9 +129,10 @@ public class MixerGUI extends JPanel
 			@Override
 			public void stateChanged(ChangeEvent arg0)
 			{
-				masterTextField.setText(
-					decimals2formatter.format(masterSlider.getValue() * 0.04f));
-				updateModelWeights();
+				float masterValue = masterSlider.getValue() * 0.04f;
+				masterTextField.setText(decimals2formatter.format(masterValue));
+				mixerModel = MixerModel.updateMixSetting(mixerModel, 
+						MixerModel.Fields.MASTER, masterValue);
 				topPanel.remix();
 			}
 		});
@@ -121,11 +141,10 @@ public class MixerGUI extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				int val = (int)((Float.valueOf(
+				int sliderVal = (int)((Float.valueOf(
 						masterTextField.getText()) * 25));
-				val = Math.max(0, Math.min(100, val));
-				System.out.println("MixerGUI.masterTextField.actionPerformed.val:" + val);
-				masterSlider.setValue(val);
+				sliderVal = Math.max(0, Math.min(100, sliderVal));
+				masterSlider.setValue(sliderVal);
 				masterTextField.setText(
 						decimals2formatter.format(masterSlider.getValue() * 0.04f));
 			}
@@ -136,63 +155,15 @@ public class MixerGUI extends JPanel
 		mixPanel.add(masterTextField,  gbConstraints);
 		
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 1;
+		gbConstraints.gridy = 0;
 		gbConstraints.gridwidth = 3;
 		add(mixPanel, gbConstraints);
 		gbConstraints.gridwidth = 1;
-		
-		colorMappingOptions = new ButtonGroup();
-		clampOption = new JRadioButton("Clamp");
-		ringOption = new JRadioButton("Ring");
-		colorMappingOptions.add(clampOption);
-		colorMappingOptions.add(ringOption);
-		switch (mixerModel.mapping)
-		{
-		case CLAMP: clampOption.setSelected(true); break;
-		case RING: ringOption.setSelected(true);
-		}
-		
-		JPanel  colorMappingOptionPanel = new JPanel();
-		colorMappingOptionPanel.setLayout(new FlowLayout());
-
-		colorMappingOptionPanel.add(clampOption, BorderLayout.LINE_START);
-		colorMappingOptionPanel.add(ringOption, BorderLayout.LINE_END);
-
-		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 2;
-		gbConstraints.fill = GridBagConstraints.HORIZONTAL;
-		gbConstraints.gridwidth = 0;
-		add(colorMappingOptionPanel, gbConstraints);
-		gbConstraints.gridwidth = 1;
-
-		clampOption.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				mixerModel = 
-						MixerModel.updateMixSetting(mixerModel, 
-						MixerModel.Fields.MAPPING, 
-						MixerModel.MapMethod.CLAMP);
-			
-				topPanel.remix();
-			}
-		});
-		
-		ringOption.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				mixerModel = MixerModel.updateMixSetting(mixerModel, 
-						MixerModel.Fields.MAPPING, 
-						MixerModel.MapMethod.RING);
-				
-				topPanel.remix();
-			}
-		});
 	}
 	
+	/*
+	 * 100 increments, 0 to 100, representing 0 to 1 weight.
+	 */
 	private JSlider makeWeightingSlider(final int idx) 
 	{
 		final JSlider weightSlider = new JSlider(0, 100, 
@@ -223,11 +194,13 @@ public class MixerGUI extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				weightSlider[idx].setValue((int)((Float.valueOf(
-						weightTextField[idx].getText()) * 100)));
+				weightSlider[idx].setValue(
+						(int)((Float.valueOf(weightTextField[idx].getText())
+								* 100)));
+				
 				weightTextField[idx].setText(
 						decimals2formatter.format(
-								weightSlider[idx].getValue() / 100f));
+								weightSlider[idx].getValue()/ 100f));
 			}
 		});
 	
@@ -238,13 +211,6 @@ public class MixerGUI extends JPanel
 	{
 		mixerModel = MixerModel.updateMixSetting(mixerModel, 
 				MixerModel.Fields.WEIGHTS, getWeights());
-		
-		/* NOTE: if we include weights or gradients in 
-		 * the OctaveGUI displays, we will need to call 
-		 * TopPanel.update() instead of .remix(). But there 
-		 * would be a significant performance cost.
-		 */
-//		topPanel.remix();
 	}
 	
 	private float[] getWeights()

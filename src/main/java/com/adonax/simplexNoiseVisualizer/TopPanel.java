@@ -48,7 +48,9 @@ public class TopPanel extends JPanel
 		return appSettings;
 	}
 	
-	public final ColorMapSelectorGUI colorMapGUI;
+	public final ColorMapPreprocessingGUI colorMapPreprocessingGUI;
+	public final ColorMapSelectorGUI colorMapSelectorGUI;
+	public final ColorMapGUI colorMapGUI;
 	public OctaveGUI[] octaveGUIs;
 	public MixerGUI mixerGUI; 
 	
@@ -75,6 +77,7 @@ public class TopPanel extends JPanel
 		appSettings = new TopPanelModel();
 		
 		boolean[] selected = new boolean[appSettings.octaves];
+
 		mixerGUI = new MixerGUI(this, new MixerModel(appSettings), 
 				new GradientGUIModel(
 						new LinearGradientFunction(
@@ -91,8 +94,14 @@ public class TopPanel extends JPanel
 								0, 0.5f, 0),
 						selected
 						));
-		finalDisplay = new FinalDisplay(appSettings);
-		colorMapGUI = new ColorMapSelectorGUI(this);
+
+		finalDisplay = new FinalDisplay();
+		updateFinalDisplaySize(topPanelModel);
+
+		colorMapSelectorGUI = new ColorMapSelectorGUI(this);
+		colorMapPreprocessingGUI = new ColorMapPreprocessingGUI(this);
+		colorMapGUI = new ColorMapGUI(colorMapPreprocessingGUI, 
+				colorMapSelectorGUI);
 		
 		octaveModels = new OctaveModel[appSettings.octaves];
 		for (int i = 0; i < appSettings.octaves; i++)
@@ -106,34 +115,16 @@ public class TopPanel extends JPanel
 		octaveScroll.setPreferredSize(new Dimension(800, 434));	
 		add(octaveScroll, BorderLayout.NORTH);
 
-		// TODO: restore code export (to MenuBar)
-//		JButton exportBtn = new JButton("Export Code");
-//		exportBtn.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent arg0)
-//			{
-//				java.util.List<TextureParams> textureParamsList = new ArrayList<TextureParams>(4);
-//				textureParamsList.add(sts1.getTextureParams());
-//				textureParamsList.add(sts2.getTextureParams());
-//				textureParamsList.add(sts3.getTextureParams());
-//				textureParamsList.add(sts4.getTextureParams());
-//
-//				new ExportFrame(STBPanel.this.host, textureParamsList, tc.getCombineParams());
-//			}
-//		});
-
 		centerPanel = new JPanel();
+		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.X_AXIS));
 		centerPanel.add(mixerGUI);
 		centerPanel.add(colorMapGUI);
+		finalDisplay.setAlignmentY(Component.TOP_ALIGNMENT);
 		centerPanel.add(finalDisplay);
-
-		finalDisplay.setPreferredSize(
-				new Dimension(appSettings.finalWidth + 16, 
-						appSettings.finalHeight + 36));
-
-		add(centerPanel, BorderLayout.CENTER);		
-		updateOctaveDisplays();
 		
+		add(centerPanel, BorderLayout.SOUTH);		
+		
+		updateOctaveDisplays();
 	}
 
 	private JPanel makeOctavesPanel(OctaveModel[] om)
@@ -192,16 +183,21 @@ public class TopPanel extends JPanel
 		centerPanel.add(mixerGUI);
 		centerPanel.add(colorMapGUI);
 		centerPanel.add(finalDisplay);
+
 		revalidate();
+		
+		// TODO code smell, on the new MixerModel, but for different GUI
+		colorMapPreprocessingGUI.updateColorMapPreprocessingGUI(
+				newMixerGUI.getMixerModel().mapping);
 	}
 	
-	public void updateFinalDisplay(FinalDisplay newFinalDisplay)
+	public void updateFinalDisplaySize(TopPanelModel topPanelModel)
 	{
-		centerPanel.remove(finalDisplay);
-		finalDisplay = newFinalDisplay;
-		centerPanel.add(finalDisplay);
-		revalidate();
-		repaint();
+		Dimension preferredDims = new Dimension(
+				appSettings.finalWidth + 15, 
+				appSettings.finalHeight + 24);
+		finalDisplay.setPreferredSize(preferredDims);
+		finalDisplay.setMaximumSize(preferredDims);
 	}
 	
 	public void updateOctaveDisplays()

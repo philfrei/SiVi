@@ -11,7 +11,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import com.adonax.simplexNoiseVisualizer.FinalDisplay;
 import com.adonax.simplexNoiseVisualizer.MixerGUI;
 import com.adonax.simplexNoiseVisualizer.NoiseData;
 import com.adonax.simplexNoiseVisualizer.TextureModel;
@@ -83,10 +82,11 @@ public class TutorialDisplay extends JPanel
 				topPanel.loadOctavesPanel(sivi.octaveModels);
 				topPanel.updateMixerGUI(new MixerGUI(
 						topPanel, sivi.mixerModel, sivi.gradientGUIModel));	
-				topPanel.colorMapGUI.setColorAxis(0, sivi.colorAxis);
-				topPanel.colorMapGUI.setSelected(0, false);
-				topPanel.updateFinalDisplay(
-						new FinalDisplay(sivi.appSettings));
+				topPanel.colorMapSelectorGUI.setColorAxis(0, sivi.colorAxis);
+				topPanel.colorMapSelectorGUI.setSelected(0, false);
+//				topPanel.updateFinalDisplay(
+//						new FinalDisplay(sivi.appSettings));
+				topPanel.updateFinalDisplaySize(sivi.appSettings);
 				
 				topPanel.updateOctaveDisplays();
 			}

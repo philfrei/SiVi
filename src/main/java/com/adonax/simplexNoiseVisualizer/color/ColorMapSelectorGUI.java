@@ -6,11 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 //import java.awt.Insets;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.border.TitledBorder;
 
 import com.adonax.simplexNoiseVisualizer.TopPanel;
 
@@ -92,12 +90,6 @@ public class ColorMapSelectorGUI extends JPanel
 		ColorMapSelectorGUI.topPanel = topPanel;
 		bars = topPanel.getAppSettings().colorMaps;
 		
-		TitledBorder combineTitledBorder = 
-				BorderFactory.createTitledBorder("Select a Color Map");
-		setBorder(combineTitledBorder);
-//		Insets insets = 
-//				combineTitledBorder.getBorderInsets(this);
-		
 		setLayout(new GridBagLayout());
 		gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.LINE_START;
@@ -122,8 +114,8 @@ public class ColorMapSelectorGUI extends JPanel
 				}
 			});
 			
-			colorBars[i] = new ColorBar(); 
-			colorBars[i].createDataFlavor(); // TODO:
+			colorBars[i] = new ColorBar();
+			colorBars[i].createDataFlavor();
 			colorBars[i].setSize(256, 16);
 			
 			gbConstraints.gridx = 0;

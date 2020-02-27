@@ -40,14 +40,19 @@ import com.adonax.simplexNoiseVisualizer.utils.FloatArrayFunctions;
 
 public class AnimationPanel extends JPanel
 {
+	private static final long serialVersionUID = 1L;
+
 	private BufferedImage[] images = new BufferedImage[0];
+	
 	// Model variables
 	private int imagesCount;
 	private float zIncr;
 	private int overlap;
 	private volatile int deltaTime;
-//	private boolean imagesUpdated;
-	private boolean modelUpdated;
+
+	// state booleans
+	private boolean modelIsValid;
+	private boolean graphicsHaveBeenCompiled;
 	
 	// GUI 
 	final JTextField stepsFld = new JTextField();
@@ -55,7 +60,7 @@ public class AnimationPanel extends JPanel
 	final JTextField overlapFld = new JTextField();
 	final JTextField deltaTimeFld = new JTextField();			
 	
-	private JButton loadBtn, viewBtn, exportBtn;
+	private JButton btnLoad, btnRunAnimation, btnExport;
 	private JSlider imgSlider;
 	private boolean animationRunning;
 	
@@ -76,12 +81,6 @@ public class AnimationPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-//				imagesCount = Integer.valueOf(stepsFld.getText());
-//				images = new BufferedImage[imagesCount];
-//				if (imgSlider != null) imgSlider.setValue(0);
-//				imgSlider.setEnabled(false);
-//				imgSlider.setValue(0);
-				modelUpdated = false;
 				zIncrFld.requestFocus();
 				updateForm();
 			}
@@ -96,8 +95,6 @@ public class AnimationPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-//				zIncr = Float.valueOf(zIncrFld.getText());
-				modelUpdated = false;
 				overlapFld.requestFocus();
 				updateForm();
 			}
@@ -112,7 +109,6 @@ public class AnimationPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				modelUpdated = false;
 				deltaTimeFld.requestFocus();
 				updateForm();
 			}
@@ -137,7 +133,7 @@ public class AnimationPanel extends JPanel
 					deltaTime = 0;
 				}
 				updateForm();
-				loadBtn.requestFocus();
+				btnLoad.requestFocus();
 			}
 		});
 
@@ -146,9 +142,9 @@ public class AnimationPanel extends JPanel
 		overlapFld.setText("0");
 		deltaTimeFld.setText("20");
 		
-		viewBtn = new JButton("View");
-		viewBtn.setEnabled(false);
-		viewBtn.addActionListener(new ActionListener()
+		btnRunAnimation = new JButton("View");
+		btnRunAnimation.setEnabled(false);
+		btnRunAnimation.addActionListener(new ActionListener()
 		{		
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -157,19 +153,20 @@ public class AnimationPanel extends JPanel
 			}
 		});
 
-		loadBtn = new JButton("Load");
-		loadBtn.setEnabled(false);
-		loadBtn.addActionListener(new ActionListener()
+		btnLoad = new JButton("Load");
+		btnLoad.setEnabled(false);
+		btnLoad.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
 				loadImageArray();
-				viewBtn.setEnabled(true);
+				btnRunAnimation.setEnabled(true);
 				imgSlider.setEnabled(true);
-				loadBtn.setEnabled(false);
+				btnExport.setEnabled(true);
+				btnLoad.setEnabled(false);
 				viewImage(0);
-				viewBtn.requestFocus();
+				btnRunAnimation.requestFocus();
 			}
 		});
 
@@ -184,9 +181,9 @@ public class AnimationPanel extends JPanel
 			}
 		});
 			
-		exportBtn = new JButton("Export Animated GIF");
-		exportBtn.setEnabled(false);
-		exportBtn.addActionListener(new ActionListener()
+		btnExport = new JButton("Export Animated GIF");
+		btnExport.setEnabled(false);
+		btnExport.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent arg0)
@@ -201,8 +198,7 @@ public class AnimationPanel extends JPanel
 				int returnVal = fs.showSaveDialog(null);
 				if(returnVal == JFileChooser.APPROVE_OPTION) 
 				{
-					fileName = new File(
-							fs.getSelectedFile().getAbsoluteFile()
+					fileName = new File(fs.getSelectedFile().getAbsoluteFile()
 							+ "." + graphicFormat);
 					
 					try
@@ -258,10 +254,10 @@ public class AnimationPanel extends JPanel
 		
 		gbConstraints.gridx = 0;
 		gbConstraints.gridy = 4;
-		add(loadBtn, gbConstraints);
+		add(btnLoad, gbConstraints);
 		gbConstraints.gridx = 1;
 		gbConstraints.gridy = 4;
-		add(viewBtn, gbConstraints);	
+		add(btnRunAnimation, gbConstraints);	
 		
 		gbConstraints.gridx = 0;
 		gbConstraints.gridy = 5;
@@ -270,52 +266,30 @@ public class AnimationPanel extends JPanel
 		
 		gbConstraints.gridx = 0;
 		gbConstraints.gridy = 6;
-		add(exportBtn, gbConstraints);	
+		add(btnExport, gbConstraints);	
 	}
 
+	// To be called when action on other forms changes the graphics data.
 	public void requireReload()
 	{
-		if (animationRunning) toggleAnimator();
-		loadBtn.setEnabled(true);
-		imgSlider.setEnabled(false);
-		viewBtn.setEnabled(false);
-		exportBtn.setEnabled(false);
-//		repaint();
+		// turn off animator if it is running
+		if (animationRunning) toggleAnimator(); 
+
+		// Changes to the graphics data do not require a model update
+		// but they do require a recompile.
+		graphicsHaveBeenCompiled = false;
+		
+		updateForm();
 	}
 	
+	// Called whenever a field has been edited.
 	private void updateForm()
 	{
 		updateModel();
 		updateControls();
-		repaint();
 	}
 	
-	private void updateControls()
-	{
-		/*
-		 * State of model issues:
-		 * 		modelUpdated becomes false at start of edit
-		 * 			but only stays false if entry is out of range
-		 * 		when loadBtn is first enabled, the view and export 
-		 * 			buttons should be disabled
-		 * 		when loadBtn is first disabled (occurs when load executes)
-		 * 			view and export buttons should become enabled
-		 */
-		if (loadBtn.isEnabled() != modelUpdated)
-		{
-			loadBtn.setEnabled(modelUpdated);
-			imgSlider.setEnabled(!modelUpdated);
-			viewBtn.setEnabled(!modelUpdated);
-			exportBtn.setEnabled(!modelUpdated);
-	
-			if (modelUpdated)
-			{
-				imgSlider.setMaximum(Math.max(0, imagesCount - 1));
-				imgSlider.setValue(0);
-			}
-		}		
-	}
-	
+	// Updates the model, but may allow bad data, so also need validate()
 	private void updateModel()
 	{
 		try
@@ -358,11 +332,14 @@ public class AnimationPanel extends JPanel
 		{
 			deltaTime = 20;
 		}
+
+		// Assumes we've changed the model and now need a recompile
+		graphicsHaveBeenCompiled = false;
 		
-		modelUpdated = validateModel();
+		validateModel();
 	}
 
-	private boolean validateModel()
+	private void validateModel()
 	{
 		boolean modelIsOK = true;
 		String errMessage = "";
@@ -391,15 +368,35 @@ public class AnimationPanel extends JPanel
 			modelIsOK = false;
 		}
 		
-		if (!modelIsOK)
+		if (modelIsOK)
+		{
+			modelIsValid = true;
+		}
+		else
 		{
 			System.out.println(errMessage);
 			// TODO - make a popup
-		}
-		
-		return modelIsOK;
+			modelIsValid = false;
+		}		
 	}
-	
+
+	private void updateControls()
+	{
+		if (modelIsValid)
+		{
+			btnLoad.setEnabled(!graphicsHaveBeenCompiled);
+			imgSlider.setEnabled(graphicsHaveBeenCompiled);
+			btnRunAnimation.setEnabled(graphicsHaveBeenCompiled);
+			btnExport.setEnabled(graphicsHaveBeenCompiled);
+		}
+		else
+		{
+			btnLoad.setEnabled(false);
+			imgSlider.setEnabled(false);
+			btnRunAnimation.setEnabled(false);
+			btnExport.setEnabled(false);
+		}
+	}
 	
 	/*
 	 * IMAGE LOADING
@@ -480,6 +477,9 @@ public class AnimationPanel extends JPanel
 			
 			images[i] = TextureFunctions.makeImage(nd, mm, cm);
 		}
+		
+		imgSlider.setMaximum(Math.max(0, imagesCount - 1));
+		imgSlider.setValue(0);
 	}
 	
 	private void viewImage(int i)
@@ -495,12 +495,12 @@ public class AnimationPanel extends JPanel
 		if (animationRunning)
 		{
 			animationRunning = false;
-			viewBtn.setText("View");
+			btnRunAnimation.setText("View");
 			timer.cancel();
 		}
 		else
 		{
-			viewBtn.setText("Stop");
+			btnRunAnimation.setText("Stop");
 			animationRunning = true;
 			timerIdx = 0;
 			timer = new Timer();
@@ -526,12 +526,5 @@ public class AnimationPanel extends JPanel
 				timerIdx = 0;
 			}
 		}
-	}
-	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	}	
 }
-

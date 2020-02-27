@@ -59,7 +59,7 @@ class AppFrame extends JFrame
 	    TopPanel topPanel = new TopPanel();
 	
 	    scroll = new JScrollPane(topPanel);
-	    scroll.setPreferredSize(new Dimension(1150, 850));
+	    scroll.setPreferredSize(new Dimension(1200, 712));
 	    add(scroll);
 	    
 	    MenuBar menuBar = new MenuBar(topPanel);

@@ -34,7 +34,6 @@ public class MenuBar
 		this.topPanel = topPanel;
 	}
 	
-	
 	public JMenuBar create()
 	{
 		JMenuBar menuBar = new JMenuBar();
@@ -63,11 +62,9 @@ public class MenuBar
 				topPanel.updateMixerGUI(new MixerGUI(
 						topPanel, sivi.mixerModel, 
 						new GradientGUIModel()));	
-				topPanel.colorMapGUI.setColorAxis(0, sivi.colorAxis);
-				topPanel.colorMapGUI.setSelected(0, false);
-				topPanel.updateFinalDisplay(
-						new FinalDisplay(sivi.appSettings));
-				
+				topPanel.colorMapSelectorGUI.setColorAxis(0, sivi.colorAxis);
+				topPanel.colorMapSelectorGUI.setSelected(0, false);
+				topPanel.updateFinalDisplaySize(sivi.appSettings);		
 				topPanel.updateOctaveDisplays();
 			}
 		});
@@ -98,7 +95,6 @@ public class MenuBar
 		JMenuItem quitApplication = new JMenuItem("Quit", KeyEvent.VK_Q);
 		quitApplication.addActionListener(new ActionListener()
 		{
-			
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
@@ -133,9 +129,9 @@ public class MenuBar
 			}
 		});
 				
-		JMenuItem codeGeneratorSubMenu = 
-				new JMenuItem("Code Generator", KeyEvent.VK_C);
-		codeGeneratorSubMenu.setEnabled(false);
+//		JMenuItem codeGeneratorSubMenu = 
+//				new JMenuItem("Code Generator", KeyEvent.VK_C);
+//		codeGeneratorSubMenu.setEnabled(false);
 		
 		JMenuItem animatorPanel = new JMenuItem("Animation Tool", KeyEvent.VK_A);
 	    animatorPanel.addActionListener(new ActionListener()
@@ -183,7 +179,7 @@ public class MenuBar
 		});
 	    
 		viewMenu.add(viewGallery);
-		viewMenu.add(codeGeneratorSubMenu);
+//		viewMenu.add(codeGeneratorSubMenu);
 		viewMenu.add(animatorPanel);
 		viewMenu.addSeparator();
 		viewMenu.add(settingsDialog);

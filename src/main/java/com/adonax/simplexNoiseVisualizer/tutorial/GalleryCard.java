@@ -105,13 +105,13 @@ public class GalleryCard extends JPanel
 				new TopPanelModel(4, 256, 256, 6);
 	
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
-		octaveModels[0] = new OctaveModel(0.5f, 4, 0, 0, 
+		octaveModels[0] = new OctaveModel(0.25f, 5, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.NONE);
-		octaveModels[1] = new OctaveModel(0.75f, 8, 0, 0, 
+		octaveModels[1] = new OctaveModel(0.5f, 10, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.SMOOTH);
-		octaveModels[2] = new OctaveModel(1.5f, 16, 0, 0, 
+		octaveModels[2] = new OctaveModel(1f, 20, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.SMOOTH);
-		octaveModels[3] = new OctaveModel(3, 32, 0, 0, 
+		octaveModels[3] = new OctaveModel(2, 40, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
 		
 		ColorAxis colorAxis = new ColorAxis();
@@ -306,21 +306,23 @@ public class GalleryCard extends JPanel
 		colorBarPegs.add(new ColorBarPeg(255, 128, 96, 0, 255));
 		colorAxis.setColorBarPegs(colorBarPegs);
 
-		SinusoidalGradientFunction sinusoidalGradient = 
-				new SinusoidalGradientFunction( 0, 0, 160, 0, 8, 0);
+//		SinusoidalGradientFunction sinusoidalGradient = 
+//				new SinusoidalGradientFunction( 0, 0, 160, 0, 8, 0);
+		RadialGradientFunction radialGradient = 
+				new RadialGradientFunction(128, 128, 128, 0, 15);
 		boolean[] selected = new boolean[3];
-		selected[2] = true;
+		selected[1] = true;
 		
 		GradientGUIModel gradientGUIModel = new GradientGUIModel(
-				new LinearGradientFunction(), new RadialGradientFunction(),
-				sinusoidalGradient, selected);
+				new LinearGradientFunction(), radialGradient, 
+				new SinusoidalGradientFunction(), selected);
 		
 		float masterWeight = 4;
 		float[] weights = new float[1];
 		weights[0] = 1;
 		MixerModel mixerModel = new MixerModel(weights, 
 				masterWeight, MixerModel.MapMethod.RING, 
-				sinusoidalGradient,	settings); 
+				radialGradient,	settings); 
 		
 		TextureModel sivi = new TextureModel(settings, octaveModels,
 				mixerModel, gradientGUIModel, colorAxis);		
@@ -352,7 +354,7 @@ public class GalleryCard extends JPanel
 		weights[0] = 0.75f;
 		weights[1] = 0.25f;
 		MixerModel mixerModel = new MixerModel(
-				weights, 2, MixerModel.MapMethod.CLAMP, 
+				weights, 1.6f, MixerModel.MapMethod.CLAMP, 
 				new NoiseData(settings.finalWidth, 
 						settings.finalHeight));	
 
@@ -400,14 +402,14 @@ public class GalleryCard extends JPanel
 		
 		
 		float[] weights = new float[settings.octaves];
-		float masterWeight = 0.75f;
-		weights[0] = 0.64f * masterWeight;
-		weights[1] = 0.32f * masterWeight;
-		weights[2] = 0.16f * masterWeight;
-		weights[3] = 0.08f * masterWeight;
-		weights[4] = 0.04f * masterWeight;
-		weights[5] = 0.02f * masterWeight;
-		weights[6] = 0.01f * masterWeight;
+		float masterWeight = 1.08f;
+		weights[0] = 0.64f;
+		weights[1] = 0.32f;
+		weights[2] = 0.16f;
+		weights[3] = 0.08f;
+		weights[4] = 0.04f;
+		weights[5] = 0.02f;
+		weights[6] = 0.01f;
 		
 		MixerModel mixerModel = new MixerModel(weights, 
 				masterWeight, MixerModel.MapMethod.CLAMP, 
@@ -447,7 +449,7 @@ public class GalleryCard extends JPanel
 		
 		float[] weights = new float[settings.octaves];
 		float masterWeight = 1f;
-		weights[0] = 1f * masterWeight;
+		weights[0] = 1f;
 		
 		MixerModel mixerModel = new MixerModel(weights, 
 				masterWeight, MixerModel.MapMethod.CLAMP, 
@@ -524,13 +526,13 @@ public class GalleryCard extends JPanel
 		TopPanelModel settings = new TopPanelModel(4, 350, 350, 6);
 		
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
-		octaveModels[0] = new OctaveModel(2, 2, 0, 0, 
+		octaveModels[0] = new OctaveModel(3, 3, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
-		octaveModels[1] = new OctaveModel(4, 4, 0, 0, 
+		octaveModels[1] = new OctaveModel(6, 6, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
-		octaveModels[2] = new OctaveModel(8, 8, 0, 0, 
+		octaveModels[2] = new OctaveModel(12, 12, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
-		octaveModels[3] = new OctaveModel(16, 16, 0, 0, 
+		octaveModels[3] = new OctaveModel(24, 24, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
 		
 		ColorAxis colorAxis = new ColorAxis();
@@ -561,7 +563,7 @@ public class GalleryCard extends JPanel
 		weights[3] = 0.07f;
 
 		MixerModel mixerModel = new MixerModel(
-				weights, 1,	MixerModel.MapMethod.CLAMP, 
+				weights, 1.48f,	MixerModel.MapMethod.CLAMP, 
 				radialGradient,	settings);
 
 		TextureModel sivi = new TextureModel(settings, octaveModels,
@@ -575,16 +577,14 @@ public class GalleryCard extends JPanel
 	
 	TutorialDisplay makeFieryFuzzball(final TutorialFramework tf)
 	{
-		TopPanelModel settings = new TopPanelModel(4, 350, 350, 6);
+		TopPanelModel settings = new TopPanelModel(3, 350, 350, 6);
 		
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
-		octaveModels[0] = new OctaveModel(4, 16, 0, 0, 
+		octaveModels[0] = new OctaveModel(6, 24, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
-		octaveModels[1] = new OctaveModel(8, 32, 0, 0, 
+		octaveModels[1] = new OctaveModel(12, 48, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
-		octaveModels[2] = new OctaveModel(16, 64, 0, 0, 
-				-1, 1, OctaveModel.NoiseNormalization.ABS);
-		octaveModels[3] = new OctaveModel(32, 128, 0, 0, 
+		octaveModels[2] = new OctaveModel(24, 96, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
 		
 		ColorAxis colorAxis = new ColorAxis();
@@ -607,12 +607,11 @@ public class GalleryCard extends JPanel
 				new LinearGradientFunction(), radialGradient,
 				new SinusoidalGradientFunction(), selected);
 		
-		float masterWeight = 0.25f;
+		float masterWeight = 0.24f;
 		float[] weights = new float[settings.octaves];
-		weights[0] = 0.56f * masterWeight;
-		weights[1] = 0.28f * masterWeight;
-		weights[2] = 0.14f * masterWeight;
-		weights[3] = 0.07f * masterWeight;
+		weights[0] = 0.56f;
+		weights[1] = 0.28f;
+		weights[2] = 0.14f;
 		
 		MixerModel mixerModel = new MixerModel(weights, 
 				masterWeight, MixerModel.MapMethod.CLAMP,
@@ -632,13 +631,13 @@ public class GalleryCard extends JPanel
 		TopPanelModel settings = new TopPanelModel(4, 300, 300, 6);
 		
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
-		octaveModels[0] = new OctaveModel(8, 2, 0, 0, 
+		octaveModels[0] = new OctaveModel(16, 4, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
-		octaveModels[1] = new OctaveModel(16, 4, 0, 0, 
+		octaveModels[1] = new OctaveModel(32, 8, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
-		octaveModels[2] = new OctaveModel(32, 8, 0, 0, 
+		octaveModels[2] = new OctaveModel(64, 16, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
-		octaveModels[3] = new OctaveModel(64, 16, 0, 0, 
+		octaveModels[3] = new OctaveModel(128, 32, 0, 0, 
 				-1, 1, OctaveModel.NoiseNormalization.ABS);
 		
 		ColorAxis colorAxis = new ColorAxis();
@@ -665,10 +664,10 @@ public class GalleryCard extends JPanel
 		
 		float masterWeight = 1;
 		float[] weights = new float[settings.octaves];
-		weights[0] = 0.32f * masterWeight;
-		weights[1] = 0.16f * masterWeight;
-		weights[2] = 0.08f * masterWeight;
-		weights[3] = 0.04f * masterWeight;
+		weights[0] = 0.32f;
+		weights[1] = 0.16f;
+		weights[2] = 0.08f;
+		weights[3] = 0.04f;
 		
 		MixerModel mixerModel = new MixerModel(weights, 
 				masterWeight, MixerModel.MapMethod.CLAMP,
