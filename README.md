@@ -1,6 +1,46 @@
-[toc]
+# SIVI - a Java-based 2D Noise Visualizer
 
-# SIVI
+## Contents
+
+[Introduction](SiVi#introduction)
+
+[Compiling and Running SIVI](https://github/philfrei/SiVi#compiling-and-running-sivi)
+
+* [Instructions for downloading and running from source](SiVi#instructions-for-downloading-and-running-from-source) 
+
+* [Information for importing to an IDE or build tool](SiVi#information-for-importing-to-an-ide-or-build-tool)
+
+[The GUI Explained](SiVi#the-gui-explained)
+
+* [Channels](SiVi#channels)
+
+* [Mixer](SiVi#mixer)
+
+* [Gradient Modulation](SiVi#gradient-modulation)
+
+* [Color Mapping](SiVi#color-mapping)
+
+* [Final Display](SiVi#final-display)
+
+[Example Gallery](SiVi#example-gallery)
+
+* [Classic Clouds](SiVi#classic-clouds)
+
+* [Tree Rings](SiVi#tree-rings)
+
+* [Plasma and Animation](SiVi#plasma-and-animation)
+
+[Exporting textures for use in other frameworks](SiVi#exporting-textures-for-use-in-other-frameworks)
+
+[Using GUI settings to write code](SiVi#using-gui-settings-to-write-code)
+
+* [Code template](SiVi#code-template)
+* [Notes on the code](SiVi#notes-on-the-code)
+[Additional Topics](SiVi#further-notes)
+[Project History](SiVi#project-history)
+[References and links](SiVi#references-and-links)
+
+## Introduction
 
 **SIVI** is a Java-based GUI built to assist in the creation of textures that rely on the mixing of 2D [gradient noise]([https://en.wikipedia.org/wiki/Gradient_noise). With SIVI, one can directly view the results of mixing variously scaled and manipulated *channels* of gradient noise data. Additional capabilities include the exporting of graphics and animated gifs. The values exposed by the GUI can be used when writing procedural code. A code template, with notes for use, is included below.
 
@@ -25,15 +65,15 @@ If you don't wish to fork the project, you can download, compile and run [siviso
 
 I am not including instructions for working with various IDE's or build programs like ANT or MAVEN. The following information should be helpful for bringing the project into a preferred environment. The code, as posted, is from my personal *Eclipse* IDE fork. It names the module-level folder *Java* instead of the name cited in `module-info.java`, which is *siviModule*.  
 
-Location of `main()`: [`../com/adonax/sivi/LaunchSivi`](src/main/java/com/adonax/sivi/LauchSivi)
+Location of `main()`: [`../com/adonax/sivi/LaunchSivi`](tree/master/src/main/java/com/adonax/sivi/LauchSivi)
 
-Required Java modules: `java.desktop`, `java.datatransfer`, `java.xml` (see [`module-info.java`](src/main/java/module-info.java)) 
+Required Java modules: `java.desktop`, `java.datatransfer`, `java.xml` (see [`module-info.java`](tree/master/src/main/java/module-info.java)) 
 
 ## The GUI Explained
 
 In this next section, the basic features of the GUI are described. The following figure shows the GUI for a 3-channel project used to create an earthlike planet texture. 
 
-*Fig. a: SIVI's GUI (67% size), developing an earthlike planet texture*
+*Fig. SIVI's GUI (67% size), developing an earthlike planet texture*
 
 <img src="images\fsTerra.png" alt="fsTerra" style="zoom:67%;" />
 
@@ -87,9 +127,9 @@ In this section, we take a closer look at two examples from the *Gallery* contai
 
 #### Classic clouds
 
-*Fig. b: Clouds*
+*Fig. Clouds*
 
-![Classic Clouds](images\classic_clouds.png)
+<img src="images\classic_clouds.png" alt="Classic Clouds" />
 
 This texture uses 5 channels, configured with a *fractal*-like pattern commonly called *octaves*. The scaling on the inputs progresses by doubling: 2, 4, 8, 16, 32. The relative contribution of each successive channel is halved (approximately): 0.52, 0.26, 0.13, 0.6, 0.3. Fractal relationships between channels work well for many textures, and *octave* relationships are often set as a default in implementations that I've come across. IMHO, the use of this exact doubling/halving pattern is not always needed. For example, the earthlike planet texture in the GUI example gets an interesting degree of variation with only three channels by using a 3:1 ratio between the channel settings instead of 2:1. Given that executing the noise function is relatively costly, finding ways to minimize the number of channels needed to create a graphic can be helpful.
 
@@ -97,19 +137,19 @@ Note that the weighting values in the mixer add up to 1. As a result, with the a
 
 The 0 value of the color mapping is a simple Blue [R:0, G:0, B:255] and the 1 value is a simple White [R:255, G:255, B:255]. If setting the colors with `floats` instead of `ints`, we would use: [0, 0, 1] and [1, 1, 1] respectively. If coding the textures procedurally, we could forgo the use of the map altogether, and simply plug the noise values into the R and G arguments for the pixel, and leave the B value at 1 for all pixels.
 
-#### Rings
+#### Tree Rings
 
-*Fig. c: Rings*
+*Fig. Tree Rings*
 
-![Rings](images\brown_rings.png) 
+<img src="images/tree_rings.png" alt="Tree Rings" />
 
 This texture uses just one channel. The mixer has the amplitude set to 4, and combines the noise values with a radial gradient function. The radial gradient is centered in the middle with a high value of 15, and progresses at a linear angle away from the center, reaching a value of 0 at the center edge (and a bit lower at the corners). This gradient, when added to the noise function, causes the values reaching the Color Map to greatly exceed the map's range. The 0 value color is [154, 122, 29] and the 1 value of the map is [192, 160, 64]. With the *rings* value selected, the function repeatedly ranges through the map's colors as the input to the mapping function ranges from below 0 to over 15. Intermediate values are computed using linear interpolation for each color channel.
 
 ####  "Plasma" and Animation
 
-*Fig. d: SIVI can export gifs*
+*Fig. SIVI can export gifs*
 
-![plasma](images\plasma.gif)
+<img src="images\plasma.gif" alt="Plasma gif" />
 
 A tool for creating animating gifs is now part of the project. The animation currently has only been enabled on the *z-axis*. The tool can be invoked from the Menu Bar:  (MenuBar>>Settings>>AnimationTool). The tool opens with default settings that create a 50-frame graphic, with the 20 milliseconds per frame. 
 
@@ -133,7 +173,7 @@ The mapping function in SIVI works as follows: `float` values ranging from 0 to 
 
 ## Exporting textures for use in other frameworks
 
-*Fig. e: Screen shot of 3 textures, imported into AFRAME as skins/surfaces*
+*Fig. Screen shot of 3 textures, imported into AFRAME as skins/surfaces*
 
 ![trio](images\trio.jpg)
 
@@ -260,7 +300,7 @@ public class CodeTemplate {
 ```
 
 
-##### Notes on the code.
+#### Notes on the code.
 
 (1a, b) The degree to which the different *channels* will affect the texture are set in the *MIX* section of the GUI. We have one *Mix* slider for each *channel*. Weights are calculated by taking the sum of all channels as a denominator, and the individual setting as the numerator. In the *Earth-like Planet* example shown at the top,  the denominator = 0.63 + 0.21 + 0.07, and the individual channels will get the following weights:
 `mixWeights[0]` = 0.63/0.91, `mixWeights[1]` = 0.21/0.91, `mixWeights[2]` = 0.07/0.91. These values are precalculated and stored in `mixWeights[]` at the outset, so that the factors can be plugged into the inner loops rather than redundantly recalculated.
@@ -305,7 +345,7 @@ The template code simply has us populating an array of `Color` objects. Presumab
 
 ## Further notes
 
-The noise-texture functions can also be used with what are sometimes called *anisotropic* effects to create the appearance of a globe or perspective. *AngryOctapus* illustrates the use of an [oval lens](http://www.angryoctopus.co.nz/?p=11) near the end of the linked blog article. I believe these transforms are best performed as part of step (3a). SIVI has not (yet) implemented this.
+The noise-texture functions can also be used with what are sometimes called *anisotropic* effects to create the appearance of a globe or perspective. *AngryOctapus* [describes the use of an oval lens](http://www.angryoctopus.co.nz/?p=11) near the end of the linked blog article. I believe these transforms are best performed as part of step (3a). SIVI has not (yet) implemented this.
 
 It would also be useful to be able to incorporate stencils, asis done in the above *AngryOctapus* blog, as part of the process of creating a "planet" graphic, or as I've seen Ken Perlin demonstrate in a graphic that looks like a solar eclipse. (The link to this has vanished, unfortunately.) I am thinking in terms of stencils as either being incorporated into the Color Mapping step, or as an additional step after the Color Mapping and prior to display. In this step, pixels in the area to be stenciled out would receive an Alpha channel value of 0, to make them transparent.
 
@@ -359,7 +399,7 @@ Stefan Gustafson's paper [*Simplex Noise Demystified*](http://weber.itn.liu.se/~
 
 [Repository for noise functions (Simplex, Classic, Cellular)](https://github.com/stegu/webgl-noise/) from Stefan Gustafson
 
-*Angry Octapus'* blog post [Content Generation for Programmers Pt 1](http://www.angryoctopus.co.nz/?p=11)
+*AngryOctapus'* blog post [Content Generation for Programmers Pt 1](http://www.angryoctopus.co.nz/?p=11)
 
 Also worth checking out:
 
