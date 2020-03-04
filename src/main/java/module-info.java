@@ -3,12 +3,12 @@
  *
  */
 module siviModule {
-	exports com.adonax.simplexNoiseVisualizer.utils;
-	exports com.adonax.simplexNoiseVisualizer.color;
-	exports com.adonax.simplexNoiseVisualizer.animation;
-	exports com.adonax.simplexNoiseVisualizer.tutorial;
-	exports com.adonax.simplexNoiseVisualizer;
-	exports com.adonax.simplexNoiseVisualizer.gradients;
+	exports com.adonax.sivi.utils;
+	exports com.adonax.sivi.color;
+	exports com.adonax.sivi.animation;
+	exports com.adonax.sivi.gallery;
+	exports com.adonax.sivi;
+	exports com.adonax.sivi.gradients;
 
 	requires transitive java.datatransfer;
 	requires transitive java.desktop;
