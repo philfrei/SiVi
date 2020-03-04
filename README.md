@@ -2,6 +2,7 @@
 
 ## Contents
 [Introduction](https://github.com/philfrei/SiVi#introduction)
+
 [Compiling and Running SIVI](https://github.com/philfrei/SiVi#compiling-and-running-sivi)
 * [Instructions for downloading and running from source]
 * https://github.com/philfrei/SiVi#instructions-for-downloading-and-running-from-source)
