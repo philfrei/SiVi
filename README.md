@@ -1,44 +1,27 @@
-# SIVI - a Java-based 2D Noise Visualizer
+# SIVI - a Java-based 2D Gradient-Noise Visualizer
 
 ## Contents
-
-[Introduction](SiVi#introduction)
-
-[Compiling and Running SIVI](https://github/philfrei/SiVi#compiling-and-running-sivi)
-
-* [Instructions for downloading and running from source](SiVi#instructions-for-downloading-and-running-from-source) 
-
-* [Information for importing to an IDE or build tool](SiVi#information-for-importing-to-an-ide-or-build-tool)
-
-[The GUI Explained](SiVi#the-gui-explained)
-
-* [Channels](SiVi#channels)
-
-* [Mixer](SiVi#mixer)
-
-* [Gradient Modulation](SiVi#gradient-modulation)
-
-* [Color Mapping](SiVi#color-mapping)
-
-* [Final Display](SiVi#final-display)
-
-[Example Gallery](SiVi#example-gallery)
-
-* [Classic Clouds](SiVi#classic-clouds)
-
-* [Tree Rings](SiVi#tree-rings)
-
-* [Plasma and Animation](SiVi#plasma-and-animation)
-
-[Exporting textures for use in other frameworks](SiVi#exporting-textures-for-use-in-other-frameworks)
-
-[Using GUI settings to write code](SiVi#using-gui-settings-to-write-code)
-
-* [Code template](SiVi#code-template)
-* [Notes on the code](SiVi#notes-on-the-code)
-[Additional Topics](SiVi#further-notes)
-[Project History](SiVi#project-history)
-[References and links](SiVi#references-and-links)
+[Introduction](https://github.com/philfrei/SiVi#introduction)
+[Compiling and Running SIVI](https://github.com/philfrei/SiVi#compiling-and-running-sivi)
+* [Instructions for downloading and running from source](https://github.com/philfrei/SiVi#instructions-for-downloading-and-running-from-source) 
+* [Information for importing to an IDE or build tool](https://github.com/philfrei/SiVi#information-for-importing-to-an-ide-or-build-tool)
+[The GUI Explained](https://github.com/philfrei/SiVi#the-gui-explained)
+* [Channels](https://github.com/philfrei/SiVi#channels)
+* [Mixer](https://github.com/philfrei/SiVi#mixer)
+* [Gradient Modulation](https://github.com/philfrei/SiVi#gradient-modulation)
+* [Color Mapping](https://github.com/philfrei/SiVi#color-mapping)
+* [Final Display](https://github.com/philfrei/SiVi#final-display)
+[Example Gallery](https://github.com/philfrei/SiVi#example-gallery)
+* [Classic Clouds](https://github.com/philfrei/SiVi#classic-clouds)
+* [Tree Rings](https://github.com/philfrei/SiVi#tree-rings)
+* [Plasma and Animation](https://github.com/philfrei/SiVi#plasma-and-animation)
+[Exporting textures for use in other frameworks](https://github.com/philfrei/SiVi#exporting-textures-for-use-in-other-frameworks)
+[Using GUI settings to write code](https://github.com/philfrei/SiVi#using-gui-settings-to-write-code)
+* [Code template](https://github.com/philfrei/SiVi#code-template)
+* [Notes on the code](https://github.com/philfrei/SiVi#notes-on-the-code)
+[Additional Topics](https://github.com/philfrei/SiVi#further-notes)
+[Project History](https://github.com/philfrei/SiVi#project-history)
+[References and links](https://github.com/philfrei/SiVi#references-and-links)
 
 ## Introduction
 
