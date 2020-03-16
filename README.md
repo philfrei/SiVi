@@ -9,6 +9,7 @@
 [Information for importing to an IDE or build tool](https://github.com/philfrei/SiVi#information-for-importing-to-an-ide-or-build-tool)
 
 [The GUI Explained](https://github.com/philfrei/SiVi#the-gui-explained)
+
 * [Channels](https://github.com/philfrei/SiVi#channels)
 * [Mixer](https://github.com/philfrei/SiVi#mixer)
 * [Gradient Modulation](https://github.com/philfrei/SiVi#gradient-modulation)
@@ -36,9 +37,9 @@
 
 **SIVI** is a Java-based GUI built to assist in the creation of textures that rely on the mixing of 2D [gradient noise]([https://en.wikipedia.org/wiki/Gradient_noise). With SIVI, one can directly view the results of mixing variously scaled and manipulated *channels* of gradient noise data. Additional capabilities include the exporting of graphics and animated gifs. The values exposed by the GUI can be used when writing procedural code. A code template, with notes for use, is included below.
 
-The inspiration for SIVI came from reading Stefan Gustafsen's 2005 article [Simplex noise demystified](http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf). I strongly recommend Gustafsen's article to anyone wanting a clear explanation of the theory and for his implementation of Ken Perlin's* Simplex Noise. However, the article said little about how to *use* this technique. SIVI was written to both help learn how to code gradient-noise-based textures, and to facilitate experiments with texture design.
+The inspiration for making SIVI came from reading Stefan Gustafsen's 2005 article [Simplex noise demystified](http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf). I strongly recommend Gustafsen's article to anyone wanting a clear explanation of the theory and for his implementation of Ken Perlin's *Simplex Noise*. However, the article said little about how to *use* this technique. SIVI was written to both help learn how to code gradient-noise based textures, and to facilitate experimenting with texture design.
 
-SIVI uses [OpenSimplexNoise](https://gist.github.com/KdotJPG/b1270127455a94ac5d19) as its default procedural noise algorithm. SIVI has been set up to easily incorporate additional noise generating libraries, making it possible to compare different types of gradient noise. Gustafsen's implementation of *SimplexNoise* is included and can be selected for comparison purposes, though it's status is unclear due to patent considerations.
+SIVI uses [OpenSimplexNoise](https://gist.github.com/KdotJPG/b1270127455a94ac5d19) as its default. SIVI has been set up to easily incorporate additional noise generating libraries, making it possible to compare different types of gradient noise. Gustafsen's implementation of *SimplexNoise* is included and can be selected for comparison purposes.
 
 ## Compiling and Running SIVI
 
@@ -55,7 +56,7 @@ If you don't wish to fork the project, you can download, compile and run [siviso
 
 #### Information for importing to an IDE or build tool
 
-I am not including instructions for working with various IDE's or build programs like ANT or MAVEN. The following information should be helpful for bringing the project into a preferred environment. The code, as posted, is from my personal *Eclipse* IDE fork. It names the module-level folder *Java* instead of the name cited in `module-info.java`, which is *siviModule*.  
+I am not including instructions for working with various IDE's or build programs like ANT or MAVEN. The following information should be helpful for bringing the project into a preferred environment. The code, as posted, is from my personal *Eclipse* IDE fork. Eclipse names the module-level folder *Java* instead of the name cited in `module-info.java`, which is *siviModule*.  
 
 Location of `main()`: [`../com/adonax/sivi/LaunchSivi`](tree/master/src/main/java/com/adonax/sivi/LauchSivi)
 
@@ -73,7 +74,7 @@ In this next section, the basic features of the GUI are described. The following
 
 The top half of SIVI contains controls for the contributing *channels* of noise. This project has 3 channels. If more channels are used than can be displayed, a scroll bar is provided. Each *channel* controls a separate call to the noise function. The settings on each channel are for *scaling*, *translation*, a filter function (of dubious merit), and a set of radio buttons for the selection of an algorithm to transform the results, or not, from the range -1 to 1, to the range 0 to 1. This section also includes a visualization of the target area.
 
-A call is made to the noise function for every pixel in the target rectangle image. As we traverse over the area of our intended graphic using a simple `for` loop, the X and Y coordinates are plugged in as arguments to the noise function. The GUI controls **X Scale** and **Y Scale** hold the scaling values that control the distance we travel through the *gradient noise space* over the course of this `for` loop.
+A call is made to the noise function for every pixel in the target rectangle image. As we traverse over the area of our intended graphic using a simple `for` loop, the X and Y coordinates are plugged in as arguments to the noise function. The GUI controls **X Scale** and **Y Scale** hold values that control the distance we travel through the *gradient noise space* over the course of this `for` loop.
 
 With a scaling of 2 instead of 1, our arguments to the noise function are twice as large, and thus cover twice as much of the *gradient noise space*. This results in a denser, more compact, pattern of peaks and valleys in the data. In the above example, the first channel has an X scaling of 3, the second an X scaling of 9 and the third and X scaling of 27. If you look at the corresponding visualizations for the channels, you can see that the first graphic matches the top left corner of the second (at 1/3rd the width and height), and the second matches up to the top corner of the 3rd.
 
@@ -123,9 +124,9 @@ In this section, we take a closer look at two examples from the *Gallery* contai
 
 <img src="images\classic_clouds.png" alt="Classic Clouds" />
 
-This texture uses 5 channels, configured with a *fractal*-like pattern commonly called *octaves*. The scaling on the inputs progresses by doubling: 2, 4, 8, 16, 32. The relative contribution of each successive channel is halved (approximately): 0.52, 0.26, 0.13, 0.6, 0.3. Fractal relationships between channels work well for many textures, and *octave* relationships are often set as a default in implementations that I've come across. IMHO, the use of this exact doubling/halving pattern is not always needed. For example, the earthlike planet texture in the GUI example gets an interesting degree of variation with only three channels by using a 3:1 ratio between the channel settings instead of 2:1. Given that executing the noise function is relatively costly, finding ways to minimize the number of channels needed to create a graphic can be helpful.
+This texture uses 5 channels, configured with a *fractal*-like pattern commonly called *octaves*. The scaling on the inputs progresses by doubling: 2, 4, 8, 16, 32. The relative contribution of each successive channel is halved (approximately): 0.52, 0.26, 0.13, 0.6, 0.3. Fractal relationships between channels work well for many textures, and *octave* relationships are often set as a default in implementations that I've come across. IMHO, the use of this exact doubling/halving pattern is not always needed. For example, the earthlike planet texture in the GUI example obtains an interesting degree of variation with only three channels, using a 3:1 ratio between the channel settings instead of 2:1. Given that executing the noise function is relatively costly, finding ways to minimize the number of channels can be helpful.
 
-Note that the weighting values in the mixer add up to 1. As a result, with the amplitude also set to one, the sum of the weights is guaranteed to never exceed 1. So, no pre-screening is needed prior to sending the data to the Color Map, and selecting either *Ring* or *Clamp* has no effect.
+Note that the weighting values in the mixer add up to 1. As a result, with the amplitude also set to one, the sum of the weights is guaranteed to never exceed 1. So, no pre-screening is needed prior to sending the data to the *Color Map*, and selecting either *Ring* or *Clamp* has no effect.
 
 The 0 value of the color mapping is a simple Blue [R:0, G:0, B:255] and the 1 value is a simple White [R:255, G:255, B:255]. If setting the colors with `floats` instead of `ints`, we would use: [0, 0, 1] and [1, 1, 1] respectively. If coding the textures procedurally, we could forgo the use of the map altogether, and simply plug the noise values into the R and G arguments for the pixel, and leave the B value at 1 for all pixels.
 
@@ -301,9 +302,9 @@ public class CodeTemplate {
 
 (3a, b) Here we obtain the arguments that are used by the noise-function. The scaling settings **X Scale** and **Y Scale** are multiplied against the unit iterator, which affects the distance traversed over the *gradient noise space*. Higher increments arising from higher scaling values will take bigger steps over the space, and thus produce more closely packed peaks and valleys in the data.
 
-The denominator 256 was arbitrarily chosen and is correctly considered an *antipattern* ([magic number](https://en.wikipedia.org/wiki/Magic_number_%28programming%29)). The goal was to aim for 256 steps (i.e., 256 pixels) as corresponding to 1 lattice traversal with the scaling set to 1. However, the difference between X and X+1 in a noise function call does not necessarily match the distance between lattice points, especially when simplexes are used. It might be useful to make this value configurable, tied to the distance between a pair of consecutive lattice points for the gradient noise function being used.
+The denominator 256 was arbitrarily chosen here and is correctly considered an *antipattern* ([magic number](https://en.wikipedia.org/wiki/Magic_number_%28programming%29)). The goal is to aim to set 256 steps (i.e., 256 pixels) to correspond to 1 lattice traversal with the scaling set to 1. However, the difference between X and X+1 in a noise function call does not necessarily match the distance between lattice points. And different engines seem to have configured this differently, with Gustafsen's *Simplex Noise* requiring a denominator of 512 in order to match the lattice position differences employed in *Open Simplex Noise*. 
 
-As the step size approaches the distance between consecutive lattices, the relationship between steps becomes increasingly random. For reasons of practicality, an upper limit for the scaling was set to 128 (half of the distance between two lattices). At the other end, making miniscule progress between two lattices approaches returning a constant value, so as a practical matter, the lower limit of the scaling is set to 1/8th the distance between two lattices.
+As the step size approaches the distance between consecutive lattices, the relationship between steps becomes increasingly random. For reasons of practicality, an upper limit for the scaling was set to 128 steps (half of the distance between two lattices). At the lower end, making miniscule progress between two lattices approaches a return of a constant value, so as a practical matter, the lower limit of the scaling is set to 1/8th the distance between two lattices.
 
 The iteration over the *gradient noise space* starts at [0, 0] by default. A translation value can move the starting point to another location in the *gradient noise space*. Sometimes the translation values are thought of as being similar to random number generator *seeds*.
 
@@ -331,7 +332,7 @@ An interesting variant, instead of using the *floor* function, is to cast the no
 
 The template code simply has us populating an array of `Color` objects. Presumably one will be using these colors with either a `BufferedImage` with a `WritableRaster`, if working with Swing, or a `WritableImage` and `PixelWriter` with JavaFX.
 
-(9) An Interface is used in this template code as a place-holder to a call to the noise function. There are several noise functions that one can use. SIVI uses [OpenSimplexNoise]() as the default, and includes Gustafson's implementation of Ken Perlin's [SimplexNoise]() (which has patent restrictions pertaining to the use of 3D, to the best of my limited knowledge). SIVI allows one to compare the two. Other gradient noise functions also exist, such as *ClassicPerlinNoise* and *ImprovedPerlinNoise*. These can be brought into SIVI, by implementing `NoiseEngine` and storing the adaptation class in the `enum` collection `NoiseEngines`.
+(9) An Interface is used in this template code as a place-holder to a call to the noise function. There are currently noise functions that one can use. SIVI uses [OpenSimplexNoise]() as the default, and includes Gustafson's implementation of Ken Perlin's [SimplexNoise](). Other gradient noise functions also exist, such as *ClassicPerlinNoise* and *ImprovedPerlinNoise*. These can be brought into SIVI, by implementing `NoiseEngine` and storing the adaptation class in the `enum` collection `NoiseEngines.Source`.
 
 (10) This section is also place-holder code. It's purpose is to indicate where on the GUI the plug-in values are displayed. SIVI makes use of a functional programming design, where collections of variables are stored in immutable "model" objects.
 
@@ -353,7 +354,7 @@ Part way in, I learned about *functional programming* and the *Model-View-Contro
 
 In February, 2020, the project was rebooted. Revisions included deleting *tutorial* and *code-generation* functionality to bring down the code base size, revisions and enhancements to the GUI, and a tweaking of the *model* data structure.
 
-The most significant change was making *OpenSimplexNoise* the default noise engine, and creating a code interface for including additional noise engines. Gustafson's implementation of Perlin's Simplex Noise has been left in as an alternative for viewing, but given Ken Perlin's patent, it's status in the project is uncertain. I would be especially cautious about creating gifs with the SimplexNoise engine, as this makes use of the z-axis, and word-on-the-forums has it that the principle target of patent enforcement has been with 3D.
+The most significant change was making *OpenSimplexNoise* the default noise engine, and creating a code interface for including additional noise engines. Gustafson's implementation of Perlin's Simplex Noise has been left in as an alternative for viewing. 
 
 #### Wish List
 
@@ -368,8 +369,7 @@ Following are items that if coded would enhance the project. They can be found i
   *B&W might be preferred as a way of keeping in mind that the numbers at this point have NOT yet been color-mapped.*
 
 - Bring in additional noise engines
-  *This would include adding the ability to scale for different lattice sizes.*
-
+  
 - Anisotropic effects
   *Requires functions that respond to the [x, y] location in the target graphic, and are applied prior to the call to the noise function.*
 

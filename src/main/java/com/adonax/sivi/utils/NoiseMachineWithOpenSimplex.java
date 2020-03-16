@@ -15,5 +15,4 @@ public class NoiseMachineWithOpenSimplex implements NoiseEngine {
 	{
 		return openSimplexNoise.eval(xin, yin, zin);
 	}
-
 }

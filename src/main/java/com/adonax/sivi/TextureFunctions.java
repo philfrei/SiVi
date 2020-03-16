@@ -29,9 +29,10 @@ import com.adonax.sivi.utils.NoiseEngines;
 public class TextureFunctions {
 
 	// TODO unclear this is best location
-	// TODO unclear these are best namesk
+	// TODO unclear these are best names
 	private static NoiseEngines.Sources noiseEngine = NoiseEngines.Sources.OPEN_SIMPLEX;
 	private static NoiseEngine noiseMachine = noiseEngine.getNoiseEngine();
+	private static float latticeDFactor = 1/256f; // default
 	public static NoiseEngines.Sources getNoiseSource() 
 	{
 		return noiseEngine;
@@ -40,6 +41,7 @@ public class TextureFunctions {
 	{
 		TextureFunctions.noiseEngine = noiseEngine;
 		TextureFunctions.noiseMachine = noiseEngine.getNoiseEngine();
+		TextureFunctions.latticeDFactor = noiseEngine.getLatticeFactor();
 	}
 	
 	
@@ -59,15 +61,13 @@ public class TextureFunctions {
 	public static NoiseData makeNoiseDataArray(int width, 
 			int height, OctaveModel om) 
 	{
-
 		float[] noiseArray = new float[width * height];
 
 		for (int i = 0, n = width * height; i < n; i ++)
 		{
-			//TODO: build 256.0f into the OctaveModel "scale" factors
-			float y = (((i/width) % height) * om.yScale / 256.0f)  
+			float y = (((i/width) % height) * om.yScale * latticeDFactor)  
 					+ om.yTranslate;
-			float x = ((i % width) * om.xScale / 256.0f)
+			float x = ((i % width) * om.xScale * latticeDFactor)
 					+ om.xTranslate;
 
 			float noiseVal = (float) noiseMachine.noise(x, y);
@@ -149,10 +149,9 @@ public class TextureFunctions {
 		{
 			for (int i = 0, n = width * height; i < n; i ++)
 			{
-				//TODO: build 256.0f into the OctaveModel "scale" factors?
-				y = (((i/width) % height) * om[j].yScale / 256.0f)  
+				y = (((i/width) % height) * om[j].yScale * latticeDFactor)  
 						+ om[j].yTranslate;
-				x = ((i % width) * om[j].xScale / 256.0f)
+				x = ((i % width) * om[j].xScale * latticeDFactor)
 						+ om[j].xTranslate;
 	
 				if (dimensions == 2) 
