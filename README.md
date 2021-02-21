@@ -4,10 +4,7 @@
 [Introduction](https://github.com/philfrei/SiVi#introduction)
 
 [Compiling and Running SIVI](https://github.com/philfrei/SiVi#compiling-and-running-sivi)
-* [Instructions for downloading and running from source]
-* https://github.com/philfrei/SiVi#instructions-for-downloading-and-running-from-source)
-
-[Information for importing to an IDE or build tool](https://github.com/philfrei/SiVi#information-for-importing-to-an-ide-or-build-tool)
+* [Instructions for downloading and running from source](https://github.com/philfrei/SiVi#instructions-for-downloading-and-running-from-source)
 
 [The GUI Explained](https://github.com/philfrei/SiVi#the-gui-explained)
 
@@ -36,9 +33,9 @@
 
 ## Introduction
 
-**SIVI** is a Java-based GUI built to assist in the creation of textures that rely on the mixing of 2D [gradient noise]([https://en.wikipedia.org/wiki/Gradient_noise). With SIVI, one can directly view the results of mixing variously scaled and manipulated *channels* of gradient noise data. Additional capabilities include the exporting of graphics and animated gifs. The values exposed by the GUI can be used when writing procedural code. A code template, with notes for use, is included below.
+**SIVI** is a Java-based GUI built to assist in the creation of textures that rely on the mixing of 2D [gradient noise]([https://en.wikipedia.org/wiki/Gradient_noise). With SIVI, one can view the results of mixing variously scaled and manipulated *channels* of gradient noise data. Additional capabilities include the exporting of graphics and animated gifs. Values are exposed by the GUI that can be referred to when writing procedural code to create textures on the fly. A [template](https://github.com/philfrei/SiVi#code-template) for writing procedural code is included below.
 
-The inspiration for making SIVI came from reading Stefan Gustafsen's 2005 article [Simplex noise demystified](http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf). I strongly recommend Gustafsen's article to anyone wanting a clear explanation of the theory and for his implementation of Ken Perlin's *Simplex Noise*. However, the article said little about how to *use* this technique. SIVI was written to both help learn how to code gradient-noise based textures, and to facilitate experimenting with texture design.
+The inspiration for making SIVI came from reading Stefan Gustafsen's 2005 article [Simplex noise demystified](http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf). I strongly recommend Gustafsen's article to anyone wanting a clear explanation of the theory and for his implementation of Ken Perlin's *Simplex Noise*. However, the article said little about how to *use* this technique artistically. SIVI was written to help with learning both how to design and how to code gradient-noise-based textures, and to make experimenting with designs easier.
 
 SIVI uses [OpenSimplexNoise](https://gist.github.com/KdotJPG/b1270127455a94ac5d19) as its default. SIVI has been set up to easily incorporate additional noise generating libraries, making it possible to compare different types of gradient noise. Gustafsen's implementation of *SimplexNoise* is included and can be selected for comparison purposes.
 
@@ -54,10 +51,6 @@ If you don't wish to fork the project, you can download, compile and run [siviso
    `javac -d compiled/ --module-source-path sivisource -m siviModule` 
 5. To run, execute the following command:
    `java -p compiled/ -m siviModule/com.adonax.sivi.LaunchSivi`
-
-#### Information for importing to an IDE or build tool
-
-I am not including instructions for working with various IDE's or build programs like ANT or MAVEN. The following information should be helpful for bringing the project into a preferred environment. The code, as posted, is from my personal *Eclipse* IDE fork. Eclipse names the module-level folder *Java* instead of the name cited in `module-info.java`, which is *siviModule*.  
 
 Location of `main()`: [`../com/adonax/sivi/LaunchSivi`](tree/master/src/main/java/com/adonax/sivi/LauchSivi)
 
@@ -361,12 +354,12 @@ The most significant change was making *OpenSimplexNoise* the default noise engi
 
 Following are items that if coded would enhance the project. They can be found in the *task list*, along with notes relevant for the task. The ordering below reflects my personal, first estimate of priority and size-of-task. But it should be possible to jump in at any point in this list.
 
-- Improve settings entry for ALL fields so that an <Enter> keypress is not required. This has only been done for the *Animation Panel* fields.
+- Improve the field controls so that an <Enter> keypress is not required after changing the value in the field. This has only been done for the *Animation Panel* fields.
   
 - Save/Load for texture settings
   *Will likely include a review of the current somewhat fragmented "model" structure.* 
 
-- B&W option setting for channel displays
+- B&W option setting for channel displays?
   *B&W might be preferred as a way of keeping in mind that the numbers at this point have NOT yet been color-mapped.*
 
 - Bring in additional noise engines
@@ -384,6 +377,7 @@ Following are items that if coded would enhance the project. They can be found i
 
 - Code export
 
+- NEW idea: add the mapping functions shown in article [Procedural Generation](http://squall-digital.com/ProceduralGeneration.html)
   
 
 ## References and Links
