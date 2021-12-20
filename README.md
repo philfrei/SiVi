@@ -45,16 +45,12 @@ If you don't wish to fork the project, you can download, compile and run [siviso
 
 #### Instructions for downloading and running from source
 
-1. Download to a suitable project folder (e.g., if Windows, `c://.../Desktop/sivi`) and extract all.
-3. Open a command shell and navigate to the project folder.
+1. Download to a suitable project folder and extract all.
+3. Open a command shell and navigate to the project folder (holds the **src/** folder)
 4. To compile, execute the following command: 
-   `javac -d compiled/ --module-source-path sivisource -m siviModule` 
+   `javac -d compiled/ --module-source-path src/main/java -m siviModule` 
 5. To run, execute the following command:
    `java -p compiled/ -m siviModule/com.adonax.sivi.LaunchSivi`
-
-Location of `main()`: [`../com/adonax/sivi/LaunchSivi`](tree/master/src/main/java/com/adonax/sivi/LauchSivi)
-
-Required Java modules: `java.desktop`, `java.datatransfer`, `java.xml` (see [`module-info.java`](tree/master/src/main/java/module-info.java)) 
 
 ## The GUI Explained
 
