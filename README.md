@@ -132,9 +132,9 @@ This texture uses just one channel. The mixer has the amplitude set to 4, and co
 
 <img src="images\plasma.gif" alt="Plasma gif" />
 
-A tool for creating animating gifs is now part of the project. The animation currently has only been enabled on the *z-axis*. The tool can be invoked from the Menu Bar:  (MenuBar>>Settings>>AnimationTool). The tool opens with default settings that create a 50-frame graphic, with the 20 milliseconds per frame. 
+A tool for creating animating gifs is now part of the project. The animation is now enabled on the *x-, y- and z-axis*. The tool can be invoked from the Menu Bar:  (MenuBar>>Settings>>AnimationTool). The tool opens with default settings that create a 50-frame graphic, with the 20 milliseconds per frame. 
 
-In this graphic, you will notice that there is no discontinuity when the gif loops. This smoothness is accomplished by designating a large number of frames in the *Overlap* control. When there are overlap frames, linear interpolation is used between each overlapped pair to achieve smoothing.
+In this example graphic, you will notice that there is no discontinuity when the gif loops. This smoothness is accomplished by designating a large number of frames in the *Overlap* control. When there are overlap frames, linear interpolation is used between each overlapped pair to achieve smoothing.
 
 As for the fiery graphic itself, there are four channels of *Turbulent Noise*, set to *octave* relationships. The output is sent to a color map function that consists of three colors: 
 
@@ -146,8 +146,8 @@ As for the fiery graphic itself, there are four channels of *Turbulent Noise*, s
 
 The mapping function in SIVI works as follows: `float` values ranging from 0 to 1 are mapped to `int` values ranging from 0 to 255. If the calculated `int` is exactly 0, 127 or 255, the corresponding color values are used. If the calculated `int` value lies in between 0 and 127, or in between 127 and 255, then the RGB color values are calculated using linear interpolation. For example, the map value of 214 (half way between 127 and 255) would give us a *red* value of 102.  
 
-
-
+A couple notes and TODOs: I neglected to allow animation when the z-axis increment is 0. For the moment, a very small value, such as 0.000001 can be added for a virtually motionless action on the z-axis.
+Bear in mind that the value of 1 is pretty much equivalent to moving from node to node, and thus will create a fairly random sequence. Values of 0.1 or 0.01 will likely produce better results. I'm also noticing that the timing of 50 milliseconds per frame (20 fps) is reasonably smooth.
 
 
 
