@@ -4,7 +4,6 @@
 [Introduction](https://github.com/philfrei/SiVi#introduction)
 
 [Compiling and Running SIVI](https://github.com/philfrei/SiVi#compiling-and-running-sivi)
-* [Instructions for downloading and running from source](https://github.com/philfrei/SiVi#instructions-for-downloading-and-running-from-source)
 
 [The GUI Explained](https://github.com/philfrei/SiVi#the-gui-explained)
 
@@ -42,8 +41,10 @@ SIVI uses [OpenSimplexNoise](https://gist.github.com/KdotJPG/b1270127455a94ac5d1
 ## Compiling and Running SIVI
 
 If you don't wish to fork the project, you can download and run SiVi-1.0.1-SNAPSHOT.jar with the following command: java -jar SiVi-1.0.1-SNAPSHOT.jar
+The program is configured to run with Java 11 or higher.
 
-This file is located in the /target directory. The program is configured to run with Java 11 or higher.
+To recreate this jar, in the CLI navigate to the project directory (contains pom.xml) and execute the Maven command: mvn clean package
+The jar will be created in the /target directory. 
 
 ## The GUI Explained
 
