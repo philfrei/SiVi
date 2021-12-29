@@ -32,13 +32,13 @@
 
 ## Introduction
 
-**SIVI** is a Java-based GUI built to assist in the creation of textures that rely on the mixing of 2D [gradient noise]([https://en.wikipedia.org/wiki/Gradient_noise). With SIVI, one can view the results of mixing variously scaled and manipulated *channels* of gradient noise data. Additional capabilities include the exporting of graphics and animated gifs. Values are exposed by the GUI that can be referred to when writing procedural code to create textures on the fly. A [template](https://github.com/philfrei/SiVi#code-template) for writing procedural code is included below.
+**SiVi** is a Java-based GUI built to assist in the creation of textures that rely on the mixing of 2D [gradient noise]([https://en.wikipedia.org/wiki/Gradient_noise). With SiVi, one can view the results of mixing variously scaled and manipulated *channels* of gradient noise data. Additional capabilities include the exporting of graphics and animated gifs. Values are exposed by the GUI that can be referred to when writing procedural code to create textures on the fly. A [template](https://github.com/philfrei/SiVi#code-template) for writing procedural code is included below.
 
-The inspiration for making SIVI came from reading Stefan Gustafsen's 2005 article [Simplex noise demystified](http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf). I strongly recommend Gustafsen's article to anyone wanting a clear explanation of the theory and for his implementation of Ken Perlin's *Simplex Noise*. However, the article said little about how to *use* this technique artistically. SIVI was written to help with learning both how to design and how to code gradient-noise-based textures, and to make experimenting with designs easier.
+The inspiration for making SiVi came from reading Stefan Gustafsen's 2005 article [Simplex noise demystified](http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf). I strongly recommend Gustafsen's article to anyone wanting a clear explanation of the theory and for his implementation of Ken Perlin's *Simplex Noise*. However, the article said little about how to *use* this technique artistically. SIVI was written to help with learning both how to design and how to code gradient-noise-based textures, and to make experimentation easier.
 
-SIVI uses [OpenSimplexNoise](https://gist.github.com/KdotJPG/b1270127455a94ac5d19) as its default. SIVI has been set up to easily incorporate additional noise generating libraries, making it possible to compare different types of gradient noise. Gustafsen's implementation of *SimplexNoise* is included and can be selected for comparison purposes.
+SiVi uses [OpenSimplexNoise](https://gist.github.com/KdotJPG/b1270127455a94ac5d19) as its default. SiVi has been set up to easily incorporate additional noise generating libraries, making it possible to compare different types of gradient noise. Gustafsen's implementation of *SimplexNoise* is included and can be selected for comparison purposes.
 
-## Compiling and Running SIVI
+## Compiling and Running SiVi
 
 If you don't wish to fork the project, you can download and run SiVi-1.0.1-SNAPSHOT.jar with the following command: java -jar SiVi-1.0.1-SNAPSHOT.jar
 The program is configured to run with Java 11 or higher.
@@ -50,13 +50,17 @@ The jar will be created in the /target directory.
 
 In this next section, the basic features of the GUI are described. The following figure shows the GUI for a 3-channel project used to create an earthlike planet texture. 
 
-*Fig. SIVI's GUI (67% size), developing an earthlike planet texture*
+*Fig. SiVi's GUI (67% size), developing an earthlike planet texture*
 
 <img src="images\fsTerra.png" alt="fsTerra" style="zoom:67%;" />
 
+#### Settings
+
+From the menu bar, the settings allow the specification of the width and height of the graphic, and the number of contributing "octaves". The noise engine is also selected here. Most recently, horizontal and vertical reflections have been added. These reflections result in a doubling of the width and height in the final display.
+
 #### Channels
 
-The top half of SIVI contains controls for the contributing *channels* of noise. This project has 3 channels. If more channels are used than can be displayed, a scroll bar is provided. Each *channel* controls a separate call to the noise function. The settings on each channel are for *scaling*, *translation*, a filter function (of dubious merit), and a set of radio buttons for the selection of an algorithm to transform the results, or not, from the range -1 to 1, to the range 0 to 1. This section also includes a visualization of the target area.
+The top half of SiVi contains controls for the contributing *channels* of noise. This project has 3 channels. If more channels are used than can be displayed, a scroll bar is provided. Each *channel* controls a separate call to the noise function. The settings on each channel are for *scaling*, *translation*, a filter function (of dubious merit), and a set of radio buttons for the selection of an algorithm to transform the results, or not, from the range -1 to 1, to the range 0 to 1. This section also includes a visualization of the target area.
 
 A call is made to the noise function for every pixel in the target rectangle image. As we traverse over the area of our intended graphic using a simple `for` loop, the X and Y coordinates are plugged in as arguments to the noise function. The GUI controls **X Scale** and **Y Scale** hold values that control the distance we travel through the *gradient noise space* over the course of this `for` loop.
 
@@ -70,7 +74,7 @@ In the next stage, we choose whether or not to apply one of two scaling function
 
 #### Mixer
 
-In the bottom half of SIVI, the top left corner has an array of sliders, one per *channel*, under the heading **Mix**. With this, one can control the relative contributions of each channel. This section also include a slider named **All** that affects the amplitude of the resulting mix of channels. In our example, the first channel is given a value of 63, the second channel is given 21, and the third 7. Each has 1/3 the weight of the previous, corresponding to the scaling changes between channels. The mixed noise value will be computed as follows: 
+In the bottom half of SiVi, the top left corner has an array of sliders, one per *channel*, under the heading **Mix**. With this, one can control the relative contributions of each channel. This section also include a slider named **All** that affects the amplitude of the resulting mix of channels. In our example, the first channel is given a value of 63, the second channel is given 21, and the third 7. Each has 1/3 the weight of the previous, corresponding to the scaling changes between channels. The mixed noise value will be computed as follows: 
 $$
 noiseVal = (noiseVal_0 * 63 + noiseVal_1 * 21 + noiseVal_2 * 7)/(63 + 21 + 7)
 $$
@@ -78,9 +82,9 @@ This *fractal*-like progression of settings between channels is often an efficie
 
 #### Gradient Modulation
 
-The output of the mix can go directly to the *Color Mapping* function, or it can optionally be combined with data from another shape or function. There are only a few target gradient shapes built into SIVI: currently a plane, a radial gradient, and a sine function. These are shown in the box labeled **Modulate a Gradient Function** which is directly below the **MIX** section. The check boxes are used to include a gradient. Settings for the target gradients can be edited by clicking the corresponding label. 
+The output of the mix can go directly to the *Color Mapping* function, or it can optionally be combined with data from another shape or function. There are only a few target gradient shapes built into SiVi: currently a plane, a radial gradient, and a sine function. These are shown in the box labeled **Modulate a Gradient Function** which is directly below the **MIX** section. The check boxes are used to include a gradient. Settings for the target gradients can be edited by clicking the corresponding label. 
 
-Expanding the number of gradient shapes and their configurability could greatly enhance the artistic potential of SIVI.
+Expanding the number of gradient shapes and their configurability would greatly enhance the artistic potential of SiVi.
 
 #### Color Mapping
 
@@ -98,7 +102,7 @@ The *Final Texture* area on the lower left corner displays the resulting texture
 
 ## Example Gallery
 
-SIVI includes a gallery of examples that are procedurally generated. These can be displayed using the Menu Bar: (MenuBar>>Settings>>Gallery). Clicking on a displayed graphic will bring it's settings into the GUI for further editing. Gallery examples can be used as starting points for the creation of new graphics.
+SiVi includes a gallery of examples that are procedurally generated. These can be displayed using the Menu Bar: (MenuBar>>Settings>>Gallery). Clicking on a displayed graphic will bring it's settings into the GUI for further editing. Gallery examples can be used as starting points for the creation of new graphics.
 
 In this section, we take a closer look at two examples from the *Gallery* contained within SIVI.
 
@@ -330,15 +334,15 @@ It would also be useful to be able to incorporate stencils, asis done in the abo
 
 #### Origins
 
-When this project was started, I was pretty much a novice Java coder. I could barely write functioning GUI code, and learned a great deal from collaborators at Java-Gaming.org and in particular from member LoomWeaver (Sumio Kiyooka). Despite this help, cruft and code smell remain attributes of the project, for which I admit responsibility.
+When this project was started, I was pretty much a novice Java coder. I could barely write functioning GUI code, and learned a great deal from collaborators at Java-Gaming.org (now jvm-gaming.org) and especially from member LoomWeaver (Sumio Kiyooka). Despite this help, cruft and code smell remain attributes of the project, for which I admit responsibility.
 
-Part way in, I learned about *functional programming* and the *Model-View-Controller* design pattern, and the code was revised in my first attempts to implement these concepts. It's safe to assume that further work on this project will require a significant amount of refactoring.
+Along the way, I learned about *functional programming* and the *Model-View-Controller* design pattern, and the code was revised in my first attempts to implement these concepts.
 
 #### Project reboot
 
 In February, 2020, the project was rebooted. Revisions included deleting *tutorial* and *code-generation* functionality to bring down the code base size, revisions and enhancements to the GUI, and a tweaking of the *model* data structure.
 
-The most significant change was making *OpenSimplexNoise* the default noise engine, and creating a code interface for including additional noise engines. Gustafson's implementation of Perlin's Simplex Noise has been left in as an alternative for viewing. 
+The most significant change was making *OpenSimplexNoise* the default noise engine, and creating a code interface to allow the inclusion of additional noise engines. Gustafson's implementation of Perlin's Simplex Noise has been left in as an alternative for viewing. 
 
 #### Wish List
 
@@ -349,21 +353,20 @@ Following are items that if coded would enhance the project. They can be found i
 - Save/Load for texture settings
   *Will likely include a review of the current somewhat fragmented "model" structure.* 
 
-- B&W option setting for channel displays?
-  *B&W might be preferred as a way of keeping in mind that the numbers at this point have NOT yet been color-mapped.*
-
 - Bring in additional noise engines
   
 - Anisotropic effects
   *Requires functions that respond to the [x, y] location in the target graphic, and are applied prior to the call to the noise function.*
 
-- More and enhanced Gradients
+- Additional, and enhanced, gradients
 
+- Add more poles to the color mapping, and include an alpha channel.
+	
 - Stencils
   *Apply masks that can either be color (RGB) or alpha (opacity) channel values.*
 
 - More animation parameters
-  *Currently we have [z] translation. Expand to [x, y, z] translation, or to include other settings.*
+  *We now have [x, y, z] translation. Consider animating other settings.*
 
 - Code export
 
