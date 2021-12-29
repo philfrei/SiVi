@@ -1,14 +1,19 @@
 package com.adonax.sivi;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import com.adonax.sivi.gradients.GradientGUI;
 import com.adonax.sivi.gradients.GradientGUIModel;
@@ -24,12 +29,13 @@ public class SettingsPanel extends JPanel
 
 	Object parent;
 	private JComboBox<NoiseEngines.Sources> cboNoiseEngines;
+	TopPanelModel settings;
 	
 	SettingsPanel(final TopPanel topPanel)
 	{
-		TopPanelModel settings = topPanel.getAppSettings();
+		settings = topPanel.getAppSettings();
 		
-		JLabel octavesLbl = new JLabel("Octaves");
+		JLabel octavesLbl = new JLabel("Octaves   ");
 		final JTextField octaves = new JTextField(
 				String.valueOf(topPanel.getAppSettings().octaves), 5);
 		octaves.addActionListener(new ActionListener()
@@ -121,6 +127,8 @@ public class SettingsPanel extends JPanel
 			}
 		});
 	
+		JSeparator sepEngine = new JSeparator(SwingConstants.HORIZONTAL);
+		sepEngine.setPreferredSize(new Dimension(250, 1));
 		JLabel lblNoiseEngine = new JLabel("Engine");
 		cboNoiseEngines = new JComboBox<NoiseEngines.Sources>(
 				NoiseEngines.Sources.values());
@@ -136,44 +144,128 @@ public class SettingsPanel extends JPanel
 			}
 		});
 		
+		JSeparator sepReflection = new JSeparator(SwingConstants.HORIZONTAL);
+		sepReflection.setPreferredSize(new Dimension(250, 1));		
+		JLabel lblReflections = new JLabel("DISPLAY REFLECTIONS:  ");
+		JCheckBox chkBoxXAxisReflection = new JCheckBox("X-Axis");
+		chkBoxXAxisReflection.setSelected(settings.isVerticallySymmetric);
+		chkBoxXAxisReflection.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				TopPanelModel newSettings = TopPanelModel.setAppSetting(
+						settings, TopPanelModel.Fields.IS_VERTICALLY_SYMMETRIC, 
+						chkBoxXAxisReflection.isSelected());
+				rebuildWithNewSizeSettings(topPanel, newSettings);
+			}
+		});
+		
+		JCheckBox chkBoxYAxisReflection = new JCheckBox("Y-Axis");
+		chkBoxYAxisReflection.setSelected(settings.isHorizontallySymmetric);
+		chkBoxYAxisReflection.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				TopPanelModel newSettings = TopPanelModel.setAppSetting(
+						settings, TopPanelModel.Fields.IS_HORIZONTALLY_SYMMETRIC, 
+						chkBoxYAxisReflection.isSelected());
+				rebuildWithNewSizeSettings(topPanel, newSettings);
+			}
+		});
+
+//		JSeparator sepWrap = new JSeparator(SwingConstants.HORIZONTAL);
+//		sepWrap.setPreferredSize(new Dimension(250, 1));
+//		JLabel lblWraparound = new JLabel("WRAP (for tiling):  ");
+//		JCheckBox chkWrapVertical = new JCheckBox("Wrap Vertically");
+//		JCheckBox chkWrapHorizontal = new JCheckBox("Wrap Horizontally");	
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.LINE_START;
 		
+		int gridYval = 0;
+		
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 0;
+		gbConstraints.gridy = gridYval;
 		add(octavesLbl, gbConstraints);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 0;
+		gbConstraints.gridy = gridYval;
 		add(octaves, gbConstraints);
 		
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 1;
+		gbConstraints.gridy = ++gridYval;
 		add(widthLbl, gbConstraints);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 1;
+		gbConstraints.gridy = gridYval;
 		add(widthSetting, gbConstraints);
 		
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 2;
+		gbConstraints.gridy = ++gridYval;
+		gbConstraints.insets = new Insets(0,0,5,0);
 		add(heightLbl, gbConstraints);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 2;
+		gbConstraints.gridy = gridYval;
 		add(heightSetting, gbConstraints);
-		
+						
+		// Reflection
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 3;
+		gbConstraints.gridy = ++gridYval;
+		gbConstraints.gridwidth = 2;
+		gbConstraints.insets = new Insets(0, 0, 0, 0);
+		add(sepReflection, gbConstraints);
+		gbConstraints.gridx = 0;
+		gbConstraints.gridy = ++gridYval;
+		gbConstraints.gridwidth = 0;
+		add(lblReflections, gbConstraints);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = ++gridYval;
+		gbConstraints.gridwidth = 1;
+		add(chkBoxXAxisReflection, gbConstraints);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = ++gridYval;
+		add(chkBoxYAxisReflection, gbConstraints);
+
+		// Wrap
+//		gbConstraints.gridx = 0;
+//		gbConstraints.gridy = ++gridYval;
+//		gbConstraints.gridwidth = 2;
+//		add(sepWrap, gbConstraints);
+//		gbConstraints.gridx = 0;
+//		gbConstraints.gridy = ++gridYval;
+//		gbConstraints.gridwidth = 2;
+//		add(lblWraparound, gbConstraints);
+//		gbConstraints.gridx = 1;
+//		gbConstraints.gridy = ++gridYval;
+//		gbConstraints.gridwidth = 1;
+//		add(chkWrapVertical, gbConstraints);
+//		gbConstraints.gridx = 1;
+//		gbConstraints.gridy = ++gridYval;
+//		add(chkWrapHorizontal, gbConstraints);
+
+		// Engine
+		gbConstraints.gridx = 0;
+		gbConstraints.gridy = ++gridYval;
+		gbConstraints.gridwidth = 2;
+		gbConstraints.insets = new Insets(0,0,5,0);		
+		add(sepEngine, gbConstraints);
+		gbConstraints.gridx = 0;
+		gbConstraints.gridy = ++gridYval;
+		gbConstraints.insets = new Insets(0,0,0,0);
+
 		add(lblNoiseEngine, gbConstraints);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 3;
+		gbConstraints.gridy = gridYval;
 		add(cboNoiseEngines, gbConstraints);
-		
+
 	}
 	
 	private GradientGUIModel reviseGradientGUIModel(
 			GradientGUIModel ggm, 
 			TopPanelModel oldMSettings, TopPanelModel newSettings)
 	{
+		settings = newSettings;
 		
 		LinearGradientFunction oldLGF = 
 				(LinearGradientFunction)ggm.gradients[0];
@@ -213,6 +305,8 @@ public class SettingsPanel extends JPanel
 	private void rebuildWithNewSizeSettings(TopPanel topPanel, 
 			TopPanelModel newSettings)
 	{
+		settings = newSettings;
+		
 		// General note: color not affected, thus ignored.
 		OctaveModel[] octaveModels = 
 				new OctaveModel[newSettings.octaves];

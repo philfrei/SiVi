@@ -193,9 +193,15 @@ public class TopPanel extends JPanel
 	
 	public void updateFinalDisplaySize(TopPanelModel topPanelModel)
 	{
-		Dimension preferredDims = new Dimension(
-				appSettings.finalWidth + 15, 
-				appSettings.finalHeight + 24);
+		int fdWidth = topPanelModel.finalWidth;
+		int fdHeight = topPanelModel.finalHeight;
+		
+		if (topPanelModel.isVerticallySymmetric) fdWidth *= 2;
+		
+		if (topPanelModel.isHorizontallySymmetric) fdHeight *= 2;
+		
+		Dimension preferredDims = 
+				new Dimension(fdWidth + 15, fdHeight + 24);
 		finalDisplay.setPreferredSize(preferredDims);
 		finalDisplay.setMaximumSize(preferredDims);
 	}
@@ -225,15 +231,13 @@ public class TopPanel extends JPanel
 			octaveModels[i] = octaveGUIs[i].getOctaveModel();
 		}
 		NoiseData noiseData = TextureFunctions.makeNoiseDataArray(
-				appSettings.finalWidth, 
-				appSettings.finalHeight, 
-				octaveModels, mixerGUI.getMixerModel());
+				appSettings, octaveModels, mixerGUI.getMixerModel());
 		
 		BufferedImage image = TextureFunctions.makeImage(
 				noiseData, mixerGUI.getMixerModel(), 
 				ColorMapSelectorGUI.getColorMap());
 
-		finalDisplay.update(image);
+		finalDisplay.update(image, appSettings);
 		
 		if (animationPanel != null)
 		{

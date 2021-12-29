@@ -41,16 +41,9 @@ SIVI uses [OpenSimplexNoise](https://gist.github.com/KdotJPG/b1270127455a94ac5d1
 
 ## Compiling and Running SIVI
 
-If you don't wish to fork the project, you can download, compile and run [sivisource.zip](sivisource.zip). This file holds all the source code needed to run SIVI. This code is configured to run with Java 11 or higher. 
+If you don't wish to fork the project, you can download and run SiVi-1.0.1-SNAPSHOT.jar with the following command: java -jar SiVi-1.0.1-SNAPSHOT.jar
 
-#### Instructions for downloading and running from source
-
-1. Download to a suitable project folder and extract all.
-3. Open a command shell and navigate to the project folder (holds the **src/** folder)
-4. To compile, execute the following command: 
-   `javac -d compiled/ --module-source-path src/main/java -m siviModule` 
-5. To run, execute the following command:
-   `java -p compiled/ -m siviModule/com.adonax.sivi.LaunchSivi`
+This file is located in the /target directory. The program is configured to run with Java 11 or higher.
 
 ## The GUI Explained
 

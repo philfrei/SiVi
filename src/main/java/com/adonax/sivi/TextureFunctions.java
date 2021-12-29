@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
 import com.adonax.sivi.color.ColorMap;
+import com.adonax.sivi.utils.FloatArrayFunctions;
 import com.adonax.sivi.utils.NoiseEngine;
 import com.adonax.sivi.utils.NoiseEngines;
 /**
@@ -48,7 +49,8 @@ public class TextureFunctions {
 	/**
 	 * Generate a 2D noise data array from a single octave channel
 	 * source. Noise data may or may not be normalized in this 
-	 * step.
+	 * step. This simpler version is intended for use with the individual
+	 * octave channels of the OctaveGUI.
 	 *
 	 * This is a pure function.
 	 *
@@ -62,16 +64,16 @@ public class TextureFunctions {
 			int height, OctaveModel om) 
 	{
 		float[] noiseArray = new float[width * height];
-
+		
+		float yFactor = om.yScale * latticeDFactor;
+		float xFactor = om.xScale * latticeDFactor;
+		
 		for (int i = 0, n = width * height; i < n; i ++)
 		{
-			float y = (((i/width) % height) * om.yScale * latticeDFactor)  
-					+ om.yTranslate;
-			float x = ((i % width) * om.xScale * latticeDFactor)
-					+ om.xTranslate;
+			float y = (((i/width) % height) * yFactor) + om.yTranslate;
+			float x = ((i % width) * xFactor) + om.xTranslate;
 
 			float noiseVal = (float) noiseMachine.noise(x, y);
-//			float noiseVal = (float) SimplexNoise.noise(x, y);
 			noiseVal = Math.min(
 					Math.max(noiseVal, om.minClamp), om.maxClamp);
 
@@ -103,18 +105,20 @@ public class TextureFunctions {
 	 * 
 	 * @return TextureData
 	 */
-	public static NoiseData makeNoiseDataArray(int width, int height, 
+	public static NoiseData makeNoiseDataArray(TopPanelModel tpm,  
 			OctaveModel[] om, MixerModel mm) 
 	{
-		return noiseDataMaker(width, height, om, mm, 0, 2);
+		return makeNoiseDataArray(tpm, om, mm, 0, 0, 0, 2);
 	}
 
 	/**
-	 * Generate a 2D noise data array from an array of octave channels 
-	 * and a Z value. The 3D SimplexNoise function is called. Noise data 
-	 * may or may not be normalized in this step depending on values 
-	 * from the OctaveModel, and may or may not be used to modulate 
-	 * a gradient function, depending on settings from the MixerModel. 
+	 * Generate a 2D or 3D noise data array from an array of octave channels 
+	 * and X, Y, Z translation increments. Intended for use when generating 
+	 * a series of images for animation. If Z input is 0, we use the 2D, else we
+	 * use the 3D SimplexNoise function. Noise data may or may not be normalized 
+	 * in this step depending on values from the OctaveModel, and may or may not
+	 * be used to modulate a gradient function, depending on settings from the 
+	 * MixerModel. 
 	 *
 	 * This is a pure function.
 	 *
@@ -122,22 +126,41 @@ public class TextureFunctions {
 	 * @param height    image height
 	 * @param om        texture parameters from a single OctaveModel
 	 * @param mm		mixer & gradient settings/data from MixerModel
+	 * @param x			x translation component
+	 * @param y			y translation component
 	 * @param z			float z-axis value for 3D SimplexNoise function
 	 * 
 	 * @return TextureData
 	 */
-	public static NoiseData makeNoiseDataArray(int width, int height, 
-			OctaveModel[] om, MixerModel mm, float z) 
+	public static NoiseData makeNoiseDataArray(TopPanelModel tpm, OctaveModel[] om, 
+			MixerModel mm, float xTranslate, float yTranslate, float zTranslate, int dimensions)
 	{
-		return noiseDataMaker(width, height, om, mm, z, 3);
-	}
+		int width = tpm.finalWidth;
+		int height = tpm.finalHeight;
+		boolean singleCenterColumn = false;
+		boolean singleCenterRow = false;
 	
-	private static NoiseData noiseDataMaker(int width, int height,
-			OctaveModel[] om, MixerModel mm, float z, int dimensions)
-	{
+//		if (tpm.isVerticallySymmetric) {
+//			width /= 2;
+//			if (tpm.finalWidth % 2 ==1) {
+//				singleCenterColumn = true;
+//				width++;
+//			}
+//		}
+		
+//		if (tpm.isHorizontallySymmetric) {
+//			height /= 2;
+//			if (tpm.finalHeight % 2 ==1) {
+//				singleCenterRow = true;
+//				height++;
+//			}
+//		}
+		
 		float[] noiseArray = new float[width * height];
 		float x, y, noiseVal;
 		int octLen = om.length;
+	
+		float xFactor, yFactor;
 		
 		final float[] mixWeights = new float[octLen];
 		for (int i = 0; i < octLen; i ++)
@@ -146,13 +169,14 @@ public class TextureFunctions {
 		}
 		
 		for (int j = 0; j < octLen; j++)
-		{
+		{	
+			xFactor = om[j].xScale * latticeDFactor;
+			yFactor = om[j].yScale * latticeDFactor;
+			
 			for (int i = 0, n = width * height; i < n; i ++)
 			{
-				y = (((i/width) % height) * om[j].yScale * latticeDFactor)  
-						+ om[j].yTranslate;
-				x = ((i % width) * om[j].xScale * latticeDFactor)
-						+ om[j].xTranslate;
+				y = (((i/width) % height) * yFactor) + om[j].yTranslate + yTranslate * om[j].yScale;
+				x = ((i % width) * xFactor)	+ om[j].xTranslate + xTranslate * om[j].xScale;
 	
 				if (dimensions == 2) 
 				{
@@ -160,7 +184,7 @@ public class TextureFunctions {
 				}
 				else if (dimensions == 3)
 				{
-					noiseVal = (float) noiseMachine.noise(x, y, z);
+					noiseVal = (float) noiseMachine.noise(x, y, zTranslate);
 				}
 				else
 				{
@@ -184,6 +208,17 @@ public class TextureFunctions {
 		for (int i = 0, n = width * height; i < n; i ++)
 		{
 			noiseArray[i] += mm.gradientData.noiseArray[i];
+		}
+		
+		if (tpm.isHorizontallySymmetric) {
+			noiseArray = FloatArrayFunctions.makeHorizonallySymmetricArray(
+					noiseArray, width, height, singleCenterRow);
+			height *= 2;
+		}
+		if (tpm.isVerticallySymmetric) {	
+			noiseArray = FloatArrayFunctions.makeVerticallySymmetricArray(
+					noiseArray, width, height, singleCenterColumn);
+			width *= 2;
 		}
 		
 		return new NoiseData(width, height, noiseArray);

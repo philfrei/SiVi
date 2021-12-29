@@ -46,7 +46,7 @@ public class AnimationPanel extends JPanel
 	
 	// Model variables
 	private int imagesCount;
-	private float zIncr;
+	private float xIncr, yIncr, zIncr;
 	private int overlap;
 	private volatile int deltaTime;
 
@@ -56,8 +56,10 @@ public class AnimationPanel extends JPanel
 	
 	// GUI 
 	final JTextField stepsFld = new JTextField();
-	final JTextField zIncrFld = new JTextField();
 	final JTextField overlapFld = new JTextField();
+	final JTextField xIncrFld = new JTextField();
+	final JTextField yIncrFld = new JTextField();
+	final JTextField zIncrFld = new JTextField();
 	final JTextField deltaTimeFld = new JTextField();			
 	
 	private JButton btnLoad, btnRunAnimation, btnExport;
@@ -81,25 +83,11 @@ public class AnimationPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				zIncrFld.requestFocus();
-				updateForm();
-			}
-		});
-		
-		JLabel zIncrLbl = new JLabel("Z Increment");
-		zIncrFld.setHorizontalAlignment(JTextField.RIGHT);
-		zIncrFld.setMargin(new Insets(0, 2, 0, 2));
-		zIncrFld.setColumns(4);
-		zIncrFld.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent arg0)
-			{
 				overlapFld.requestFocus();
 				updateForm();
 			}
 		});
-	
+		
 		JLabel overlapLbl = new JLabel("Overlap");
 		overlapFld.setHorizontalAlignment(JTextField.RIGHT);
 		overlapFld.setMargin(new Insets(0, 2, 0, 2));
@@ -109,10 +97,53 @@ public class AnimationPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
-				deltaTimeFld.requestFocus();
+				xIncrFld.requestFocus();
 				updateForm();
 			}
 		});		
+
+		JLabel xIncrLbl = new JLabel("X Increment");
+		xIncrFld.setHorizontalAlignment(JTextField.RIGHT);
+		xIncrFld.setMargin(new Insets(0, 2, 0, 2));
+		xIncrFld.setColumns(4);
+		xIncrFld.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				yIncrFld.requestFocus();
+				updateForm();
+			}
+		});
+	
+		JLabel yIncrLbl = new JLabel("Y Increment");
+		yIncrFld.setHorizontalAlignment(JTextField.RIGHT);
+		yIncrFld.setMargin(new Insets(0, 2, 0, 2));
+		yIncrFld.setColumns(4);
+		yIncrFld.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				zIncrFld.requestFocus();
+				updateForm();
+			}
+		});
+
+		JLabel zIncrLbl = new JLabel("Z Increment");
+		zIncrFld.setHorizontalAlignment(JTextField.RIGHT);
+		zIncrFld.setMargin(new Insets(0, 2, 0, 2));
+		zIncrFld.setColumns(4);
+		zIncrFld.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				deltaTimeFld.requestFocus();
+				updateForm();
+			}
+		});
+	
 		
 		JLabel deltaTimeLbl = new JLabel("Frame time (millis)");
 		deltaTimeLbl.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -138,8 +169,11 @@ public class AnimationPanel extends JPanel
 		});
 
 		stepsFld.setText("50");
-		zIncrFld.setText("0.01");
 		overlapFld.setText("0");
+		xIncrFld.setText("0");
+		yIncrFld.setText("0.00");
+		zIncrFld.setText("0.00");
+		
 		deltaTimeFld.setText("20");
 		
 		btnRunAnimation = new JButton("View");
@@ -218,7 +252,8 @@ public class AnimationPanel extends JPanel
 		});
 		
 		//************* LAYOUT ************
-		
+
+		int gridY = 0;
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbConstraints = new GridBagConstraints();
 		gbConstraints.anchor = GridBagConstraints.LINE_START;
@@ -228,44 +263,58 @@ public class AnimationPanel extends JPanel
 		gbConstraints.gridy = 0;
 		add(stepsLbl, gbConstraints);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 0;
+		gbConstraints.gridy = gridY;
 		add(stepsFld, gbConstraints);
 		
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 1;
-		add(zIncrLbl, gbConstraints);
-		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 1;
-		add(zIncrFld, gbConstraints);
-
-		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 2;
+		gbConstraints.gridy = ++gridY;
 		add(overlapLbl, gbConstraints);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 2;
+		gbConstraints.gridy = gridY;
 		add(overlapFld, gbConstraints);		
 		
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 3;
+		gbConstraints.gridy = ++gridY;
+		add(xIncrLbl, gbConstraints);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = gridY;
+		add(xIncrFld, gbConstraints);
+		
+		gbConstraints.gridx = 0;
+		gbConstraints.gridy = ++gridY;
+		add(yIncrLbl, gbConstraints);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = gridY;
+		add(yIncrFld, gbConstraints);
+		
+		gbConstraints.gridx = 0;
+		gbConstraints.gridy = ++gridY;
+		add(zIncrLbl, gbConstraints);
+		gbConstraints.gridx = 1;
+		gbConstraints.gridy = gridY;
+		add(zIncrFld, gbConstraints);
+
+		gbConstraints.gridx = 0;
+		gbConstraints.gridy = ++gridY;
 		add(deltaTimeLbl, gbConstraints);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 3;
+		gbConstraints.gridy = gridY;
 		add(deltaTimeFld, gbConstraints);	
 		
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 4;
+		gbConstraints.gridy = ++gridY;
 		add(btnLoad, gbConstraints);
 		gbConstraints.gridx = 1;
-		gbConstraints.gridy = 4;
+		gbConstraints.gridy = gridY;
 		add(btnRunAnimation, gbConstraints);	
 		
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 5;
+		gbConstraints.gridy = ++gridY;
 		gbConstraints.gridwidth = 2;
 		add(imgSlider, gbConstraints);
 		
 		gbConstraints.gridx = 0;
-		gbConstraints.gridy = 6;
+		gbConstraints.gridy = ++gridY;
 		add(btnExport, gbConstraints);	
 	}
 
@@ -306,12 +355,24 @@ public class AnimationPanel extends JPanel
 		}
 		stepsFld.setText(String.valueOf(imagesCount));
 		
-		try
-		{
+		try	{
+			xIncr = Float.valueOf(xIncrFld.getText());
+		}
+		catch (NumberFormatException e) {
+			xIncr = 0f;
+		}
+		
+		try	{
+			yIncr = Float.valueOf(yIncrFld.getText());
+		}
+		catch (NumberFormatException e) {
+			yIncr = 0f;
+		}
+		
+		try	{
 			zIncr = Float.valueOf(zIncrFld.getText());
 		}
-		catch (NumberFormatException e)
-		{
+		catch (NumberFormatException e) {
 			zIncr = 0.01f;
 		}
 		
@@ -407,15 +468,14 @@ public class AnimationPanel extends JPanel
 	 * TODO: create a "working/in progress" popup?
 	 * TODO: This routine can fail due to over taxing memory. No
 	 * exception or management has been implemented for this.
-	 * TODO: Would it make sense to cache calls for overlap areas?
+	 * TODO: candidate for parallel processing?
 	 */
 	private void loadImageArray()
 	{
 		// initialize
-		float z = 0;
+		float x = 0, y = 0, z = 0;
+		
 		TopPanelModel tpm = topPanel.getAppSettings();
-		int imgWidth = tpm.finalWidth;
-		int imgHeight = tpm.finalHeight;
 		
 		int octaves = tpm.octaves;
 		OctaveModel[] om = new OctaveModel[octaves];
@@ -433,11 +493,10 @@ public class AnimationPanel extends JPanel
 		// call for each image
 		for (int i = 0; i < imagesCount; i++)
 		{
-			nd = TextureFunctions.makeNoiseDataArray(
-					imgWidth, imgHeight, om, mm, z);
+			nd = TextureFunctions.makeNoiseDataArray(tpm, om, mm, x, y, z, 3);
 			
-//			System.out.println("i:" + i + "  n:" + imagesCount 
-//					+ "  overlap:" + overlap);
+//			System.out.println("AniPanel.loadImageArray, i:" + i + "\tn:" + imagesCount 
+//					+ "\toverlap:" + overlap + "\tht:" + nd.height + "\twd:" + nd.width);
 			
 			/*
 			 *  Overlap computations.
@@ -456,23 +515,30 @@ public class AnimationPanel extends JPanel
 			 */
 			if (i >= imagesCount - overlap )
 			{
+				int iApproachLerpPos = i - imagesCount;
 				ndOverlap = TextureFunctions.makeNoiseDataArray(
-						imgWidth, imgHeight, om, mm, 
-						(i - imagesCount) * zIncr);
+						tpm, om, mm, iApproachLerpPos * xIncr,
+						iApproachLerpPos * yIncr, iApproachLerpPos * zIncr, 3);
 				
 				int bFactor = (overlap + 1) - (imagesCount - i);
 				int aFactor = (overlap + 1) - bFactor;
-				
-				//System.out.println("aF:" + aFactor + "   bF:" + bFactor);
 				
 				float[] noiseArray = 
 						FloatArrayFunctions.LerpTwoFloatArrays(
 								nd.noiseArray, aFactor, 
 								ndOverlap.noiseArray, bFactor);
 				
-				nd = new NoiseData(imgWidth, imgHeight, noiseArray);
+				int lerpedNdWidth = tpm.finalWidth;
+				int lerpedNdHeight = tpm.finalHeight;
+				
+				if (tpm.isVerticallySymmetric) lerpedNdWidth *= 2;
+				if (tpm.isHorizontallySymmetric) lerpedNdHeight *= 2;
+				
+				nd = new NoiseData(lerpedNdWidth, lerpedNdHeight, noiseArray);
 			}
 			
+			x += xIncr;
+			y += yIncr;
 			z += zIncr;
 			
 			images[i] = TextureFunctions.makeImage(nd, mm, cm);
@@ -484,7 +550,7 @@ public class AnimationPanel extends JPanel
 	
 	private void viewImage(int i)
 	{
-		topPanel.finalDisplay.update(images[i]);
+		topPanel.finalDisplay.update(images[i], topPanel.getAppSettings());
 	}
 
 	Timer timer;

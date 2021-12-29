@@ -44,8 +44,28 @@ public class FinalDisplay extends JPanel
 	}
 	
 	// reminder: this will be called repeatedly by animation logic
-	public void update(BufferedImage image)
+	public void update(BufferedImage image, TopPanelModel tpm)
 	{
+		StringBuilder sb = new StringBuilder("Final Texture");
+		if (tpm.isHorizontallySymmetric || tpm.isVerticallySymmetric) {
+			sb.append(" with ");
+			if (tpm.isHorizontallySymmetric) {
+				sb.append("y-axis");
+				if (tpm.isVerticallySymmetric) {
+					sb.append(" and x-axis reflections");
+				} else {
+					sb.append(" reflection");
+				}
+			} else {
+				if (tpm.isVerticallySymmetric) {
+					sb.append("x-axis reflection");
+				}
+			}		
+		}
+		
+		setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createRaisedBevelBorder(), sb.toString()));
+		
 		this.image = image;
 		repaint();
 	}

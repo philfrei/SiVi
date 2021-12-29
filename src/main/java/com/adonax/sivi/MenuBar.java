@@ -143,10 +143,10 @@ public class MenuBar
 				JDialog animationDialog = new JDialog(){
 					private static final long serialVersionUID = 1L;
 				};
-				AnimationPanel animationPanel = new AnimationPanel(topPanel);
+				final AnimationPanel animationPanel = new AnimationPanel(topPanel);
 				animationDialog.add(animationPanel);
-				animationDialog.setTitle("Z-Axis Animator");
-				animationDialog.setBounds(0, 0, 250, 250);
+				animationDialog.setTitle("Animation Panel");
+				animationDialog.setBounds(0, 0, 250, 320);
 //				animationDialog.setModal(true);
 				animationDialog.addWindowListener(new WindowAdapter() {
 						public void windowClosing(WindowEvent e)
@@ -171,7 +171,7 @@ public class MenuBar
 				};
 				settingsDialog.add(new SettingsPanel(topPanel));
 				settingsDialog.setTitle("Edit Application Settings");
-				settingsDialog.setBounds(0, 0, 250, 150);
+				settingsDialog.setBounds(0, 0, 300, 300);
 				settingsDialog.setModal(true);
 //				settingsDialog.setAlwaysOnTop(true);
 				settingsDialog.setVisible(true);

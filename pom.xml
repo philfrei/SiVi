@@ -5,14 +5,25 @@
 
     <groupId>com.adonax</groupId>
     <artifactId>SiVi</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>SiVi</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>        
     </properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.8.2</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
     <build>
         <plugins>
@@ -21,8 +32,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
 
@@ -33,7 +44,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.adonax.texturebuilder.SimplexTextureBuilder</mainClass>
+                            <mainClass>com.adonax.sivi.LaunchSivi</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -61,5 +72,7 @@
             </plugin>
         </plugins>
     </build>
+    
+
 </project>
 

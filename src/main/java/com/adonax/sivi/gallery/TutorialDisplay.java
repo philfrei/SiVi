@@ -29,8 +29,7 @@ public class TutorialDisplay extends JPanel
 		setBorder(combineTitledBorder);
 		NoiseData noiseData =  
 				TextureFunctions.makeNoiseDataArray(
-						sivi.appSettings.finalWidth, 
-						sivi.appSettings.finalHeight,
+						sivi.appSettings,
 						sivi.octaveModels,
 						sivi.mixerModel);
 		final BufferedImage image = TextureFunctions.makeImage(

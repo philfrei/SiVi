@@ -44,6 +44,7 @@ public class GalleryCard extends JPanel
 		add(makeCirrusCloud(tf));
 		add(makePerlinExampleCloud(tf));
 		add(makeTreeRings(tf));
+
 		add(makeWoodPlank(tf));
 		add(makeTerraMap(tf));
 		add(makeCrayonyTexture(tf));
@@ -56,7 +57,7 @@ public class GalleryCard extends JPanel
 	TutorialDisplay makeClassicCloud(final GalleryDialog tf)
 	{
 		TopPanelModel settings = 
-				new TopPanelModel(5, 256, 256, 6);
+				new TopPanelModel(5, 256, 256, 6, false, false);
 	
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
 		octaveModels[0] = new OctaveModel(2, 2, 0, 0, 
@@ -99,7 +100,7 @@ public class GalleryCard extends JPanel
 	TutorialDisplay makeCirrusCloud(final GalleryDialog tf)
 	{
 		TopPanelModel settings = 
-				new TopPanelModel(4, 256, 256, 6);
+				new TopPanelModel(4, 256, 256, 6, false, false);
 	
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
 		octaveModels[0] = new OctaveModel(0.25f, 5, 0, 0, 
@@ -139,7 +140,7 @@ public class GalleryCard extends JPanel
 	TutorialDisplay makePerlinExampleCloud(final GalleryDialog tf)
 	{
 		TopPanelModel settings = 
-				new TopPanelModel(7, 256, 256, 6);
+				new TopPanelModel(7, 256, 256, 6, false, false);
 	
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
 		octaveModels[0] = new OctaveModel(1, 1, 0, 0, 
@@ -199,12 +200,12 @@ public class GalleryCard extends JPanel
 		
 		return pageDisplay;
 	}
-	
 
+	// TODO
 	TutorialDisplay makeTreeRings(final GalleryDialog tf)
 	{
 		TopPanelModel settings = 
-				new TopPanelModel(1, 256, 256, 6);
+				new TopPanelModel(1, 256, 256, 6, false, false);
 		
 		OctaveModel[] octaveModels = new OctaveModel[1];
 		octaveModels[0] = new OctaveModel(2, 2, 0, 0, 
@@ -245,7 +246,7 @@ public class GalleryCard extends JPanel
 	TutorialDisplay makeWoodPlank(final GalleryDialog tf)
 	{
 		TopPanelModel settings = 
-				new TopPanelModel(1, 500, 80, 6);
+				new TopPanelModel(1, 500, 80, 6, false, false);
 		
 		OctaveModel[] octaveModels = new OctaveModel[1];
 		octaveModels[0] = new OctaveModel(2, 7, 0, 0, 
@@ -291,7 +292,7 @@ public class GalleryCard extends JPanel
 	TutorialDisplay makeCrayonyTexture(final GalleryDialog tf)
 	{
 		TopPanelModel settings = 
-				new TopPanelModel(2, 256, 256, 6);
+				new TopPanelModel(2, 256, 256, 6, false, false);
 
 		OctaveModel[] octaveModels = new OctaveModel[2];
 		octaveModels[0] = new OctaveModel(120, 120, 0, 0, 
@@ -325,7 +326,7 @@ public class GalleryCard extends JPanel
 	TutorialDisplay makeTerraMap(final GalleryDialog tf)
 	{
 		TopPanelModel settings = 
-				new TopPanelModel(7, 512, 256, 6);
+				new TopPanelModel(7, 512, 256, 6, false, false);
 		
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
 		octaveModels[0] = new OctaveModel(1, 1, 0, 0, 
@@ -383,7 +384,7 @@ public class GalleryCard extends JPanel
 	
 	TutorialDisplay makePlasmaField(final GalleryDialog tf)
 	{
-		TopPanelModel settings = new TopPanelModel(4, 255, 255, 6);
+		TopPanelModel settings = new TopPanelModel(4, 255, 255, 6, false, false);
 		
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
 		octaveModels[0] = new OctaveModel(2, 2, 0, 0, 
@@ -436,7 +437,7 @@ public class GalleryCard extends JPanel
 	
 	TutorialDisplay makeSolarFlare(final GalleryDialog tf)
 	{
-		TopPanelModel settings = new TopPanelModel(4, 350, 350, 6);
+		TopPanelModel settings = new TopPanelModel(4, 350, 350, 6, false, false);
 		
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
 		octaveModels[0] = new OctaveModel(3, 3, 0, 0, 
@@ -489,7 +490,7 @@ public class GalleryCard extends JPanel
 	
 	TutorialDisplay makeFieryFuzzball(final GalleryDialog tf)
 	{
-		TopPanelModel settings = new TopPanelModel(3, 350, 350, 6);
+		TopPanelModel settings = new TopPanelModel(3, 350, 350, 6, false, false);
 		
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
 		octaveModels[0] = new OctaveModel(6, 24, 0, 0, 
@@ -541,7 +542,7 @@ public class GalleryCard extends JPanel
 	
 	TutorialDisplay makeCandelabra(final GalleryDialog tf)
 	{
-		TopPanelModel settings = new TopPanelModel(4, 400, 400, 6);
+		TopPanelModel settings = new TopPanelModel(4, 400, 400, 6, false, false);
 		
 		OctaveModel[] octaveModels = new OctaveModel[settings.octaves];
 		octaveModels[0] = new OctaveModel(10, 2, 0, 0, 
