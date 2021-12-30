@@ -1,4 +1,4 @@
-# SIVI - a Java-based 2D Gradient-Noise Visualizer
+# SiVi - a Java-based 2D Gradient-Noise Visualizer
 
 ## Contents
 [Introduction](https://github.com/philfrei/SiVi#introduction)
