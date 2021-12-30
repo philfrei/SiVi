@@ -162,7 +162,7 @@ Texture settings cannot yet be saved/loaded (this is high on the *task list*). B
 
 ## Using GUI Settings to write code
 
-SIVI displays values that can be plugged into code, allowing for the creation of textures on a *procedural* basis. The template code below was written with instructions on where the various GUI settings are placed.
+SIVI displays values that can be plugged into code, allowing for the creation of textures on a *procedural* basis. The template code below was written with references to the GUI controls that hold the needed values instead of more properly referencing model variables.
 
 *Important note:* There isn't any single best way to get from a given 2D pixel location to the noise function and from there to that pixel's color values. This template is just one example. The code here is functionally very close to what is used in SiVi's [TextureFunctions](https://github.com/philfrei/SiVi/blob/master/src/main/java/com/adonax/sivi/TextureFunctions.java) class. This template omits making use of the *Channel Min/Max* settings, and does not provide the details used to create and configure the gradient value arrays, nor does it provide the details used to create or configure the color mapping.
 
