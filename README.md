@@ -156,7 +156,7 @@ Bear in mind that the value of 1 is pretty much equivalent to moving from node t
 
 *Fig. Screen shot of 3 textures, imported into AFRAME as skins/surfaces*
 
-![trio](images\trio.jpg)
+<img src="images\trio.jpg" alt="Three AFRAME objects with generated skins" />
 
 Texture settings cannot yet be saved/loaded (this is high on the *task list*). But graphics can be exported to *jpg*, *png* and *gif* formats. The exported graphics can then be imported into other systems. The above figure shows three shapes drawn with the Javascript AR library AFRAME, each making use of a SIVI-generated texture graphic for its surface. This AFRAME screen shot is a bit of a cheat, though! If we were actually using AFRAME to view these 3D objects, it would be possible to navigate and view them from the reverse side. At that point it would be possible to see the seams, where the edges of the graphic meet up. Adding a provision to eliminate the seams is on the *task list*.
 
