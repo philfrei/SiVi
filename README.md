@@ -176,12 +176,12 @@ public class CodeTemplate {
 	
 	float[] mixWeights;
 
-    // [][] coordinate values reflect X & Y location of given pixel
-    float[][] noiseVals;
+	// [][] coordinate values reflect X & Y location of given pixel	
+	float[][] noiseVals;
 	float[][] modulationTarget;
-	
-    // Holds source data for constructing image in preferred Object
-    // e.g. BufferedImage (Swing) or WritableImage (JavaFX)
+
+	// Holds source data for constructing image in preferred Object
+	// e.g. BufferedImage (Swing) or WritableImage (JavaFX)
     	Color[][] graphicData; 
 	
 	NoiseFunction noiseFunction;
