@@ -1,62 +1,62 @@
-# SIVI - a Java-based 2D Gradient-Noise Visualizer
+# SiVi - a Java-based 2D Gradient-Noise Visualizer
 
-## Contents
-[Introduction](https://github.com/philfrei/SiVi#introduction)
+### Contents
+[Introduction](https://github.com/philfrei/SiVi#introduction)  
+[Compiling and Running SiVi](https://github.com/philfrei/SiVi#compiling-and-running-sivi)  
 
-[Compiling and Running SIVI](https://github.com/philfrei/SiVi#compiling-and-running-sivi)
-
-[The GUI Explained](https://github.com/philfrei/SiVi#the-gui-explained)
-
-* [Channels](https://github.com/philfrei/SiVi#channels)
-* [Mixer](https://github.com/philfrei/SiVi#mixer)
-* [Gradient Modulation](https://github.com/philfrei/SiVi#gradient-modulation)
-* [Color Mapping](https://github.com/philfrei/SiVi#color-mapping)
+[The GUI Explained](https://github.com/philfrei/SiVi#the-gui-explained)  
+* [Channels](https://github.com/philfrei/SiVi#channels)  
+* [Mixer](https://github.com/philfrei/SiVi#mixer)  
+* [Gradient Modulation](https://github.com/philfrei/SiVi#gradient-modulation)  
+* [Color Mapping](https://github.com/philfrei/SiVi#color-mapping)  
 * [Final Display](https://github.com/philfrei/SiVi#final-display)
 
-[Example Gallery](https://github.com/philfrei/SiVi#example-gallery)
-* [Classic Clouds](https://github.com/philfrei/SiVi#classic-clouds)
-* [Tree Rings](https://github.com/philfrei/SiVi#tree-rings)
-* [Plasma and Animation](https://github.com/philfrei/SiVi#plasma-and-animation)
+[Example Gallery](https://github.com/philfrei/SiVi#example-gallery)  
+* [Classic Clouds](https://github.com/philfrei/SiVi#classic-clouds)  
+* [Tree Rings](https://github.com/philfrei/SiVi#tree-rings)  
+* [Plasma and Animation](https://github.com/philfrei/SiVi#plasma-and-animation)  
 
-[Exporting textures for use in other frameworks](https://github.com/philfrei/SiVi#exporting-textures-for-use-in-other-frameworks)
+[Exporting textures for use in other frameworks](https://github.com/philfrei/SiVi#exporting-textures-for-use-in-other-frameworks)  
 
-[Using GUI settings to write code](https://github.com/philfrei/SiVi#using-gui-settings-to-write-code)
-* [Code template](https://github.com/philfrei/SiVi#code-template)
-* [Notes on the code](https://github.com/philfrei/SiVi#notes-on-the-code)
+[Using GUI settings to write code](https://github.com/philfrei/SiVi#using-gui-settings-to-write-code)  
+* [Code template](https://github.com/philfrei/SiVi#code-template)  
+* [Notes on the code](https://github.com/philfrei/SiVi#notes-on-the-code)  
 
-[Additional Topics](https://github.com/philfrei/SiVi#further-notes)
-
-[Project History](https://github.com/philfrei/SiVi#project-history)
-
-[References and links](https://github.com/philfrei/SiVi#references-and-links)
+[Additional Topics](https://github.com/philfrei/SiVi#further-notes)  
+[Project History](https://github.com/philfrei/SiVi#project-history)  
+[References and links](https://github.com/philfrei/SiVi#references-and-links)  
 
 ## Introduction
 
-**SIVI** is a Java-based GUI built to assist in the creation of textures that rely on the mixing of 2D [gradient noise]([https://en.wikipedia.org/wiki/Gradient_noise). With SIVI, one can view the results of mixing variously scaled and manipulated *channels* of gradient noise data. Additional capabilities include the exporting of graphics and animated gifs. Values are exposed by the GUI that can be referred to when writing procedural code to create textures on the fly. A [template](https://github.com/philfrei/SiVi#code-template) for writing procedural code is included below.
+**SiVi** is a Java-based tool built to assist in the creation and exploration of textures that rely on the mixing of 2D [gradient noise]([https://en.wikipedia.org/wiki/Gradient_noise). With SiVi, one can view the results of mixing variously scaled and manipulated *channels* of gradient noise data. Additional capabilities include the exporting of graphics and animated gifs. Values are exposed by the GUI that can be referred to when writing procedural code to create textures on the fly. A [template](https://github.com/philfrei/SiVi#code-template) for writing procedural code is included below.
 
-The inspiration for making SIVI came from reading Stefan Gustafsen's 2005 article [Simplex noise demystified](http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf). I strongly recommend Gustafsen's article to anyone wanting a clear explanation of the theory and for his implementation of Ken Perlin's *Simplex Noise*. However, the article said little about how to *use* this technique artistically. SIVI was written to help with learning both how to design and how to code gradient-noise-based textures, and to make experimenting with designs easier.
+The inspiration for making SiVi came from reading Stefan Gustafsen's 2005 article [Simplex noise demystified](http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf). I strongly recommend Gustafsen's article to anyone wanting a clear explanation of the theory and for his implementation of Ken Perlin's *Simplex Noise*. However, the article said little about how to *use* this technique artistically. SIVI was written to help with learning both how to design and how to code gradient-noise-based textures, and to make experimentation easier.
 
-SIVI uses [OpenSimplexNoise](https://gist.github.com/KdotJPG/b1270127455a94ac5d19) as its default. SIVI has been set up to easily incorporate additional noise generating libraries, making it possible to compare different types of gradient noise. Gustafsen's implementation of *SimplexNoise* is included and can be selected for comparison purposes.
+SiVi uses [OpenSimplexNoise](https://gist.github.com/KdotJPG/b1270127455a94ac5d19) as its default. SiVi has been set up to easily incorporate additional noise generating libraries, making it possible to compare different types of gradient noise. Gustafsen's implementation of *SimplexNoise* is included and can be selected for comparison purposes.
 
-## Compiling and Running SIVI
+## Compiling and Running SiVi
 
-If you don't wish to fork the project, you can download and run SiVi-1.0.1-SNAPSHOT.jar with the following command: java -jar SiVi-1.0.1-SNAPSHOT.jar
+If you don't wish to fork the project, you can download and run SiVi-1.0.1-SNAPSHOT.jar with the following command: `java -jar SiVi-1.0.1-SNAPSHOT.jar`.
 The program is configured to run with Java 11 or higher.
 
-To recreate this jar, in the CLI navigate to the project directory (contains pom.xml) and execute the Maven command: mvn clean package
+To recreate this jar, in the CLI navigate to the project directory (contains pom.xml) and execute the Maven command: `mvn clean package`.
 The jar will be created in the /target directory. 
 
 ## The GUI Explained
 
 In this next section, the basic features of the GUI are described. The following figure shows the GUI for a 3-channel project used to create an earthlike planet texture. 
 
-*Fig. SIVI's GUI (67% size), developing an earthlike planet texture*
+*Fig. SiVi's GUI (67% size), developing an earthlike planet texture*
 
 <img src="images\fsTerra.png" alt="fsTerra" style="zoom:67%;" />
 
+#### Settings
+
+From the menu bar, the settings allow the specification of the width and height of the graphic, and the number of contributing "octaves". The noise engine is also selected here. Most recently, horizontal and vertical reflections have been added. These reflections result in a doubling of the width and height in the final display.
+
 #### Channels
 
-The top half of SIVI contains controls for the contributing *channels* of noise. This project has 3 channels. If more channels are used than can be displayed, a scroll bar is provided. Each *channel* controls a separate call to the noise function. The settings on each channel are for *scaling*, *translation*, a filter function (of dubious merit), and a set of radio buttons for the selection of an algorithm to transform the results, or not, from the range -1 to 1, to the range 0 to 1. This section also includes a visualization of the target area.
+The top half of SiVi contains controls for the contributing *channels* of noise. This project has 3 channels. If more channels are used than can be displayed, a scroll bar is provided. Each *channel* controls a separate call to the noise function. The settings on each channel are for *scaling*, *translation*, a filter function (of dubious merit), and a set of radio buttons for the selection of an algorithm to transform the results, or not, from the range -1 to 1, to the range 0 to 1. This section also includes a visualization of the target area.
 
 A call is made to the noise function for every pixel in the target rectangle image. As we traverse over the area of our intended graphic using a simple `for` loop, the X and Y coordinates are plugged in as arguments to the noise function. The GUI controls **X Scale** and **Y Scale** hold values that control the distance we travel through the *gradient noise space* over the course of this `for` loop.
 
@@ -70,7 +70,7 @@ In the next stage, we choose whether or not to apply one of two scaling function
 
 #### Mixer
 
-In the bottom half of SIVI, the top left corner has an array of sliders, one per *channel*, under the heading **Mix**. With this, one can control the relative contributions of each channel. This section also include a slider named **All** that affects the amplitude of the resulting mix of channels. In our example, the first channel is given a value of 63, the second channel is given 21, and the third 7. Each has 1/3 the weight of the previous, corresponding to the scaling changes between channels. The mixed noise value will be computed as follows: 
+In the bottom half of SiVi, the top left corner has an array of sliders, one per *channel*, under the heading **Mix**. With this, one can control the relative contributions of each channel. This section also include a slider named **All** that affects the amplitude of the resulting mix of channels. In our example, the first channel is given a value of 63, the second channel is given 21, and the third 7. Each has 1/3 the weight of the previous, corresponding to the scaling changes between channels. The mixed noise value will be computed as follows: 
 $$
 noiseVal = (noiseVal_0 * 63 + noiseVal_1 * 21 + noiseVal_2 * 7)/(63 + 21 + 7)
 $$
@@ -78,9 +78,9 @@ This *fractal*-like progression of settings between channels is often an efficie
 
 #### Gradient Modulation
 
-The output of the mix can go directly to the *Color Mapping* function, or it can optionally be combined with data from another shape or function. There are only a few target gradient shapes built into SIVI: currently a plane, a radial gradient, and a sine function. These are shown in the box labeled **Modulate a Gradient Function** which is directly below the **MIX** section. The check boxes are used to include a gradient. Settings for the target gradients can be edited by clicking the corresponding label. 
+The output of the mix can go directly to the *Color Mapping* function, or it can optionally be combined with data from another shape or function. There are only a few target gradient shapes built into SiVi: currently a plane, a radial gradient, and a sine function. These are shown in the box labeled **Modulate a Gradient Function** which is directly below the **MIX** section. The check boxes are used to include a gradient. Settings for the target gradients can be edited by clicking the corresponding label. 
 
-Expanding the number of gradient shapes and their configurability could greatly enhance the artistic potential of SIVI.
+Expanding the number of gradient shapes and their configurability would greatly enhance the artistic potential of SiVi.
 
 #### Color Mapping
 
@@ -98,7 +98,7 @@ The *Final Texture* area on the lower left corner displays the resulting texture
 
 ## Example Gallery
 
-SIVI includes a gallery of examples that are procedurally generated. These can be displayed using the Menu Bar: (MenuBar>>Settings>>Gallery). Clicking on a displayed graphic will bring it's settings into the GUI for further editing. Gallery examples can be used as starting points for the creation of new graphics.
+SiVi includes a gallery of examples that are procedurally generated. These can be displayed using the Menu Bar: (MenuBar>>Settings>>Gallery). Clicking on a displayed graphic will bring it's settings into the GUI for further editing. Gallery examples can be used as starting points for the creation of new graphics.
 
 In this section, we take a closer look at two examples from the *Gallery* contained within SIVI.
 
@@ -128,9 +128,9 @@ This texture uses just one channel. The mixer has the amplitude set to 4, and co
 
 <img src="images\plasma.gif" alt="Plasma gif" />
 
-A tool for creating animating gifs is now part of the project. The animation currently has only been enabled on the *z-axis*. The tool can be invoked from the Menu Bar:  (MenuBar>>Settings>>AnimationTool). The tool opens with default settings that create a 50-frame graphic, with the 20 milliseconds per frame. 
+A tool for creating animating gifs is now part of the project. The animation is now enabled on the *x-, y- and z-axis*. The tool can be invoked from the Menu Bar:  (MenuBar>>Settings>>AnimationTool). The tool opens with default settings that create a 50-frame graphic, with the 20 milliseconds per frame. 
 
-In this graphic, you will notice that there is no discontinuity when the gif loops. This smoothness is accomplished by designating a large number of frames in the *Overlap* control. When there are overlap frames, linear interpolation is used between each overlapped pair to achieve smoothing.
+In this example graphic, you will notice that there is no discontinuity when the gif loops. This smoothness is accomplished by designating a large number of frames in the *Overlap* control. When there are overlap frames, linear interpolation is used between each overlapped pair to achieve smoothing.
 
 As for the fiery graphic itself, there are four channels of *Turbulent Noise*, set to *octave* relationships. The output is sent to a color map function that consists of three colors: 
 
@@ -142,8 +142,8 @@ As for the fiery graphic itself, there are four channels of *Turbulent Noise*, s
 
 The mapping function in SIVI works as follows: `float` values ranging from 0 to 1 are mapped to `int` values ranging from 0 to 255. If the calculated `int` is exactly 0, 127 or 255, the corresponding color values are used. If the calculated `int` value lies in between 0 and 127, or in between 127 and 255, then the RGB color values are calculated using linear interpolation. For example, the map value of 214 (half way between 127 and 255) would give us a *red* value of 102.  
 
-
-
+A couple notes and TODOs: I neglected to allow animation when the z-axis increment is 0. For the moment, a very small value, such as 0.000001 can be added for a virtually motionless action on the z-axis.
+Bear in mind that the value of 1 is pretty much equivalent to moving from node to node, and thus will create a fairly random sequence. Values of 0.1 or 0.01 will likely produce better results. I'm also noticing that the timing of 50 milliseconds per frame (20 fps) is reasonably smooth.
 
 
 
@@ -152,15 +152,15 @@ The mapping function in SIVI works as follows: `float` values ranging from 0 to 
 
 *Fig. Screen shot of 3 textures, imported into AFRAME as skins/surfaces*
 
-![trio](images\trio.jpg)
+<img src="images\trio.jpg" alt="Three AFRAME objects with generated skins" />
 
 Texture settings cannot yet be saved/loaded (this is high on the *task list*). But graphics can be exported to *jpg*, *png* and *gif* formats. The exported graphics can then be imported into other systems. The above figure shows three shapes drawn with the Javascript AR library AFRAME, each making use of a SIVI-generated texture graphic for its surface. This AFRAME screen shot is a bit of a cheat, though! If we were actually using AFRAME to view these 3D objects, it would be possible to navigate and view them from the reverse side. At that point it would be possible to see the seams, where the edges of the graphic meet up. Adding a provision to eliminate the seams is on the *task list*.
 
 ## Using GUI Settings to write code
 
-SIVI displays values that can be plugged into code, allowing for the creation of textures on a *procedural* basis. The template code below was written with instructions on where the various GUI settings are placed.
+SIVI displays values that can be plugged into code, allowing for the creation of textures on a *procedural* basis. The template code below was written with references to the GUI controls that hold the needed values instead of more properly referencing model variables.
 
-*Important note:* There isn't any single best way to get from a given 2D pixel location to the noise function and from there to that pixel's color values. This template is just one example. The code here is functionally very close to what is used in SIVI `TextureFunctions` class [TODO provide link]. This template omits making use of the *Channel Min/Max* settings, and does not provide the details used to create and configure the gradient value arrays, nor does it provide the details used to create or configure the color mapping.
+*Important note:* There isn't any single best way to get from a given 2D pixel location to the noise function and from there to that pixel's color values. This template is just one example. The code here is functionally very close to what is used in SiVi's [TextureFunctions](https://github.com/philfrei/SiVi/blob/master/src/main/java/com/adonax/sivi/TextureFunctions.java) class. This template omits making use of the *Channel Min/Max* settings, and does not provide the details used to create and configure the gradient value arrays, nor does it provide the details used to create or configure the color mapping.
 
 #### Code Template
 
@@ -172,12 +172,12 @@ public class CodeTemplate {
 	
 	float[] mixWeights;
 
-    // [][] coordinate values reflect X & Y location of given pixel
-    float[][] noiseVals;
+	// [][] coordinate values reflect X & Y location of given pixel	
+	float[][] noiseVals;
 	float[][] modulationTarget;
-	
-    // Holds source data for constructing image in preferred Object
-    // e.g. BufferedImage (Swing) or WritableImage (JavaFX)
+
+	// Holds source data for constructing image in preferred Object
+	// e.g. BufferedImage (Swing) or WritableImage (JavaFX)
     	Color[][] graphicData; 
 	
 	NoiseFunction noiseFunction;
@@ -330,15 +330,15 @@ It would also be useful to be able to incorporate stencils, asis done in the abo
 
 #### Origins
 
-When this project was started, I was pretty much a novice Java coder. I could barely write functioning GUI code, and learned a great deal from collaborators at Java-Gaming.org and in particular from member LoomWeaver (Sumio Kiyooka). Despite this help, cruft and code smell remain attributes of the project, for which I admit responsibility.
+When this project was started, I was pretty much a novice Java coder. I could barely write functioning GUI code, and learned a great deal from collaborators at Java-Gaming.org (now jvm-gaming.org) and especially from member LoomWeaver (Sumio Kiyooka). Despite this help, cruft and code smell remain attributes of the project, for which I admit responsibility.
 
-Part way in, I learned about *functional programming* and the *Model-View-Controller* design pattern, and the code was revised in my first attempts to implement these concepts. It's safe to assume that further work on this project will require a significant amount of refactoring.
+Along the way, I learned about *functional programming* and the *Model-View-Controller* design pattern, and the code was revised in my first attempts to implement these concepts.
 
 #### Project reboot
 
 In February, 2020, the project was rebooted. Revisions included deleting *tutorial* and *code-generation* functionality to bring down the code base size, revisions and enhancements to the GUI, and a tweaking of the *model* data structure.
 
-The most significant change was making *OpenSimplexNoise* the default noise engine, and creating a code interface for including additional noise engines. Gustafson's implementation of Perlin's Simplex Noise has been left in as an alternative for viewing. 
+The most significant change was making *OpenSimplexNoise* the default noise engine, and creating a code interface to allow the inclusion of additional noise engines. Gustafson's implementation of Perlin's Simplex Noise has been left in as an alternative for viewing. 
 
 #### Wish List
 
@@ -349,21 +349,20 @@ Following are items that if coded would enhance the project. They can be found i
 - Save/Load for texture settings
   *Will likely include a review of the current somewhat fragmented "model" structure.* 
 
-- B&W option setting for channel displays?
-  *B&W might be preferred as a way of keeping in mind that the numbers at this point have NOT yet been color-mapped.*
-
 - Bring in additional noise engines
   
 - Anisotropic effects
   *Requires functions that respond to the [x, y] location in the target graphic, and are applied prior to the call to the noise function.*
 
-- More and enhanced Gradients
+- Additional, and enhanced, gradients
 
+- Add more poles to the color mapping, and include an alpha channel.
+	
 - Stencils
   *Apply masks that can either be color (RGB) or alpha (opacity) channel values.*
 
 - More animation parameters
-  *Currently we have [z] translation. Expand to [x, y, z] translation, or to include other settings.*
+  *We now have [x, y, z] translation. Consider animating other settings.*
 
 - Code export
 
