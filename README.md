@@ -1,38 +1,34 @@
 # SiVi - a Java-based 2D Gradient-Noise Visualizer
 
-## Contents
-[Introduction](https://github.com/philfrei/SiVi#introduction)
+### Contents
+[Introduction](https://github.com/philfrei/SiVi#introduction)  
+[Compiling and Running SiVi](https://github.com/philfrei/SiVi#compiling-and-running-sivi)  
 
-[Compiling and Running SiVi](https://github.com/philfrei/SiVi#compiling-and-running-sivi)
-
-[The GUI Explained](https://github.com/philfrei/SiVi#the-gui-explained)
-
-* [Channels](https://github.com/philfrei/SiVi#channels)
-* [Mixer](https://github.com/philfrei/SiVi#mixer)
-* [Gradient Modulation](https://github.com/philfrei/SiVi#gradient-modulation)
-* [Color Mapping](https://github.com/philfrei/SiVi#color-mapping)
+[The GUI Explained](https://github.com/philfrei/SiVi#the-gui-explained)  
+* [Channels](https://github.com/philfrei/SiVi#channels)  
+* [Mixer](https://github.com/philfrei/SiVi#mixer)  
+* [Gradient Modulation](https://github.com/philfrei/SiVi#gradient-modulation)  
+* [Color Mapping](https://github.com/philfrei/SiVi#color-mapping)  
 * [Final Display](https://github.com/philfrei/SiVi#final-display)
 
-[Example Gallery](https://github.com/philfrei/SiVi#example-gallery)
-* [Classic Clouds](https://github.com/philfrei/SiVi#classic-clouds)
-* [Tree Rings](https://github.com/philfrei/SiVi#tree-rings)
-* [Plasma and Animation](https://github.com/philfrei/SiVi#plasma-and-animation)
+[Example Gallery](https://github.com/philfrei/SiVi#example-gallery)  
+* [Classic Clouds](https://github.com/philfrei/SiVi#classic-clouds)  
+* [Tree Rings](https://github.com/philfrei/SiVi#tree-rings)  
+* [Plasma and Animation](https://github.com/philfrei/SiVi#plasma-and-animation)  
 
-[Exporting textures for use in other frameworks](https://github.com/philfrei/SiVi#exporting-textures-for-use-in-other-frameworks)
+[Exporting textures for use in other frameworks](https://github.com/philfrei/SiVi#exporting-textures-for-use-in-other-frameworks)  
 
-[Using GUI settings to write code](https://github.com/philfrei/SiVi#using-gui-settings-to-write-code)
-* [Code template](https://github.com/philfrei/SiVi#code-template)
-* [Notes on the code](https://github.com/philfrei/SiVi#notes-on-the-code)
+[Using GUI settings to write code](https://github.com/philfrei/SiVi#using-gui-settings-to-write-code)  
+* [Code template](https://github.com/philfrei/SiVi#code-template)  
+* [Notes on the code](https://github.com/philfrei/SiVi#notes-on-the-code)  
 
-[Additional Topics](https://github.com/philfrei/SiVi#further-notes)
-
-[Project History](https://github.com/philfrei/SiVi#project-history)
-
-[References and links](https://github.com/philfrei/SiVi#references-and-links)
+[Additional Topics](https://github.com/philfrei/SiVi#further-notes)  
+[Project History](https://github.com/philfrei/SiVi#project-history)  
+[References and links](https://github.com/philfrei/SiVi#references-and-links)  
 
 ## Introduction
 
-**SiVi** is a Java-based GUI built to assist in the creation of textures that rely on the mixing of 2D [gradient noise]([https://en.wikipedia.org/wiki/Gradient_noise). With SiVi, one can view the results of mixing variously scaled and manipulated *channels* of gradient noise data. Additional capabilities include the exporting of graphics and animated gifs. Values are exposed by the GUI that can be referred to when writing procedural code to create textures on the fly. A [template](https://github.com/philfrei/SiVi#code-template) for writing procedural code is included below.
+**SiVi** is a Java-based tool built to assist in the creation and exploration of textures that rely on the mixing of 2D [gradient noise]([https://en.wikipedia.org/wiki/Gradient_noise). With SiVi, one can view the results of mixing variously scaled and manipulated *channels* of gradient noise data. Additional capabilities include the exporting of graphics and animated gifs. Values are exposed by the GUI that can be referred to when writing procedural code to create textures on the fly. A [template](https://github.com/philfrei/SiVi#code-template) for writing procedural code is included below.
 
 The inspiration for making SiVi came from reading Stefan Gustafsen's 2005 article [Simplex noise demystified](http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf). I strongly recommend Gustafsen's article to anyone wanting a clear explanation of the theory and for his implementation of Ken Perlin's *Simplex Noise*. However, the article said little about how to *use* this technique artistically. SIVI was written to help with learning both how to design and how to code gradient-noise-based textures, and to make experimentation easier.
 
