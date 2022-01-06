@@ -1,10 +1,5 @@
 package com.adonax.sivi.animation;
 
-/*
- * TODO: Create a provision for incorporating additional 
- * animation vectors, such as translation or scaling.
- */
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -13,9 +8,14 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -54,6 +54,10 @@ public class AnimationPanel extends JPanel
 	private boolean modelIsValid;
 	private boolean graphicsHaveBeenCompiled;
 	
+	// Executor to help with task of obtaining 
+	private ExecutorService noiseExecutor;
+	private List<Future<?>> futures;
+	
 	// GUI 
 	final JTextField stepsFld = new JTextField();
 	final JTextField overlapFld = new JTextField();
@@ -68,11 +72,19 @@ public class AnimationPanel extends JPanel
 	
 	private TopPanel topPanel;
 	
+	// a new Animation Panel is created from the MenuBar
 	public AnimationPanel(final TopPanel topPanel)
 	{		
 		this.topPanel = topPanel;
 		topPanel.setAnimationPanel(this);
-		
+	
+		// TODO experiment with .newWorkStealingPool()?
+//		this.noiseExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		this.noiseExecutor = Executors.newWorkStealingPool();
+		futures = new ArrayList<Future<?>>();
+		System.out.println("Thread pool created with " + Runtime.getRuntime().availableProcessors() 
+				+ " threads.");
+
 		JLabel stepsLbl = new JLabel("Steps");
 		stepsLbl.setHorizontalTextPosition(SwingConstants.RIGHT);
 		stepsFld.setHorizontalAlignment(JTextField.RIGHT);
@@ -194,7 +206,10 @@ public class AnimationPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
+				long timeStartBuild = System.currentTimeMillis();
 				loadImageArray();
+				System.out.println("time to build image: " + (System.currentTimeMillis() - timeStartBuild));
+				
 				btnRunAnimation.setEnabled(true);
 				imgSlider.setEnabled(true);
 				btnExport.setEnabled(true);
@@ -413,14 +428,6 @@ public class AnimationPanel extends JPanel
 			modelIsOK = false;
 		}
 		
-		if (zIncr == 0)
-		{
-			errMessage = errMessage + errSpacer 
-					+ "The function increment must be non-zero.";
-			errSpacer = " ";
-			modelIsOK = false;
-		}
-		
 		if (deltaTime < 1)
 		{
 			errMessage = errMessage + errSpacer 
@@ -473,8 +480,6 @@ public class AnimationPanel extends JPanel
 	private void loadImageArray()
 	{
 		// initialize
-		float x = 0, y = 0, z = 0;
-		
 		TopPanelModel tpm = topPanel.getAppSettings();
 		
 		int octaves = tpm.octaves;
@@ -487,66 +492,89 @@ public class AnimationPanel extends JPanel
 		MixerModel mm = topPanel.mixerGUI.getMixerModel();
 		ColorMap cm = ColorMapSelectorGUI.getColorMap(); 
 		
-		NoiseData nd = null;
-		NoiseData ndOverlap = null;
+//		NoiseData nd = null;
+//		NoiseData ndOverlap = null;
+		
+		futures.clear(); // TODO is this needed?
 		
 		// call for each image
 		for (int i = 0; i < imagesCount; i++)
 		{
-			nd = TextureFunctions.makeNoiseDataArray(tpm, om, mm, x, y, z, 3);
+			int idx = i;
 			
-//			System.out.println("AniPanel.loadImageArray, i:" + i + "\tn:" + imagesCount 
-//					+ "\toverlap:" + overlap + "\tht:" + nd.height + "\twd:" + nd.width);
+			Runnable task = new Runnable() {
+
+				
+				NoiseData nd = null;
+				NoiseData ndOverlap = null;
+				
+				@Override
+				public void run() {
+					nd = TextureFunctions.makeNoiseDataArray(tpm, om, mm, idx * xIncr, idx * yIncr, idx * zIncr, 3);
+					
+					/*
+					 *  Overlap computations.
+					 *  
+					 *  TODO: OK, I admit I was counting on my fingers and toes.  
+					 *  Definitely room for improvement here. Goal, to
+					 *  implement Ken Perlin's algorithm: 
+					 *  
+					 *  	replace the function F(x,y,z) with: 
+					 * 		F2(x,y,z) = (1-z)*F(x,y,z) + z*F(x,y,z-1) 
+					 *  
+					 *  http://www.noisemachine.com/talk1/24b.html
+					 *  
+					 *  Would be great if someone improved the following, 
+					 *  made it easier to read. Phil Freihofner 7/2/2014.
+					 */
+					if (idx >= imagesCount - overlap )
+					{
+						int iApproachLerpPos = idx - imagesCount;
+						ndOverlap = TextureFunctions.makeNoiseDataArray(
+								tpm, om, mm, iApproachLerpPos * xIncr,
+								iApproachLerpPos * yIncr, iApproachLerpPos * zIncr, 3);
+						
+						int bFactor = (overlap + 1) - (imagesCount - idx);
+						int aFactor = (overlap + 1) - bFactor;
+						
+						float[] noiseArray = 
+								FloatArrayFunctions.LerpTwoFloatArrays(
+										nd.noiseArray, aFactor, 
+										ndOverlap.noiseArray, bFactor);
+						
+						int lerpedNdWidth = tpm.finalWidth;
+						int lerpedNdHeight = tpm.finalHeight;
+						
+						if (tpm.isVerticallySymmetric) lerpedNdWidth *= 2;
+						if (tpm.isHorizontallySymmetric) lerpedNdHeight *= 2;
+						
+						nd = new NoiseData(lerpedNdWidth, lerpedNdHeight, noiseArray);
+					}
+					
+					images[idx] = TextureFunctions.makeImage(nd, mm, cm);
+					
+				}
+			};
 			
-			/*
-			 *  Overlap computations.
-			 *  
-			 *  TODO: OK, I admit I was counting on my fingers and toes.  
-			 *  Definitely room for improvement here. Goal, to
-			 *  implement Ken Perlin's algorithm: 
-			 *  
-			 *  	replace the function F(x,y,z) with: 
-			 * 		F2(x,y,z) = (1-z)*F(x,y,z) + z*F(x,y,z-1) 
-			 *  
-			 *  http://www.noisemachine.com/talk1/24b.html
-			 *  
-			 *  Would be great if someone improved the following, 
-			 *  made it easier to read. Phil Freihofner 7/2/2014.
-			 */
-			if (i >= imagesCount - overlap )
-			{
-				int iApproachLerpPos = i - imagesCount;
-				ndOverlap = TextureFunctions.makeNoiseDataArray(
-						tpm, om, mm, iApproachLerpPos * xIncr,
-						iApproachLerpPos * yIncr, iApproachLerpPos * zIncr, 3);
-				
-				int bFactor = (overlap + 1) - (imagesCount - i);
-				int aFactor = (overlap + 1) - bFactor;
-				
-				float[] noiseArray = 
-						FloatArrayFunctions.LerpTwoFloatArrays(
-								nd.noiseArray, aFactor, 
-								ndOverlap.noiseArray, bFactor);
-				
-				int lerpedNdWidth = tpm.finalWidth;
-				int lerpedNdHeight = tpm.finalHeight;
-				
-				if (tpm.isVerticallySymmetric) lerpedNdWidth *= 2;
-				if (tpm.isHorizontallySymmetric) lerpedNdHeight *= 2;
-				
-				nd = new NoiseData(lerpedNdWidth, lerpedNdHeight, noiseArray);
-			}
-			
-			x += xIncr;
-			y += yIncr;
-			z += zIncr;
-			
-			images[i] = TextureFunctions.makeImage(nd, mm, cm);
+			Future<?> f = noiseExecutor.submit(task);
+			futures.add(f);
 		}
+
+		// Wait for all sent tasks to complete:
+		for (Future<?> future : futures) {
+		    try {
+				future.get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		
 		imgSlider.setMaximum(Math.max(0, imagesCount - 1));
 		imgSlider.setValue(0);
-	}
+	} 
 	
 	private void viewImage(int i)
 	{

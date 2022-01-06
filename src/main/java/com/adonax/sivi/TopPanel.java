@@ -19,7 +19,6 @@ package com.adonax.sivi;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
 import javax.swing.*;
 
 import com.adonax.sivi.animation.AnimationPanel;
@@ -65,6 +64,11 @@ public class TopPanel extends JPanel
 	private OctaveModel[] octaveModels;
 	private AnimationPanel animationPanel;
 	
+//	private ExecutorService octaveExecutor;
+//	public void setOctaveExecutorThreadCount(int nThreads) {
+//		this.octaveExecutor = Executors.newFixedThreadPool(nThreads); 
+//	}
+	
 	TopPanel()
 	{
 		this(new TopPanelModel());
@@ -75,9 +79,9 @@ public class TopPanel extends JPanel
 		setLayout(new BorderLayout());
 
 		appSettings = new TopPanelModel();
-		
+//		setOctaveExecutorThreadCount(appSettings.octaves);		
 		boolean[] selected = new boolean[appSettings.octaves];
-
+		
 		mixerGUI = new MixerGUI(this, new MixerModel(appSettings), 
 				new GradientGUIModel(
 						new LinearGradientFunction(
@@ -212,14 +216,24 @@ public class TopPanel extends JPanel
 		
 		for (OctaveGUI oct: octaveGUIs)
 		{
-			oct.update();
+//			octaveExecutor.execute(new Runnable() {
+//				@Override
+//				public void run() {
+					oct.update();
+//				}		
+//			});
 		}
 		remix();
 	}
-
+		
 	public void updateOctaveDisplay(int idx)
 	{
-		octaveGUIs[idx].update();
+//		octaveExecutor.execute(new Runnable() {
+//			@Override
+//			public void run() {
+				octaveGUIs[idx].update();
+//			}		
+//		});
 		remix();
 	}
 	

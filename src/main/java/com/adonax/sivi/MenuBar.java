@@ -128,11 +128,7 @@ public class MenuBar
 				tutorial.setVisible(true);
 			}
 		});
-				
-//		JMenuItem codeGeneratorSubMenu = 
-//				new JMenuItem("Code Generator", KeyEvent.VK_C);
-//		codeGeneratorSubMenu.setEnabled(false);
-		
+					
 		JMenuItem animatorPanel = new JMenuItem("Animation Tool", KeyEvent.VK_A);
 	    animatorPanel.addActionListener(new ActionListener()
 		{

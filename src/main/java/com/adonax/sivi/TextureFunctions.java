@@ -139,22 +139,6 @@ public class TextureFunctions {
 		int height = tpm.finalHeight;
 		boolean singleCenterColumn = false;
 		boolean singleCenterRow = false;
-	
-//		if (tpm.isVerticallySymmetric) {
-//			width /= 2;
-//			if (tpm.finalWidth % 2 ==1) {
-//				singleCenterColumn = true;
-//				width++;
-//			}
-//		}
-		
-//		if (tpm.isHorizontallySymmetric) {
-//			height /= 2;
-//			if (tpm.finalHeight % 2 ==1) {
-//				singleCenterRow = true;
-//				height++;
-//			}
-//		}
 		
 		float[] noiseArray = new float[width * height];
 		float x, y, noiseVal;
