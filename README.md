@@ -1,5 +1,7 @@
 # SiVi - a Java-based 2D Gradient-Noise Visualizer
 
+<img src="images\candelabra.gif" alt="Candelabra" />
+
 ### Contents
 [Introduction](https://github.com/philfrei/SiVi#introduction)  
 [Compiling and Running SiVi](https://github.com/philfrei/SiVi#compiling-and-running-sivi)  
