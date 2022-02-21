@@ -376,8 +376,11 @@ Following are items that if coded would enhance the project. They can be found i
 Stefan Gustafson's paper [*Simplex Noise Demystified*](http://weber.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
 
 [Repository for noise functions (Simplex, Classic, Cellular)](https://github.com/stegu/webgl-noise/) from Stefan Gustafson
-
+	
 *AngryOctapus'* blog post [Content Generation for Programmers Pt 1](http://www.angryoctopus.co.nz/?p=11)
+
+[Tutorial by Ken Perlin from 1999 Slide Presentation, includes a mention of his work on the development of Simplex noise. 
+Unfortunately, there are many dead links.](http://noisemachine.com/talk1/index.html)
 
 Also worth checking out:
 
