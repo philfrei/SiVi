@@ -350,22 +350,22 @@ Following are items that if coded would enhance the project. They can be found i
 
 - Improve the field controls so that an <Enter> keypress is not required after changing the value in the field. This has only been done for the *Animation Panel* fields.
   
-- Save/Load for texture settings
-  *Will likely include a review of the current somewhat fragmented "model" structure.* 
+- Save/Load for texture settings:
+  *Will likely convert the contributing Objects into a JSON structure.* 
 
 - Bring in additional noise engines
   
-- Anisotropic effects
+- Anisotropic effects:
   *Requires functions that respond to the [x, y] location in the target graphic, and are applied prior to the call to the noise function.*
 
 - Additional, and enhanced, gradients
 
 - Add more poles to the color mapping, and include an alpha channel.
 	
-- Stencils
+- Stencils:
   *Apply masks that can either be color (RGB) or alpha (opacity) channel values.*
 
-- More animation parameters
+- More animation parameters:
   *We now have [x, y, z] translation. Consider animating other settings.*
 
 - Code export
