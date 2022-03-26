@@ -332,7 +332,7 @@ It would also be useful to be able to incorporate stencils, asis done in the abo
 
 #### Origins
 
-When this project was started, I was pretty much a novice Java coder. I could barely write functioning GUI code, and learned a great deal from collaborators at Java-Gaming.org (now jvm-gaming.org) and especially from member LoomWeaver (Sumio Kiyooka). Despite this help, cruft and code smell remain attributes of the project, for which I admit responsibility.
+When this project was started, I was pretty much a novice Java coder. I could barely write functioning GUI code, and learned a great deal from collaborators at Java-Gaming.org (now jvm-gaming.org) and especially from member LoomWeaver (Sumio Kiyooka).
 
 Along the way, I learned about *functional programming* and the *Model-View-Controller* design pattern, and the code was revised in my first attempts to implement these concepts.
 
@@ -341,6 +341,8 @@ Along the way, I learned about *functional programming* and the *Model-View-Cont
 In February, 2020, the project was rebooted. Revisions included deleting *tutorial* and *code-generation* functionality to bring down the code base size, revisions and enhancements to the GUI, and a tweaking of the *model* data structure.
 
 The most significant change was making *OpenSimplexNoise* the default noise engine, and creating a code interface to allow the inclusion of additional noise engines. Gustafson's implementation of Perlin's Simplex Noise has been left in as an alternative for viewing. 
+
+In December of 2021, additional functionality was added: we can now make patterns that have symmetry, we can animate on the X and Y axis in addition to the Z axis, and the gif generation has been sped up dramatically by employing parallel worker threads.
 
 #### Wish List
 
